@@ -158,7 +158,7 @@ env.Alias('crosstalk', crosstalk)
 # Science
 
 scienceYaml = os.path.join(PKG_ROOT, 'pipelines', 'runIsr.yaml')
-science = env.Command(os.path.join(REPO_ROOT, 'science'), crosstalk,
+science = env.Command(os.path.join(REPO_ROOT, 'science'), [crosstalk, flat],
                       [" ".join(
                           ['pipetask run -j', str(num_process), '-d "detector=0 AND exposure IN (',
                            ','.join(str(exp) for exp in scienceExposures), ')"',
@@ -174,8 +174,40 @@ everything.extend([bias, dark, flat, science])
 
 env.Alias("install", "SConstruct")
 
-env.Alias("all", everything)
+def getExecutable(packageRoot, script, directory=None):
+    """
+    Given the name of a package and a script or other python executable which
+    lies within the given subdirectory (defaults to "bin"), return an
+    appropriate string which can be used to set up an appropriate environment
+    and execute the command.
+    This includes:
+    * Specifying an explict list of paths to be searched by the dynamic linker;
+    * Specifying a Python executable to be run (we assume the one on the
+      default ${PATH} is appropriate);
+    * Specifying the complete path to the script.
+    """
+    if directory is None:
+        directory = "bin"
+    return "{} python {}".format(libraryLoaderEnvironment(),
+                                    os.path.join(packageRoot, directory, script))
+
+def command(target, source, cmd):
+    """Run a command and record that we ran it
+    The record is in the form of a file in the ".scons" directory.
+    """
+    name = os.path.join(".scons", target)
+    if isinstance(cmd, str):
+        cmd = [cmd]
+    out = env.Command(name, source, cmd + [Touch(name)])
+    env.Alias(target, name)
+    return out
+
+tests = [command(f"test_{name}", ['DATA/science'], getExecutable(PKG_ROOT, f"test_{name}.py", "tests"))
+         for name in ('flat', 'bias', 'dark', 'crosstalk')]
+env.Alias("tests", tests)
+
+env.Alias("all", everything + [tests])
 Default(everything)
 
-env.Clean(everything, [y for x in everything for y in x])
+env.Clean(everything, [y for x in everything for y in x] + ['DATA'])
 
