@@ -19,4 +19,4 @@ version.py
 *.egg-info
 DATA/
 bin/
-.scons/
+.scons*

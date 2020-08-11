@@ -1,4 +1,4 @@
-# This file is part of ci_cpp.
+# This file is part of ci_cpp_gen3.
 #
 # Developed for the LSST Data Management System.
 # This product includes software developed by the LSST Project
@@ -23,6 +23,8 @@ import unittest
 import lsst.utils.tests
 
 
+# TODO: DM-26396
+#       Update these tests to validate calibration construction.
 class CrosstalkTestCases(lsst.utils.tests.TestCase):
 
     def setup_independentFrame(self):
