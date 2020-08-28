@@ -34,8 +34,8 @@ from lsst.pipe.tasks.repair import RepairTask
 # TODO: DM-26396
 #       Update these tests to validate calibration construction.
 class BiasTestCases(lsst.utils.tests.TestCase):
-
-    def setUpClass(self):
+    @classmethod
+    def setUpClass(cls):
         """Setup butler, and generate an ISR processed exposure.
 
         Notes
@@ -46,51 +46,52 @@ class BiasTestCases(lsst.utils.tests.TestCase):
         overscan correction and bias subtraction
 
         """
-        repoDir = os.path.join("..", "DATA")
+        repoDir = os.path.join("DATA/")
         butler = dafButler.Butler(repoDir, collections=['LATISS/raw/all', 'LATISS/calib', 'calib/v00'])
 
-        self.config = ipIsr.IsrTaskConfig()
-        self.config.doSaturation = True
-        self.config.doSuspect = True
-        self.config.doSetBadRegions = True
-        self.config.doOverscan = True
-        self.config.doBias = True
-        self.config.doVariance = True
+        config = ipIsr.IsrTaskConfig()
+        config.doSaturation = True
+        config.doSuspect = True
+        config.doSetBadRegions = True
+        config.doOverscan = True
+        config.doBias = True
+        config.doVariance = True
 
-        self.config.doLinearize = False
-        self.config.doCrosstalk = False
-        self.config.doWidenSaturationTrails = False
-        self.config.doBrighterFatter = False
-        self.config.doDefect = False
-        self.config.doSaturationInterpolation = False
-        self.config.doDark = False
-        self.config.doStrayLight = False
-        self.config.doFlat = False
-        self.config.doApplyGains = False
-        self.config.doFringe = False
-        self.config.doMeasureBackground = False
-        self.config.doVignette = False
-        self.config.doAttachTransmissionCurve = False
-        self.config.doUseOpticsTransmission = False
-        self.config.doUseFilterTransmission = False
-        self.config.doUseSensorTransmission = False
-        self.config.doUseAtmosphereTransmission = False
+        config.doLinearize = False
+        config.doCrosstalk = False
+        config.doWidenSaturationTrails = False
+        config.doBrighterFatter = False
+        config.doDefect = False
+        config.doSaturationInterpolation = False
+        config.doDark = False
+        config.doStrayLight = False
+        config.doFlat = False
+        config.doApplyGains = False
+        config.doFringe = False
+        config.doMeasureBackground = False
+        config.doVignette = False
+        config.doAttachTransmissionCurve = False
+        config.doUseOpticsTransmission = False
+        config.doUseFilterTransmission = False
+        config.doUseSensorTransmission = False
+        config.doUseAtmosphereTransmission = False
 
-        self.isrTask = ipIsr.IsrTask(config=self.config)
+        isrTask = ipIsr.IsrTask(config=config)
+        # TODO: DM-26396
         # This is not an independent frame.
-        self.raw = butler.get('raw', dataId={'detector': 0, 'exposure': 2020012800007,
-                                             'instrument': 'LATISS'})
-        self.bias = butler.get('bias', dataId={'detector': 0,
-                                               'instrument': 'LATISS',
-                                               'calibration_label': 'bias/ci_cpp_bias'})
-        self.camera = butler.get('camera', dataId={'detector': 0, 'exposure': 2020012800007,
-                                                   'instrument': 'LATISS',
-                                                   'calibration_label': 'unbounded'})
+        cls.raw = butler.get('raw', dataId={'detector': 0, 'exposure': 2020012800007,
+                                            'instrument': 'LATISS'})
+        cls.bias = butler.get('bias', dataId={'detector': 0,
+                                              'instrument': 'LATISS',
+                                              'calibration_label': 'bias/ci_cpp_bias'})
+        cls.camera = butler.get('camera', dataId={'detector': 0, 'exposure': 2020012800007,
+                                                  'instrument': 'LATISS',
+                                                  'calibration_label': 'unbounded'})
 
-        results = self.isrTask.run(self.raw, camera=self.camera,
-                                   bias=self.bias)
+        results = isrTask.run(cls.raw, camera=cls.camera,
+                              bias=cls.bias)
 
-        self.exposure = results.outputExposure
+        cls.exposure = results.outputExposure
 
     def test_independentFrameLevel(self):
         """Test image mean.

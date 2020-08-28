@@ -17,6 +17,11 @@ version.py
 .eggs
 .pytest_cache
 *.egg-info
-DATA/
 bin/
 .scons*
+.coverage
+DATA/butler.yaml
+DATA/gen3.sqlite3
+DATA/LATISS
+DATA/calib/
+DATA/ci_*
