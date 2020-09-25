@@ -73,23 +73,14 @@ class FlatTestCases(lsst.utils.tests.TestCase):
         config.doUseAtmosphereTransmission = False
 
         isrTask = ipIsr.IsrTask(config=config)
+        rawDataId = {'detector': 0, 'exposure': 2020012800007, 'instrument': 'LATISS'}
         # TODO: DM-26396
         # This is not an independent frame.
-        cls.raw = butler.get('raw', dataId={'detector': 0, 'exposure': 2020012800028,
-                                            'instrument': 'LATISS'})
-        cls.bias = butler.get('bias', dataId={'detector': 0,
-                                              'instrument': 'LATISS',
-                                              'calibration_label': 'bias/ci_cpp_bias'})
-        cls.dark = butler.get('dark', dataId={'detector': 0,
-                                              'instrument': 'LATISS',
-                                              'calibration_label': 'dark/ci_cpp_dark'})
-        cls.flat = butler.get('flat', dataId={'detector': 0,
-                                              'instrument': 'LATISS',
-                                              'physical_filter': 'KPNO_406_828nm~EMPTY',
-                                              'calibration_label': 'flat/ci_cpp_flat'})
-        cls.camera = butler.get('camera', dataId={'detector': 0, 'exposure': 2020012800028,
-                                                  'instrument': 'LATISS',
-                                                  'calibration_label': 'unbounded'})
+        cls.raw = butler.get('raw', rawDataId)
+        cls.bias = butler.get('bias', rawDataId)
+        cls.dark = butler.get('dark', rawDataId)
+        cls.flat = butler.get('flat', rawDataId)
+        cls.camera = butler.get('camera', rawDataId)
 
         results = isrTask.run(cls.raw, camera=cls.camera,
                               bias=cls.bias, dark=cls.dark, flat=cls.flat)
