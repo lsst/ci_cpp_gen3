@@ -27,7 +27,6 @@ import lsst.daf.butler as dafButler
 import lsst.ip.isr as ipIsr
 import lsst.meas.algorithms as measAlg
 import lsst.utils.tests
-
 from lsst.pipe.tasks.repair import RepairTask
 
 
@@ -77,16 +76,12 @@ class BiasTestCases(lsst.utils.tests.TestCase):
         config.doUseAtmosphereTransmission = False
 
         isrTask = ipIsr.IsrTask(config=config)
+        rawDataId = {'detector': 0, 'exposure': 2020012800007, 'instrument': 'LATISS'}
         # TODO: DM-26396
         # This is not an independent frame.
-        cls.raw = butler.get('raw', dataId={'detector': 0, 'exposure': 2020012800007,
-                                            'instrument': 'LATISS'})
-        cls.bias = butler.get('bias', dataId={'detector': 0,
-                                              'instrument': 'LATISS',
-                                              'calibration_label': 'bias/ci_cpp_bias'})
-        cls.camera = butler.get('camera', dataId={'detector': 0, 'exposure': 2020012800007,
-                                                  'instrument': 'LATISS',
-                                                  'calibration_label': 'unbounded'})
+        cls.raw = butler.get('raw', dataId=rawDataId)
+        cls.bias = butler.get('bias', rawDataId)
+        cls.camera = butler.get('camera', rawDataId)
 
         results = isrTask.run(cls.raw, camera=cls.camera,
                               bias=cls.bias)
