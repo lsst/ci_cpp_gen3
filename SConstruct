@@ -5,5 +5,5 @@ from lsst.sconsUtils import scripts
 targetList = ('version', 'shebang', 'DATA',) + scripts.DEFAULT_TARGETS
 
 scripts.BasicSConstruct("ci_cpp_gen3", disableCc=True,
+                        subDirList=[],
                         defaultTargets=targetList)
-

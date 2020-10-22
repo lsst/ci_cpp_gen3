@@ -2,6 +2,7 @@
 import os
 import yaml
 import lsst.sconsUtils as utils
+from lsst.sconsUtils.utils import libraryLoaderEnvironment
 
 from SCons.Script import SConscript, GetOption
 
@@ -37,8 +38,8 @@ def getExecutableCmd(package, script, *args):
     cmd : `str`
         The constructed command.
     """
-    cmds = [os.path.join(env.ProductDir(package), "bin", script)]
-
+    cmds = ["{} python {}".format(libraryLoaderEnvironment(),
+                                  os.path.join(env.ProductDir(package), "bin", script))]
     cmds.extend(args)
     return " ".join(cmds)
 
@@ -70,7 +71,7 @@ def getPipeTaskCmd(stage, expList, pipelineFile):
     if not os.path.exists(pipelineYaml):
         pipelineYaml = os.path.join(env.ProductDir('cp_pipe'), 'pipelines', pipelineFile)
 
-    cmds = ['pipetask run '
+    args = ['run '
             '-j', str(num_process),
             '-d "detector=0 AND exposure IN (',
             ','.join(str(exp) for exp in expList), ')"',
@@ -79,12 +80,12 @@ def getPipeTaskCmd(stage, expList, pipelineFile):
             f"-o ci_cpp_{stage}",
             f"-p {pipelineYaml}",
             '--register-dataset-types']
-    return " ".join(cmds)
+    return getExecutableCmd('ctrl_mpexec', 'pipetask', *args)
 
 def getCertifyCmd(stage):
     """
     Construct a certify command in a uniform way.
-    
+
     Parameters
     ----------
     stage : `str`
@@ -95,10 +96,10 @@ def getCertifyCmd(stage):
     cmd : `str`
         The constructed command.
     """
-    return getExecutableCmd('cp_pipe', 'certifyCalibration.py', 
+    return getExecutableCmd('cp_pipe', 'certifyCalibration.py',
                             f"{REPO_ROOT}", f"ci_cpp_{stage}", 'calib/v00',
                             '-b 1980-01-01', '-e 2050-01-01', stage)
-                            
+
 
 # Begin ci_cpp build commands.
 # Create the butler, register the instrument, and add calibs.
@@ -111,7 +112,7 @@ butler = env.Command([os.path.join(REPO_ROOT, "gen3.sqlite3"),
                                        "register-instrument", REPO_ROOT, CAMERA),
                       getExecutableCmd("daf_butler", "butler",
                                        "write-curated-calibrations", REPO_ROOT,
-                                       "-i", CAMERA)
+                                       CAMERA)
                   ])
 env.Alias("butler", butler)
 
@@ -173,3 +174,5 @@ env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_science'))
 targets = [science, crosstalk, flat, dark, bias, ingest, butler]
 env.Clean(targets, [y for x in targets for y in x] +
           [os.path.join(REPO_ROOT, "calib"), os.path.join(REPO_ROOT, "LATISS")])
+
+env.Alias('install', 'SConscript')
