@@ -159,6 +159,14 @@ science = env.Command(os.path.join(REPO_ROOT, 'ci_cpp_science'), crosstalk,
                                       'runIsr.yaml')])
 env.Alias('science', science)
 
+# Create DEFECTS
+defects = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_defects'),
+                       os.path.join(REPO_ROOT, "calib", 'v00', "defects")], crosstalk,
+                      [getPipeTaskCmd('defects', exposureDict['flatExposures'] +
+                                      exposureDict['darkExposures'],
+                                      'findDefects.yaml'),
+                       getCertifyCmd('defects')])
+env.Alias('defects', defects)
 
 # Set up dependencies
 env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, "LATISS", "calib"))
@@ -167,11 +175,12 @@ env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_bias'))
 env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_dark'))
 env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_flat'))
 env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_crosstalk'))
+env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_defects'))
 env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_science'))
 
 
 # Set up things to clean.
-targets = [science, crosstalk, flat, dark, bias, ingest, butler]
+targets = [defects, science, crosstalk, flat, dark, bias, ingest, butler]
 env.Clean(targets, [y for x in targets for y in x] +
           [os.path.join(REPO_ROOT, "calib"), os.path.join(REPO_ROOT, "LATISS")])
 
