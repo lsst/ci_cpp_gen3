@@ -73,7 +73,7 @@ def getPipeTaskCmd(stage, expList, pipelineFile):
 
     args = ['run '
             '-j', str(num_process),
-            '-d "detector=0 AND exposure IN (',
+            '-d "instrument=\'LATISS\' AND detector=0 AND exposure IN (',
             ','.join(str(exp) for exp in expList), ')"',
             f"-b {REPO_ROOT}/butler.yaml",
             f"-i {inputCollections}",
