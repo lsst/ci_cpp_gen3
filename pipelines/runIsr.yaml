@@ -5,4 +5,4 @@ tasks:
     class: lsst.ip.isr.isrTask.IsrTask
     config:
       doLinearize: False
-      doCrosstalk: False
+      doCrosstalk: True
