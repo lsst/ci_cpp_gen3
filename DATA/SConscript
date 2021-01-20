@@ -46,7 +46,7 @@ def getExecutableCmd(package, script, *args):
 def getPipeTaskCmd(stage, expList, pipelineFile):
     """Construct a pipetask command in a uniform way.
 
-    Paramters
+    Parameters
     ---------
     stage : `str`
         Name of the calibration stage to construct.
@@ -153,6 +153,14 @@ crosstalk = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_crosstalk'),
                          getCertifyCmd('crosstalk')])
 env.Alias('crosstalk', crosstalk)
 
+#PTC
+ptc = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_ptc'),
+                         os.path.join(REPO_ROOT, "calib", 'v00', "ptc")], crosstalk,
+                        [getPipeTaskCmd('ptc', exposureDict['ptcExposurePairs'],
+                                        'measurePhotonTransferCurve.yaml'),
+                         getCertifyCmd('ptc')])
+env.Alias('ptc', ptc)
+
 # Run a science exposure
 science = env.Command(os.path.join(REPO_ROOT, 'ci_cpp_science'), crosstalk,
                       [getPipeTaskCmd('science', exposureDict['scienceExposures'],
@@ -175,12 +183,13 @@ env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_bias'))
 env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_dark'))
 env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_flat'))
 env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_crosstalk'))
+env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_ptc'))
 env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_defects'))
 env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_science'))
 
 
 # Set up things to clean.
-targets = [defects, science, crosstalk, flat, dark, bias, ingest, butler]
+targets = [defects, science, ptc, crosstalk, flat, dark, bias, ingest, butler]
 env.Clean(targets, [y for x in targets for y in x] +
           [os.path.join(REPO_ROOT, "calib"), os.path.join(REPO_ROOT, "LATISS")])
 
