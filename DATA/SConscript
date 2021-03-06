@@ -155,11 +155,19 @@ env.Alias('crosstalk', crosstalk)
 
 #PTC
 ptc = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_ptc'),
-                         os.path.join(REPO_ROOT, "calib", 'v00', "ptc")], crosstalk,
-                        [getPipeTaskCmd('ptc', exposureDict['ptcExposurePairs'],
-                                        'measurePhotonTransferCurve.yaml'),
-                         getCertifyCmd('ptc')])
+                   os.path.join(REPO_ROOT, "calib", 'v00', "ptc")], crosstalk,
+                  [getPipeTaskCmd('ptc', exposureDict['ptcExposurePairs'],
+                                  'measurePhotonTransferCurve.yaml'),
+                   getCertifyCmd('ptc')])
 env.Alias('ptc', ptc)
+
+# Brighter-fatter Kernel
+bfk = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_bfk'),
+                   os.path.join(REPO_ROOT, "calib", 'v00', "bfk")], ptc,
+                  [getPipeTaskCmd('bfk', [exposureDict['allFlatExposures'][0]],
+                                  'cpBfkSolve.yaml'),
+                   getCertifyCmd('bfk')])
+env.Alias('bfk', bfk)
 
 # Run a science exposure
 science = env.Command(os.path.join(REPO_ROOT, 'ci_cpp_science'), crosstalk,
@@ -184,6 +192,7 @@ env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_dark'))
 env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_flat'))
 env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_crosstalk'))
 env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_ptc'))
+env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_bfk'))
 env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_defects'))
 env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_science'))
 
