@@ -170,7 +170,7 @@ bfk = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_bfk'),
 env.Alias('bfk', bfk)
 
 # Run a science exposure
-science = env.Command(os.path.join(REPO_ROOT, 'ci_cpp_science'), crosstalk,
+science = env.Command(os.path.join(REPO_ROOT, 'ci_cpp_science'), bfk,
                       [getPipeTaskCmd('science', exposureDict['scienceExposures'],
                                       'runIsr.yaml')])
 env.Alias('science', science)

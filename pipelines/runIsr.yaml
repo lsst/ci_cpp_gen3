@@ -4,5 +4,7 @@ tasks:
   isr:
     class: lsst.ip.isr.isrTask.IsrTask
     config:
+      connections.newBFKernel: bfk
       doLinearize: False
       doCrosstalk: True
+      doBrighterFatter: True
