@@ -192,6 +192,14 @@ defects = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_defects'),
                        getCertifyCmd('defects')])
 env.Alias('defects', defects)
 
+# Create SKY
+sky = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_sky'),
+                   os.path.join(REPO_ROOT, "calib", "v00", "sky")], science,
+                  [getPipeTaskCmd('sky', exposureDict['scienceExposures'],
+                                  'cpSky.yaml'),
+                   getCertifyCmd('sky')])
+env.Alias('sky', sky)
+
 # Set up dependencies
 env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, "LATISS", "calib"))
 env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, "LATISS", "raw"))
@@ -204,10 +212,11 @@ env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_bfk'))
 env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_linearity'))
 env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_defects'))
 env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_science'))
+env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_sky'))
 
 
 # Set up things to clean.
-targets = [defects, bfk, linearity, science, ptc, crosstalk, flat, dark, bias, ingest, butler]
+targets = [sky, defects, bfk, linearity, science, ptc, crosstalk, flat, dark, bias, ingest, butler]
 env.Clean(targets, [y for x in targets for y in x] +
           [os.path.join(REPO_ROOT, "calib"), os.path.join(REPO_ROOT, "LATISS")])
 
