@@ -169,13 +169,13 @@ bfk = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_bfk'),
                    getCertifyCmd('bfk')])
 env.Alias('bfk', bfk)
 
-# linearity
-linearity = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_linearity'),
-                         os.path.join(REPO_ROOT, "calib", 'v00', "linearity")], ptc,
-                        [getPipeTaskCmd('linearity', [exposureDict['allFlatExposures'][0]],
+# linearizer
+linearizer = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_linearizer'),
+                         os.path.join(REPO_ROOT, "calib", 'v00', "linearizer")], ptc,
+                        [getPipeTaskCmd('linearizer', [exposureDict['allFlatExposures'][0]],
                                         'cpLinearitySolve.yaml'),
-                         getCertifyCmd('linearity')])
-env.Alias('linearity', linearity)
+                         getCertifyCmd('linearizer')])
+env.Alias('linearizer', linearizer)
 
 # Run a science exposure
 science = env.Command(os.path.join(REPO_ROOT, 'ci_cpp_science'), bfk,
@@ -209,14 +209,14 @@ env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_flat'))
 env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_crosstalk'))
 env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_ptc'))
 env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_bfk'))
-env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_linearity'))
+env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_linearizer'))
 env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_defects'))
 env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_science'))
 env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_sky'))
 
 
 # Set up things to clean.
-targets = [sky, defects, bfk, linearity, science, ptc, crosstalk, flat, dark, bias, ingest, butler]
+targets = [sky, defects, bfk, linearizer, science, ptc, crosstalk, flat, dark, bias, ingest, butler]
 env.Clean(targets, [y for x in targets for y in x] +
           [os.path.join(REPO_ROOT, "calib"), os.path.join(REPO_ROOT, "LATISS")])
 
