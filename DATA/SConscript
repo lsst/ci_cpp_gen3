@@ -117,7 +117,7 @@ butler = env.Command([os.path.join(REPO_ROOT, "gen3.sqlite3"),
 env.Alias("butler", butler)
 
 # Ingest the raw data.
-RAW_ROOT = os.path.join(TESTDATA_ROOT, "raw", "2020-01-28")
+RAW_ROOT = os.path.join(TESTDATA_ROOT, "raw", "2021-05-25")
 ingest = env.Command(os.path.join(REPO_ROOT, "LATISS", "raw"), butler,
                      [getExecutableCmd("daf_butler", "butler",
                                        "ingest-raws", REPO_ROOT,
