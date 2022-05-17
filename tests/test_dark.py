@@ -77,7 +77,7 @@ class DarkTestCases(lsst.utils.tests.TestCase):
         config.doUseAtmosphereTransmission = False
 
         isrTask = ipIsr.IsrTask(config=config)
-        rawDataId = {'detector': 0, 'exposure': 2020012800014, 'instrument': 'LATISS'}
+        rawDataId = {'detector': 0, 'exposure': 2021052500057, 'instrument': 'LATISS'}
         # TODO: DM-26396
         # This is not an independent frame.
         cls.raw = butler.get('raw', rawDataId)
