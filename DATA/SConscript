@@ -80,6 +80,12 @@ def getPipeTaskCmd(stage, expList, pipelineFile):
             f"-o ci_cpp_{stage}",
             f"-p {pipelineYaml}",
             '--register-dataset-types']
+    # Crosstalk solution not that good; discards many
+    # amps. Turn it off for ISR of the science exposures.
+    # See DM-34173; DM-35041
+    if stage in ['science']:
+        args.append("-c isr:doCrosstalk=False")
+
     return getExecutableCmd('ctrl_mpexec', 'pipetask', *args)
 
 def getCertifyCmd(stage):
