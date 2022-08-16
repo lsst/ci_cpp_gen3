@@ -102,10 +102,15 @@ def getCertifyCmd(stage):
     cmd : `str`
         The constructed command.
     """
+    calibName = stage
+    # 'gain' corresponds to 'gain from flat pairs' method.
+    # These gain estimates are stored in the dataset 'cpPtcExtract'
+    # (formerly known as 'cpCovariances').
+    if stage == 'gain':
+        calibName = 'cpPtcExtract'
     return getExecutableCmd('daf_butler', 'butler', 'certify-calibrations',
                             f"{REPO_ROOT}", f"ci_cpp_{stage}", 'calib/v00',
-                            '--begin-date 1980-01-01', '--end-date 2050-01-01', stage)
-
+                            '--begin-date 1980-01-01', '--end-date 2050-01-01', calibName)
 
 # Begin ci_cpp build commands.
 # Create the butler, register the instrument, and add calibs.
@@ -167,6 +172,14 @@ ptc = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_ptc'),
                    getCertifyCmd('ptc')])
 env.Alias('ptc', ptc)
 
+#Gain from flat pairs
+gain = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_gain'),
+                   os.path.join(REPO_ROOT, "calib", 'v00', "gain")], crosstalk,
+                  [getPipeTaskCmd('gain', exposureDict['ptcExposurePairs'],
+                                  'cpPtc.yaml#gainFromFlatPairs'),
+                   getCertifyCmd('gain')])
+env.Alias('gain', gain)
+
 # Brighter-fatter Kernel
 bfk = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_bfk'),
                    os.path.join(REPO_ROOT, "calib", 'v00', "bfk")], ptc,
@@ -214,6 +227,7 @@ env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_dark'))
 env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_flat'))
 env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_crosstalk'))
 env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_ptc'))
+env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_gain'))
 env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_bfk'))
 env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_linearizer'))
 env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_defects'))
@@ -222,7 +236,7 @@ env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_sky'))
 
 
 # Set up things to clean.
-targets = [sky, defects, bfk, linearizer, science, ptc, crosstalk, flat, dark, bias, ingest, butler]
+targets = [sky, defects, bfk, linearizer, science, gain, ptc, crosstalk, flat, dark, bias, ingest, butler]
 env.Clean(targets, [y for x in targets for y in x] +
           [os.path.join(REPO_ROOT, "calib"), os.path.join(REPO_ROOT, "LATISS")])
 
