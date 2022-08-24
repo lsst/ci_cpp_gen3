@@ -3,11 +3,10 @@
 This configuration only affects single-package Sphinx documentation builds.
 """
 
-from documenteer.sphinxconfig.stackconf import build_package_configs
-import lsst.ci.cpp.gen3
+from documenteer.conf.pipelinespkg import *  # noqa: F403, import *
 
-
-_g = globals()
-_g.update(build_package_configs(
-    project_name='ci_cpp_gen3',
-    version=lsst.ci.cpp.gen3.version.__version__))
+project = "ci_cpp_gen3"
+html_theme_options["logotext"] = project     # noqa: F405, unknown name
+html_title = project
+html_short_title = project
+doxylink = {}
