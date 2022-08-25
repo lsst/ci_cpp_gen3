@@ -55,14 +55,6 @@ Pipeline tasks
 .. lsst-pipelinetasks::
    :root: lsst.ci.cpp.gen3
 
-.. _lsst.ci.cpp.gen3-command-line-tasks:
-
-Command-line tasks
-------------------
-
-.. lsst-cmdlinetasks::
-   :root: lsst.ci.cpp.gen3
-
 .. _lsst.ci.cpp.gen3-tasks:
 
 Tasks
