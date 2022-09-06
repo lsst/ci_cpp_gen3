@@ -118,7 +118,7 @@ class BiasTestCases(lsst.utils.tests.TestCase):
             ampExposure = self.exposure.Factory(self.exposure, amp.getBBox())
             statControl = afwMath.StatisticsControl(5.0, 5)
             statControl.setAndMask(self.exposure.mask.getPlaneBitMask(["SAT", "BAD", "NO_DATA"]))
-            sigma = afwMath.makeStatistics(ampExposure.getImage(),
+            sigma = afwMath.makeStatistics(ampExposure.getMaskedImage(),
                                            afwMath.STDEVCLIP, statControl).getValue()
             # needs to be < 0.05
             fractionalError = np.abs(sigma - amp.getReadNoise())/amp.getReadNoise()
@@ -147,17 +147,17 @@ class BiasTestCases(lsst.utils.tests.TestCase):
             ampExposure = self.exposure.Factory(self.exposure, amp.getBBox())
             clipControl = afwMath.StatisticsControl(5.0, 5)
             clipControl.setAndMask(self.exposure.mask.getPlaneBitMask(["SAT", "BAD", "NO_DATA"]))
-            sigmaClip = afwMath.makeStatistics(ampExposure.getImage(),
+            sigmaClip = afwMath.makeStatistics(ampExposure.getMaskedImage(),
                                                afwMath.STDEVCLIP, clipControl).getValue()
 
             crAmp = crRejected.Factory(crRejected, amp.getBBox())
             statControl = afwMath.StatisticsControl()
             statControl.setAndMask(self.exposure.mask.getPlaneBitMask(["SAT", "BAD", "NO_DATA", "CR"]))
-            sigma = afwMath.makeStatistics(crAmp.getImage(), afwMath.STDEV, statControl).getValue()
+            sigma = afwMath.makeStatistics(crAmp.getMaskedImage(), afwMath.STDEV, statControl).getValue()
 
             # needs to be < 0.05
             fractionalError = np.abs(sigma - sigmaClip)/sigmaClip
-            self.assertLess(fractionalError, 3.0, msg="Test 4.4: {amp.getName()} {fractionalError}")
+            self.assertLess(fractionalError, 3.0, msg=f"Test 4.4: {amp.getName()} {fractionalError}")
 
 
 class MemoryTester(lsst.utils.tests.MemoryTestCase):
