@@ -108,6 +108,8 @@ def getCertifyCmd(stage):
     # (formerly known as 'cpCovariances').
     if stage == 'gain':
         calibName = 'cpPtcExtract'
+    if stage == 'cti':
+        calibName = 'cpCtiCalib'
     return getExecutableCmd('daf_butler', 'butler', 'certify-calibrations',
                             f"{REPO_ROOT}", f"ci_cpp_{stage}", 'calib/v00',
                             '--begin-date 1980-01-01', '--end-date 2050-01-01', calibName)
@@ -227,6 +229,11 @@ cti = env.Command([os.path.join(REPO_ROOT, "ci_cpp_cti"),
                    getCertifyCmd('cti')])
 env.Alias('cti', cti)
 
+ctiProc = env.Command(os.path.join(REPO_ROOT, 'ci_cpp_ctiProc'), cti,
+                      [getPipeTaskCmd('science', [exposureDict['ptcExposurePairs'][0]],
+                                       'runCti.yaml')])
+env.Alias('ctiProc', ctiProc)
+
 # Set up dependencies
 env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, "LATISS", "calib"))
 env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, "LATISS", "raw"))
@@ -242,9 +249,10 @@ env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_defects'))
 env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_science'))
 env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_sky'))
 env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_cti'))
+env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_ctiProc'))
 
 # Set up things to clean.
-targets = [cti, sky, defects, bfk, linearizer, science, gain,
+targets = [ctiProc, cti, sky, defects, bfk, linearizer, science, gain,
            ptc, crosstalk, flat, dark, bias, ingest, butler]
 env.Clean(targets, [y for x in targets for y in x] +
           [os.path.join(REPO_ROOT, "calib"), os.path.join(REPO_ROOT, "LATISS")])
