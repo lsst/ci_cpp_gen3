@@ -230,11 +230,12 @@ cti = env.Command([os.path.join(REPO_ROOT, "ci_cpp_cti"),
 env.Alias('cti', cti)
 
 ctiProc = env.Command(os.path.join(REPO_ROOT, 'ci_cpp_ctiProc'), cti,
-                      [getPipeTaskCmd('science', [exposureDict['ptcExposurePairs'][0]],
+                      [getPipeTaskCmd('ctiProc', [exposureDict['ptcExposurePairs'][0]],
                                        'runCti.yaml')])
 env.Alias('ctiProc', ctiProc)
 
-# Set up dependencies
+# Set up dependencies.  Any new targets should have a matching entry
+# in tests/test_outputs.py.
 env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, "LATISS", "calib"))
 env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, "LATISS", "raw"))
 env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_bias'))
