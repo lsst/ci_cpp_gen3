@@ -176,7 +176,12 @@ env.Alias('ptc', ptc)
 
 #Gain from flat pairs
 gain = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_gain'),
-                   os.path.join(REPO_ROOT, "calib", 'v00', "gain")], crosstalk,
+                   os.path.join(REPO_ROOT, "calib", 'v00', "gain")],
+                   # This only really depends on crosstalk, but we don't want
+                   # scons to run multiple pipelines at a time, since that
+                   # leads to a lot of contention on the SQLite database, so
+                   # we pretend it depends on ptc as well.
+                   [crosstalk, ptc],
                   [getPipeTaskCmd('gain', exposureDict['ptcExposurePairs'],
                                   'cpPtc.yaml#gainFromFlatPairs'),
                    getCertifyCmd('gain')])
@@ -184,7 +189,12 @@ env.Alias('gain', gain)
 
 # Brighter-fatter Kernel
 bfk = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_bfk'),
-                   os.path.join(REPO_ROOT, "calib", 'v00', "bfk")], ptc,
+                   os.path.join(REPO_ROOT, "calib", 'v00', "bfk")],
+                   # This only really depends on ptc, but we don't want
+                   # scons to run multiple pipelines at a time, since that
+                   # leads to a lot of contention on the SQLite database, so
+                   # we pretend it depends on gain as well.
+                   [ptc, gain],
                   [getPipeTaskCmd('bfk', [exposureDict['allFlatExposures'][0]],
                                   'cpBfkSolve.yaml'),
                    getCertifyCmd('bfk')])
@@ -192,21 +202,39 @@ env.Alias('bfk', bfk)
 
 # linearizer
 linearizer = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_linearizer'),
-                         os.path.join(REPO_ROOT, "calib", 'v00', "linearizer")], ptc,
-                        [getPipeTaskCmd('linearizer', [exposureDict['allFlatExposures'][0]],
-                                        'cpLinearitySolve.yaml'),
-                         getCertifyCmd('linearizer')])
+                          os.path.join(REPO_ROOT, "calib", 'v00', "linearizer")],
+                         # This only really depends on ptc, but we don't want
+                         # scons to run multiple pipelines at a time, since
+                         # database, so we pretend it depends on gain as well.
+                         # that leads to a lot of contention on the SQLite, so
+                         # we pretend it depends on bfk as well.
+                         [ptc, bfk],
+                         [getPipeTaskCmd('linearizer', [exposureDict['allFlatExposures'][0]],
+                                         'cpLinearitySolve.yaml'),
+                          getCertifyCmd('linearizer')])
 env.Alias('linearizer', linearizer)
 
 # Run a science exposure
-science = env.Command(os.path.join(REPO_ROOT, 'ci_cpp_science'), bfk,
+science = env.Command(os.path.join(REPO_ROOT, 'ci_cpp_science'),
+                      # This only really depends on bfk, but we don't want
+                      # scons to run multiple pipelines at a time, since
+                      # database, so we pretend it depends on gain as well.
+                      # that leads to a lot of contention on the SQLite, so
+                      # we pretend it depends on linearizer as well.
+                      [bfk, linearizer],
                       [getPipeTaskCmd('science', exposureDict['scienceExposures'],
                                       'runIsr.yaml')])
 env.Alias('science', science)
 
 # Create DEFECTS
 defects = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_defects'),
-                       os.path.join(REPO_ROOT, "calib", 'v00', "defects")], crosstalk,
+                       os.path.join(REPO_ROOT, "calib", 'v00', "defects")],
+                       # This only really depends on crosstalk, but we don't
+                       # want scons to run multiple pipelines at a time, since
+                       # database, so we pretend it depends on gain as well.
+                       # that leads to a lot of contention on the SQLite, so we
+                       # pretend it depends on science as well.
+                       [crosstalk, science],
                       [getPipeTaskCmd('defects', exposureDict['flatExposures'] +
                                       exposureDict['darkExposures'],
                                       'findDefects.yaml'),
@@ -215,7 +243,13 @@ env.Alias('defects', defects)
 
 # Create SKY
 sky = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_sky'),
-                   os.path.join(REPO_ROOT, "calib", "v00", "sky")], science,
+                   os.path.join(REPO_ROOT, "calib", "v00", "sky")],
+                   # This only really depends on science, but we don't want
+                   # scons to run multiple pipelines at a time, since database,
+                   # so we pretend it depends on defects as well.  that leads
+                   # to a lot of contention on the SQLite, so we pretend it
+                   # depends on science as well.
+                   science,
                   [getPipeTaskCmd('sky', exposureDict['scienceExposures'],
                                   'cpSky.yaml'),
                    getCertifyCmd('sky')])
@@ -223,7 +257,13 @@ env.Alias('sky', sky)
 
 # Create CTI
 cti = env.Command([os.path.join(REPO_ROOT, "ci_cpp_cti"),
-                   os.path.join(REPO_ROOT, "calib", "v00", "cti")], ptc,
+                   os.path.join(REPO_ROOT, "calib", "v00", "cti")],
+                   # This only really depends on ptc, but we don't
+                   # want scons to run multiple pipelines at a time, since
+                   # database, so we pretend it depends on gain as well.
+                   # that leads to a lot of contention on the SQLite, so we
+                   # pretend it depends on sky as well.
+                   [ptc, sky],
                   [getPipeTaskCmd('cti', exposureDict['ptcExposurePairs'],
                                   'cpDeferredCharge.yaml'),
                    getCertifyCmd('cti')])
