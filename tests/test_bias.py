@@ -53,6 +53,8 @@ class BiasTestCases(lsst.utils.tests.TestCase):
         config.doSuspect = True
         config.doSetBadRegions = True
         config.doOverscan = True
+        config.overscan.doParallelOverscan = True
+        config.overscan.fitType = 'MEDIAN_PER_ROW'
         config.doBias = True
         config.doVariance = True
 
@@ -134,7 +136,6 @@ class BiasTestCases(lsst.utils.tests.TestCase):
         Run a CR rejection on the result and confirm that the
         unclipped standard deviation is consistent with the 5-sigma
         clipped value.
-
         """
         crTask = RepairTask()
         crRejected = self.exposure.clone()

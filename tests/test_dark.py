@@ -54,6 +54,8 @@ class DarkTestCases(lsst.utils.tests.TestCase):
         config.doSuspect = True
         config.doSetBadRegions = True
         config.doOverscan = True
+        config.overscan.doParallelOverscan = True
+        config.overscan.fitType = 'MEDIAN_PER_ROW'
         config.doBias = True
         config.doVariance = True
         config.doDark = True
