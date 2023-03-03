@@ -138,45 +138,39 @@ ingest = env.Command(os.path.join(REPO_ROOT, "LATISS", "raw"), butler,
 env.Alias("ingest", ingest)
 
 # Create BIAS
-bias = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_bias'),
-                    os.path.join(REPO_ROOT, 'calib', 'v00', 'bias')], ingest,
+bias = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_bias')], ingest,
                    [getPipeTaskCmd('bias', exposureDict['biasExposures'], 'cpBias.yaml'),
                     getCertifyCmd('bias')])
 env.Alias('bias', bias)
 
 # Create DARK
-dark = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_dark'),
-                    os.path.join(REPO_ROOT, 'calib', 'v00', 'dark')], bias,
+dark = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_dark')], bias,
                    [getPipeTaskCmd('dark', exposureDict['darkExposures'], 'cpDark.yaml'),
                     getCertifyCmd('dark')])
 env.Alias('dark', dark)
 
 # Create FLAT
-flat = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_flat'),
-                    os.path.join(REPO_ROOT, 'calib', 'v00', 'flat')], dark,
+flat = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_flat')], dark,
                    [getPipeTaskCmd('flat', exposureDict['flatExposures'], 'cpFlat.yaml'),
                     getCertifyCmd('flat')])
 env.Alias('flat', flat)
 
 # Create CROSSTALK
-crosstalk = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_crosstalk'),
-                         os.path.join(REPO_ROOT, "calib", 'v00', "crosstalk")], flat,
+crosstalk = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_crosstalk')], flat,
                         [getPipeTaskCmd('crosstalk', exposureDict['scienceExposures'],
                                         'measureCrosstalk.yaml'),
                          getCertifyCmd('crosstalk')])
 env.Alias('crosstalk', crosstalk)
 
 #PTC
-ptc = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_ptc'),
-                   os.path.join(REPO_ROOT, "calib", 'v00', "ptc")], crosstalk,
+ptc = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_ptc')], crosstalk,
                   [getPipeTaskCmd('ptc', exposureDict['ptcExposurePairs'],
                                   'cpPtc.yaml'),
                    getCertifyCmd('ptc')])
 env.Alias('ptc', ptc)
 
 #Gain from flat pairs
-gain = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_gain'),
-                   os.path.join(REPO_ROOT, "calib", 'v00', "gain")],
+gain = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_gain')],
                    # This only really depends on crosstalk, but we don't want
                    # scons to run multiple pipelines at a time, since that
                    # leads to a lot of contention on the SQLite database, so
@@ -188,8 +182,7 @@ gain = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_gain'),
 env.Alias('gain', gain)
 
 # Brighter-fatter Kernel
-bfk = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_bfk'),
-                   os.path.join(REPO_ROOT, "calib", 'v00', "bfk")],
+bfk = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_bfk')],
                    # This only really depends on ptc, but we don't want
                    # scons to run multiple pipelines at a time, since that
                    # leads to a lot of contention on the SQLite database, so
@@ -201,8 +194,7 @@ bfk = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_bfk'),
 env.Alias('bfk', bfk)
 
 # linearizer
-linearizer = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_linearizer'),
-                          os.path.join(REPO_ROOT, "calib", 'v00', "linearizer")],
+linearizer = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_linearizer')],
                          # This only really depends on ptc, but we don't want
                          # scons to run multiple pipelines at a time, since
                          # database, so we pretend it depends on gain as well.
@@ -227,8 +219,7 @@ science = env.Command(os.path.join(REPO_ROOT, 'ci_cpp_science'),
 env.Alias('science', science)
 
 # Create DEFECTS
-defects = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_defects'),
-                       os.path.join(REPO_ROOT, "calib", 'v00', "defects")],
+defects = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_defects')],
                        # This only really depends on crosstalk, but we don't
                        # want scons to run multiple pipelines at a time, since
                        # database, so we pretend it depends on gain as well.
@@ -242,8 +233,7 @@ defects = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_defects'),
 env.Alias('defects', defects)
 
 # Create SKY
-sky = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_sky'),
-                   os.path.join(REPO_ROOT, "calib", "v00", "sky")],
+sky = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_sky')],
                    # This only really depends on science, but we don't want
                    # scons to run multiple pipelines at a time, since database,
                    # so we pretend it depends on defects as well.  that leads
@@ -256,8 +246,7 @@ sky = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_sky'),
 env.Alias('sky', sky)
 
 # Create CTI
-cti = env.Command([os.path.join(REPO_ROOT, "ci_cpp_cti"),
-                   os.path.join(REPO_ROOT, "calib", "v00", "cti")],
+cti = env.Command([os.path.join(REPO_ROOT, "ci_cpp_cti")],
                    # This only really depends on ptc, but we don't
                    # want scons to run multiple pipelines at a time, since
                    # database, so we pretend it depends on gain as well.
