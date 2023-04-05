@@ -241,6 +241,22 @@ defects = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_defects'),
                        getCertifyCmd('defects')])
 env.Alias('defects', defects)
 
+# Create DEFECTS using combined darks and flats.
+defects_combined = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_defects_combined'),
+                       os.path.join(REPO_ROOT, "calib", 'v00', "defects_combined")],
+                       # This only really depends on crosstalk, but we don't
+                       # want scons to run multiple pipelines at a time, since
+                       # database, so we pretend it depends on gain as well.
+                       # that leads to a lot of contention on the SQLite, so we
+                       # pretend it depends on science as well.
+                       [crosstalk, science],
+                      [getPipeTaskCmd('defects', exposureDict['flatExposures'] +
+                                      exposureDict['darkExposures'],
+                                      'findDefectsCombined.yaml'),
+                       getCertifyCmd('defects_combined')])
+env.Alias('defects_combined', defects_combined)
+
+
 # Create SKY
 sky = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_sky'),
                    os.path.join(REPO_ROOT, "calib", "v00", "sky")],
@@ -287,13 +303,14 @@ env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_gain'))
 env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_bfk'))
 env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_linearizer'))
 env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_defects'))
+env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_defects_combined'))
 env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_science'))
 env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_sky'))
 env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_cti'))
 env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_ctiProc'))
 
 # Set up things to clean.
-targets = [ctiProc, cti, sky, defects, bfk, linearizer, science, gain,
+targets = [ctiProc, cti, sky, defects, defects_combined, bfk, linearizer, science, gain,
            ptc, crosstalk, flat, dark, bias, ingest, butler]
 env.Clean(targets, [y for x in targets for y in x] +
           [os.path.join(REPO_ROOT, "calib"), os.path.join(REPO_ROOT, "LATISS")])
