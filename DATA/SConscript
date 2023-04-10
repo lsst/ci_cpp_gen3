@@ -197,10 +197,9 @@ env.Alias('gain', gain)
 # Brighter-fatter Kernel
 bfk = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_bfk'),
                    os.path.join(REPO_ROOT, "calib", 'v00', "bfk")],
-                   # This only really depends on ptc, but we don't want
-                   # scons to run multiple pipelines at a time, since that
-                   # leads to a lot of contention on the SQLite database, so
-                   # we pretend it depends on gain as well.
+                   # While this pipeline doesn't actually depend on all of
+                   # these, we declare these dependencies to scons to avoid
+                   # database contention.                  
                    [ptc, gain],
                   [getPipeTaskCmd('bfk', [exposureDict['allFlatExposures'][0]],
                                   'cpBfkSolve.yaml'),
@@ -210,11 +209,9 @@ env.Alias('bfk', bfk)
 # linearizer
 linearizer = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_linearizer'),
                           os.path.join(REPO_ROOT, "calib", 'v00', "linearizer")],
-                         # This only really depends on ptc, but we don't want
-                         # scons to run multiple pipelines at a time, since
-                         # database, so we pretend it depends on gain as well.
-                         # that leads to a lot of contention on the SQLite, so
-                         # we pretend it depends on bfk as well.
+                          # While this pipeline doesn't actually depend on all of
+                          # these, we declare these dependencies to scons to avoid
+                          # database contention.                      
                          [ptc, bfk],
                          [getPipeTaskCmd('linearizer', [exposureDict['allFlatExposures'][0]],
                                          'cpLinearitySolve.yaml'),
@@ -223,11 +220,9 @@ env.Alias('linearizer', linearizer)
 
 # Run a science exposure
 science = env.Command(os.path.join(REPO_ROOT, 'ci_cpp_science'),
-                      # This only really depends on bfk, but we don't want
-                      # scons to run multiple pipelines at a time, since
-                      # database, so we pretend it depends on gain as well.
-                      # that leads to a lot of contention on the SQLite, so
-                      # we pretend it depends on linearizer as well.
+                      # While this pipeline doesn't actually depend on all of
+                      # these, we declare these dependencies to scons to avoid
+                      # database contention.
                       [bfk, linearizer],
                       [getPipeTaskCmd('science', exposureDict['scienceExposures'],
                                       'runIsr.yaml')])
@@ -236,11 +231,9 @@ env.Alias('science', science)
 # Create DEFECTS
 defects = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_defects'),
                        os.path.join(REPO_ROOT, "calib", 'v00', "defects")],
-                       # This only really depends on crosstalk, but we don't
-                       # want scons to run multiple pipelines at a time, since
-                       # database, so we pretend it depends on gain as well.
-                       # that leads to a lot of contention on the SQLite, so we
-                       # pretend it depends on science as well.
+                       # While this pipeline doesn't actually depend on all of
+                       # these, we declare these dependencies to scons to avoid
+                       # database contention.
                        [crosstalk, science],
                       [getPipeTaskCmd('defects', exposureDict['flatExposures'] +
                                       exposureDict['darkExposures'],
@@ -251,11 +244,9 @@ env.Alias('defects', defects)
 # Create DEFECTS using combined darks and flats.
 defectsCombined = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_defectsCombined'),
                        os.path.join(REPO_ROOT, "calib", 'v00', "defectsCombined")],
-                       # This only really depends on crosstalk, but we don't
-                       # want scons to run multiple pipelines at a time, since
-                       # database, so we pretend it depends on gain as well.
-                       # that leads to a lot of contention on the SQLite, so we
-                       # pretend it depends on science as well.
+                       # While this pipeline doesn't actually depend on all of
+                       # these, we declare these dependencies to scons to avoid
+                       # database contention.
                        [crosstalk, bias, dark, science],
                       [getPipeTaskCmd('defectsCombined', exposureDict['flatExposures'] +
                                       exposureDict['darkExposures'],
