@@ -65,6 +65,7 @@ class DarkTestCases(lsst.utils.tests.TestCase):
         config.doWidenSaturationTrails = False
         config.doBrighterFatter = False
         config.doDefect = False
+        config.doSaturation = True
         config.doSaturationInterpolation = False
         config.doStrayLight = False
         config.doFlat = False
