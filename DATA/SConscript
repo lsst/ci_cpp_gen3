@@ -67,11 +67,19 @@ def getPipeTaskCmd(stage, expList, pipelineFile):
     else:
         inputCollections = 'LATISS/raw/all,LATISS/calib,calib/v00'
 
+    # Handle subsets correctly:
+    if "#" in pipelineFile:
+        pipelineFile, extension = pipelineFile.split("#")
+    else:
+        pipelineFile, extension = pipelineFile, ""
+
     pipelineYaml = os.path.join(PKG_ROOT, "pipelines", pipelineFile)
     if not os.path.exists(pipelineYaml):
         pipelineYaml = os.path.join(env.ProductDir('cp_pipe'), 'pipelines', 'Latiss', pipelineFile)
     if not os.path.exists(pipelineYaml):
         pipelineYaml = os.path.join(env.ProductDir('cp_pipe'), 'pipelines', pipelineFile)
+    if extension != "":
+        pipelineYaml = f"{pipelineYaml}#{extension}"
 
     args = ['run '
             '-j', str(num_process),
