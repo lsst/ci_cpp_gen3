@@ -1,0 +1,12 @@
+description: ci_cpp CROSSTALK calibration construction
+instrument: lsst.obs.lsst.Latiss
+imports:
+  - location: $CP_PIPE_DIR/pipelines/Latiss/measureCrosstalk.yaml
+tasks:
+  crosstalkSolve:
+    class: lsst.cp.pipe.measureCrosstalk.CrosstalkSolveTask
+    config:
+      # The input images do not have sufficient coverage to provide
+      # good solutions to all crosstalk pairs, so filter the measured
+      # solutions to exclude NaN solutions.
+      doFiltering: true
