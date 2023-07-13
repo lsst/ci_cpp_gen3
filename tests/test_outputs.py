@@ -76,7 +76,7 @@ class OutputTestCases(lsst.utils.tests.TestCase):
             product = self.butler.get(datasetType, dataId=dataId, collections=collections)
         except Exception:
             pass
-        return(product)
+        return product
 
     def test_cameraOutput(self):
         # This confirms curated calibrations were written correctly.
