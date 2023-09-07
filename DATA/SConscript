@@ -238,7 +238,10 @@ ptc = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_ptc'),
                    os.path.join(REPO_ROOT, "calib", 'v00', "ptc")], crosstalk,
                   [getPipeTaskCmd('ptc', exposureDict['ptcExposurePairs'],
                                   'cpPtc.yaml'),
-                   getCertifyCmd('ptc')])
+                   getCertifyCmd('ptc'),
+                   getVerifyCmd('ptc', [exposureDict['ptcExposurePairs'][0]],
+                                'VerifyPtc.yaml'),
+                  ])
 env.Alias('ptc', ptc)
 
 #Gain from flat pairs
