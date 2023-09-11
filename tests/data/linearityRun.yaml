@@ -1,0 +1,4 @@
+Detector 0:
+  FAILURES:
+  - Detector 0 MAX_RESIDUAL_ERROR
+SUCCESS: false
