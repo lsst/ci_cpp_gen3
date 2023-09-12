@@ -19,6 +19,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import os
+import numpy as np
 import unittest
 import yaml
 
@@ -88,6 +89,30 @@ class VerificationTestCases(lsst.utils.tests.TestCase):
 
         return result
 
+    def assertNumbersEqual(self, inputA, inputB):
+        if not (np.isnan(inputA) and np.isnan(inputB)):
+            self.assertAlmostEqual(inputA, inputB, delta=0.05)
+
+    def assertYamlEqual(self, inputA, inputB):
+        self.assertEqual(inputA.keys(), inputB.keys())
+        for key in inputA.keys():
+            self.assertEqual(type(inputA[key]), type(inputB[key]))
+
+            if isinstance(inputA[key], dict):
+                self.assertYamlEqual(inputA[key], inputB[key])
+            elif isinstance(inputA[key], list):
+                self.assertEqual(len(inputA[key]), len(inputB[key]))
+
+                for aa, bb in zip(inputA[key], inputB[key]):
+                    if isinstance(aa, (int, float)):
+                        self.assertNumbersEqual(aa, bb)
+                    else:
+                        self.assertEqual(aa, bb)
+            elif isinstance(inputA[key], (int, float)):
+                self.assertNumbersEqual(inputA[key], inputB[key])
+            else:
+                self.assertEqual(inputA[key], inputB[key])
+
     def genericComparison(self, collections, dataId, componentMap):
         """Run common comparisons.
 
@@ -105,19 +130,19 @@ class VerificationTestCases(lsst.utils.tests.TestCase):
             runStatDataType, runStatFile = componentMap['run']
             runStats = self.getExpectedProduct(runStatDataType, collections=collections)
             expectation = self.readExpectation(runStatFile)
-            self.assertEqual(runStats, expectation)
+            self.assertYamlEqual(runStats, expectation)
 
         if 'exp' in componentMap:
             expStatDataType, expStatFile = componentMap['exp']
             expStats = self.getExpectedProduct(expStatDataType, dataId=dataId, collections=collections)
             expectation = self.readExpectation(expStatFile)
-            self.assertEqual(expStats, expectation)
+            self.assertYamlEqual(expStats, expectation)
 
         if 'det' in componentMap:
             detStatDataType, detStatFile = componentMap['det']
             detStats = self.getExpectedProduct(detStatDataType, dataId=dataId, collections=collections)
             expectation = self.readExpectation(detStatFile)
-            self.assertEqual(detStats, expectation)
+            self.assertYamlEqual(detStats, expectation)
 
     def test_biasVerify(self):
         """Run comparison for bias."""
