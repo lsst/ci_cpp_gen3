@@ -197,6 +197,7 @@ env.Alias("ingest", ingest)
 
 # Create BIAS
 bias = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_bias'),
+                    os.path.join(REPO_ROOT, 'ci_cpv_bias'),
                     os.path.join(REPO_ROOT, 'calib', 'v00', 'bias')], ingest,
                    [getPipeTaskCmd('bias', exposureDict['biasExposures'], 'cpBias.yaml'),
                     getCertifyCmd('bias'),
@@ -206,6 +207,7 @@ env.Alias('bias', bias)
 
 # Create DARK
 dark = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_dark'),
+                    os.path.join(REPO_ROOT, 'ci_cpv_dark'),
                     os.path.join(REPO_ROOT, 'calib', 'v00', 'dark')], bias,
                    [getPipeTaskCmd('dark', exposureDict['darkExposures'], 'cpDark.yaml'),
                     getCertifyCmd('dark'),
@@ -215,6 +217,7 @@ env.Alias('dark', dark)
 
 # Create FLAT
 flat = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_flat'),
+                    os.path.join(REPO_ROOT, 'ci_cpv_flat'),
                     os.path.join(REPO_ROOT, 'calib', 'v00', 'flat')], dark,
                    [getPipeTaskCmd('flat', exposureDict['flatExposures'], 'cpFlat.yaml'),
                     getCertifyCmd('flat'),
@@ -224,6 +227,7 @@ env.Alias('flat', flat)
 
 # Create CROSSTALK
 crosstalk = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_crosstalk'),
+                         os.path.join(REPO_ROOT, 'ci_cpv_crosstalk'),
                          os.path.join(REPO_ROOT, "calib", 'v00', "crosstalk")], flat,
                         [getPipeTaskCmd('crosstalk', exposureDict['scienceExposures'],
                                         'measureCrosstalk.yaml'),
@@ -235,6 +239,7 @@ env.Alias('crosstalk', crosstalk)
 
 #PTC
 ptc = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_ptc'),
+                   os.path.join(REPO_ROOT, 'ci_cpv_ptc'),
                    os.path.join(REPO_ROOT, "calib", 'v00', "ptc")], crosstalk,
                   [getPipeTaskCmd('ptc', exposureDict['ptcExposurePairs'],
                                   'cpPtc.yaml'),
@@ -259,6 +264,7 @@ env.Alias('gain', gain)
 
 # Brighter-fatter Kernel
 bfk = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_bfk'),
+                   os.path.join(REPO_ROOT, 'ci_cpv_bfk'),
                    os.path.join(REPO_ROOT, "calib", 'v00', "bfk")],
                    # While this pipeline doesn't actually depend on all of
                    # these, we declare these dependencies to scons to avoid
@@ -274,6 +280,7 @@ env.Alias('bfk', bfk)
 
 # linearizer
 linearizer = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_linearizer'),
+                          os.path.join(REPO_ROOT, 'ci_cpv_linearizer'),
                           os.path.join(REPO_ROOT, "calib", 'v00', "linearizer")],
                           # While this pipeline doesn't actually depend on all of
                           # these, we declare these dependencies to scons to avoid
