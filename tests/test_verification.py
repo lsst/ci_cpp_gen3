@@ -89,28 +89,28 @@ class VerificationTestCases(lsst.utils.tests.TestCase):
 
         return result
 
-    def assertNumbersEqual(self, inputA, inputB):
+    def assertNumbersEqual(self, inputA, inputB, msg):
         if not (np.isnan(inputA) and np.isnan(inputB)):
-            self.assertAlmostEqual(inputA, inputB, delta=0.05)
+            self.assertAlmostEqual(inputA, inputB, delta=0.05, msg=msg)
 
-    def assertYamlEqual(self, inputA, inputB):
-        self.assertEqual(inputA.keys(), inputB.keys())
+    def assertYamlEqual(self, inputA, inputB, msg=None):
+        self.assertEqual(inputA.keys(), inputB.keys(), msg)
         for key in inputA.keys():
-            self.assertEqual(type(inputA[key]), type(inputB[key]))
+            self.assertEqual(type(inputA[key]), type(inputB[key]), msg)
 
             if isinstance(inputA[key], dict):
-                self.assertYamlEqual(inputA[key], inputB[key])
+                self.assertYamlEqual(inputA[key], inputB[key], msg)
             elif isinstance(inputA[key], list):
-                self.assertEqual(len(inputA[key]), len(inputB[key]))
+                self.assertEqual(len(inputA[key]), len(inputB[key]), msg)
                 for aa, bb in zip(inputA[key], inputB[key]):
                     if isinstance(aa, (int, float)):
-                        self.assertNumbersEqual(aa, bb)
+                        self.assertNumbersEqual(aa, bb, msg)
                     else:
-                        self.assertEqual(aa, bb)
+                        self.assertEqual(aa, bb, msg)
             elif isinstance(inputA[key], (int, float)):
-                self.assertNumbersEqual(inputA[key], inputB[key])
+                self.assertNumbersEqual(inputA[key], inputB[key], msg)
             else:
-                self.assertEqual(inputA[key], inputB[key])
+                self.assertEqual(inputA[key], inputB[key], msg)
 
     def genericComparison(self, collections, dataId, componentMap):
         """Run common comparisons.
@@ -129,19 +129,19 @@ class VerificationTestCases(lsst.utils.tests.TestCase):
             runStatDataType, runStatFile = componentMap['run']
             runStats = self.getExpectedProduct(runStatDataType, collections=collections)
             expectation = self.readExpectation(runStatFile)
-            self.assertYamlEqual(runStats, expectation)
+            self.assertYamlEqual(runStats, expectation, "run level")
 
         if 'exp' in componentMap:
             expStatDataType, expStatFile = componentMap['exp']
             expStats = self.getExpectedProduct(expStatDataType, dataId=dataId, collections=collections)
             expectation = self.readExpectation(expStatFile)
-            self.assertYamlEqual(expStats, expectation)
+            self.assertYamlEqual(expStats, expectation, "exposure level")
 
         if 'det' in componentMap:
             detStatDataType, detStatFile = componentMap['det']
             detStats = self.getExpectedProduct(detStatDataType, dataId=dataId, collections=collections)
             expectation = self.readExpectation(detStatFile)
-            self.assertYamlEqual(detStats, expectation)
+            self.assertYamlEqual(detStats, expectation, "detector level")
 
     def test_biasVerify(self):
         """Run comparison for bias."""
