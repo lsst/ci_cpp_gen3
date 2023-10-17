@@ -125,6 +125,8 @@ def getCertifyCmd(stage):
         calibName = 'cpPtcExtract'
     if stage == 'cti':
         calibName = 'cpCtiCalib'
+    if stage == 'defectsCombined':
+        calibName = 'defects'
     return getExecutableCmd('daf_butler', 'butler', 'certify-calibrations',
                             f"{REPO_ROOT}", f"ci_cpp_{stage}", 'calib/v00',
                             '--begin-date 1980-01-01', '--end-date 2050-01-01', calibName)
