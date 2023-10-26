@@ -250,6 +250,8 @@ defects = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_defects'),
 env.Alias('defects', defects)
 
 # Create DEFECTS using combined darks and flats.
+# Don't certify these, as doing so would cause a clash with the
+# defects from individual images, which have the same dataset type.
 defectsCombined = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_defectsCombined'),
                        os.path.join(REPO_ROOT, "calib", 'v00', "defectsCombined")],
                        # While this pipeline doesn't actually depend on all of
@@ -258,8 +260,7 @@ defectsCombined = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_defectsCombined')
                        [crosstalk, bias, dark, science],
                       [getPipeTaskCmd('defectsCombined', exposureDict['flatExposures'] +
                                       exposureDict['darkExposures'],
-                                      'findDefectsCombined.yaml'),
-                       getCertifyCmd('defectsCombined')])
+                                      'findDefectsCombined.yaml')])
 env.Alias('defectsCombined', defectsCombined)
 
 
