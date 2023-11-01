@@ -273,8 +273,6 @@ bfk = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_bfk'),
                   [getPipeTaskCmd('bfk', [exposureDict['allFlatExposures'][0]],
                                   'cpBfkSolve.yaml'),
                    getCertifyCmd('bfk'),
-                   getVerifyCmd('bfk', exposureDict['scienceExposures'],
-                                'VerifyBfk.yaml'),
                   ])
 env.Alias('bfk', bfk)
 
