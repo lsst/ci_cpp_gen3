@@ -3,7 +3,7 @@ instrument: lsst.obs.lsst.Latiss
 imports:
   - location: $CP_PIPE_DIR/pipelines/_ingredients/cpDeferredCharge.yaml
 tasks:
-    solveCti:
+  solveCti:
     class: lsst.cp.pipe.CpCtiSolveTask
     config:
       maxSignalForCti: 20000
