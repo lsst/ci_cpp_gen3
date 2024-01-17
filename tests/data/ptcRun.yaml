@@ -1,0 +1,8 @@
+# DATA/ci_cpv_ptc/*/verifyPtcStats/verifyPtcStats
+Detector 0:
+  FAILURES:
+  - Detector 0 BFE_A00
+  - Detector 0 GAIN
+  - Detector 0 NOISE
+  - Detector 0 PTC_TURNOFF
+SUCCESS: false

@@ -4,6 +4,7 @@
 #   the "base" package.
 setupRequired(base)
 setupRequired(cp_pipe)
+setupRequired(cp_verify)
 setupRequired(ctrl_mpexec)
 setupRequired(daf_butler)
 setupRequired(ip_isr)

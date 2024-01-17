@@ -129,6 +129,45 @@ def getCertifyCmd(stage):
                             f"{REPO_ROOT}", f"ci_cpp_{stage}", 'calib/v00',
                             '--begin-date 1980-01-01', '--end-date 2050-01-01', calibName)
 
+def getVerifyCmd(stage, expList, pipelineFile):
+    """Construct the verify command in a uniform way.
+
+    Parameters
+    ----------
+    stage : `str`
+        Name of the calibration stage to verify.
+    expList : `list` [`int`]
+        List of exposure ids to use in generating the calibration.
+    pipelineFile : `str`
+        Name of pipeline yaml to use.
+
+    Returns
+    -------
+    cmd : `str`
+        The constructed command.
+    """
+    inputCollections = 'LATISS/raw/all,LATISS/calib,calib/v00'
+    if stage in ('ptc'):
+        inputCollections = f"ci_cpp_ptc,{inputCollections}"
+
+    pipelineYaml = os.path.join(PKG_ROOT, "pipelines", pipelineFile)
+    if not os.path.exists(pipelineYaml):
+        pipelineYaml = os.path.join(env.ProductDir('cp_verify'), 'pipelines', 'Latiss', pipelineFile)
+
+    args = ['run ',
+            '-j', str(num_process),
+            '-d "instrument=\'LATISS\' AND detector=0 AND exposure IN (',
+            ','.join(str(exp) for exp in expList), ')"',
+            f"-b {REPO_ROOT}/butler.yaml",
+            f"-i {inputCollections}",
+            f"-o ci_cpv_{stage}",
+            f"-p {pipelineYaml}",
+            '--register-dataset-types']
+    if stage in ('dark', 'flat'):
+        args.append(f"-c verify{stage.capitalize()}Apply:doCrosstalk=False")
+
+    return getExecutableCmd('ctrl_mpexec', 'pipetask', *args)
+
 # Begin ci_cpp build commands.
 # Create the butler, register the instrument, and add calibs.
 butler = env.Command([os.path.join(REPO_ROOT, "gen3.sqlite3"),
@@ -140,7 +179,7 @@ butler = env.Command([os.path.join(REPO_ROOT, "gen3.sqlite3"),
                                        "register-instrument", REPO_ROOT, CAMERA),
                       getExecutableCmd("daf_butler", "butler",
                                        "write-curated-calibrations", REPO_ROOT,
-                                       CAMERA)
+                                       CAMERA),
                   ])
 env.Alias("butler", butler)
 
@@ -149,44 +188,65 @@ RAW_ROOT = os.path.join(TESTDATA_ROOT, "raw", "2021-05-25")
 ingest = env.Command(os.path.join(REPO_ROOT, "LATISS", "raw"), butler,
                      [getExecutableCmd("daf_butler", "butler",
                                        "ingest-raws", REPO_ROOT,
-                                       RAW_ROOT)])
+                                       RAW_ROOT),
+                      getExecutableCmd("daf_butler", "butler",
+                                       "define-visits", REPO_ROOT, CAMERA),
+                     ])
+
 env.Alias("ingest", ingest)
 
 # Create BIAS
 bias = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_bias'),
+                    os.path.join(REPO_ROOT, 'ci_cpv_bias'),
                     os.path.join(REPO_ROOT, 'calib', 'v00', 'bias')], ingest,
                    [getPipeTaskCmd('bias', exposureDict['biasExposures'], 'cpBias.yaml'),
-                    getCertifyCmd('bias')])
+                    getCertifyCmd('bias'),
+                    getVerifyCmd('bias', exposureDict['biasExposures'], 'VerifyBias.yaml'),
+                    ])
 env.Alias('bias', bias)
 
 # Create DARK
 dark = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_dark'),
+                    os.path.join(REPO_ROOT, 'ci_cpv_dark'),
                     os.path.join(REPO_ROOT, 'calib', 'v00', 'dark')], bias,
                    [getPipeTaskCmd('dark', exposureDict['darkExposures'], 'cpDark.yaml'),
-                    getCertifyCmd('dark')])
+                    getCertifyCmd('dark'),
+                    getVerifyCmd('dark', exposureDict['darkExposures'], 'VerifyDark.yaml'),
+                   ])
 env.Alias('dark', dark)
 
 # Create FLAT
 flat = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_flat'),
+                    os.path.join(REPO_ROOT, 'ci_cpv_flat'),
                     os.path.join(REPO_ROOT, 'calib', 'v00', 'flat')], dark,
                    [getPipeTaskCmd('flat', exposureDict['flatExposures'], 'cpFlat.yaml'),
-                    getCertifyCmd('flat')])
+                    getCertifyCmd('flat'),
+                    getVerifyCmd('flat', exposureDict['flatExposures'], 'VerifyFlat.yaml'),
+                   ])
 env.Alias('flat', flat)
 
 # Create CROSSTALK
 crosstalk = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_crosstalk'),
+                         os.path.join(REPO_ROOT, 'ci_cpv_crosstalk'),
                          os.path.join(REPO_ROOT, "calib", 'v00', "crosstalk")], flat,
                         [getPipeTaskCmd('crosstalk', exposureDict['scienceExposures'],
                                         'measureCrosstalk.yaml'),
-                         getCertifyCmd('crosstalk')])
+                         getCertifyCmd('crosstalk'),
+                         getVerifyCmd('crosstalk', exposureDict['scienceExposures'],
+                                      'VerifyCrosstalk.yaml'),
+                        ])
 env.Alias('crosstalk', crosstalk)
 
 #PTC
 ptc = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_ptc'),
+                   os.path.join(REPO_ROOT, 'ci_cpv_ptc'),
                    os.path.join(REPO_ROOT, "calib", 'v00', "ptc")], crosstalk,
                   [getPipeTaskCmd('ptc', exposureDict['ptcExposurePairs'],
                                   'cpPtc.yaml'),
-                   getCertifyCmd('ptc')])
+                   getCertifyCmd('ptc'),
+                   getVerifyCmd('ptc', [exposureDict['ptcExposurePairs'][0]],
+                                'VerifyPtc.yaml'),
+                  ])
 env.Alias('ptc', ptc)
 
 #Gain from flat pairs
@@ -204,26 +264,32 @@ env.Alias('gain', gain)
 
 # Brighter-fatter Kernel
 bfk = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_bfk'),
+                   os.path.join(REPO_ROOT, 'ci_cpv_bfk'),
                    os.path.join(REPO_ROOT, "calib", 'v00', "bfk")],
                    # While this pipeline doesn't actually depend on all of
                    # these, we declare these dependencies to scons to avoid
-                   # database contention.                  
+                   # database contention.
                    [ptc, gain],
                   [getPipeTaskCmd('bfk', [exposureDict['allFlatExposures'][0]],
                                   'cpBfkSolve.yaml'),
-                   getCertifyCmd('bfk')])
+                   getCertifyCmd('bfk'),
+                  ])
 env.Alias('bfk', bfk)
 
 # linearizer
 linearizer = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_linearizer'),
+                          os.path.join(REPO_ROOT, 'ci_cpv_linearizer'),
                           os.path.join(REPO_ROOT, "calib", 'v00', "linearizer")],
                           # While this pipeline doesn't actually depend on all of
                           # these, we declare these dependencies to scons to avoid
-                          # database contention.                      
+                          # database contention.
                          [ptc, bfk],
                          [getPipeTaskCmd('linearizer', [exposureDict['allFlatExposures'][0]],
                                          'cpLinearitySolve.yaml'),
-                          getCertifyCmd('linearizer')])
+                          getCertifyCmd('linearizer'),
+                          getVerifyCmd('linearizer', exposureDict['ptcExposurePairs'],
+                                       'VerifyLinearity.yaml'),
+                         ])
 env.Alias('linearizer', linearizer)
 
 # Run a science exposure
