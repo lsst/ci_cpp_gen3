@@ -26,6 +26,7 @@ import lsst.afw.math as afwMath
 import lsst.daf.butler as dafButler
 import lsst.ip.isr as ipIsr
 import lsst.utils.tests
+from lsst.utils import getPackageDir
 
 
 # TODO: DM-26396
@@ -42,7 +43,7 @@ class FlatTestCases(lsst.utils.tests.TestCase):
         Process an independent dark frame through the ISR including
         overscan correction, bias subtraction, dark subtraction.
         """
-        repoDir = os.path.join("DATA/")
+        repoDir = os.path.join(getPackageDir("ci_cpp_gen3"), "DATA/")
         butler = dafButler.Butler(repoDir, collections=['LATISS/raw/all', 'LATISS/calib', 'calib/v00'])
 
         config = ipIsr.IsrTaskConfig()

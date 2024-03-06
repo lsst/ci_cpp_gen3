@@ -27,6 +27,7 @@ import lsst.daf.butler as dafButler
 import lsst.ip.isr as ipIsr
 import lsst.meas.algorithms as measAlg
 import lsst.utils.tests
+from lsst.utils import getPackageDir
 
 from lsst.pipe.tasks.repair import RepairTask
 
@@ -45,8 +46,7 @@ class DarkTestCases(lsst.utils.tests.TestCase):
         Process an independent dark frame through the ISR including
         overscan correction, bias subtraction, dark subtraction.
         """
-        repoDir = os.path.join("DATA/")
-        print(repoDir)
+        repoDir = os.path.join(getPackageDir("ci_cpp_gen3"), "DATA/")
         butler = dafButler.Butler(repoDir, collections=['LATISS/raw/all', 'LATISS/calib', 'calib/v00'])
 
         config = ipIsr.IsrTaskConfig()
