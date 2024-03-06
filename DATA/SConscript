@@ -65,7 +65,7 @@ def getPipeTaskCmd(stage, expList, pipelineFile):
     elif stage == 'defectsCombined':
         inputCollections = 'ci_cpp_dark/run,ci_cpp_flat/run,LATISS/raw/all,LATISS/calib'
     else:
-        inputCollections = 'LATISS/raw/all,LATISS/calib,calib/v00'
+        inputCollections = 'LATISS/raw/all,calib/v00,LATISS/calib'
 
     # Handle subsets correctly:
     if "#" in pipelineFile:

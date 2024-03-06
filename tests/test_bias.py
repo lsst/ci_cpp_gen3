@@ -47,7 +47,7 @@ class BiasTestCases(lsst.utils.tests.TestCase):
 
         """
         repoDir = os.path.join(getPackageDir("ci_cpp_gen3"), "DATA/")
-        butler = dafButler.Butler(repoDir, collections=['LATISS/raw/all', 'LATISS/calib', 'calib/v00'])
+        butler = dafButler.Butler(repoDir, collections=['LATISS/raw/all', 'calib/v00', 'LATISS/calib'])
 
         config = ipIsr.IsrTaskConfig()
         config.doSaturation = True
