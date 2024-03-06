@@ -90,6 +90,11 @@ def getPipeTaskCmd(stage, expList, pipelineFile):
             f"-o ci_cpp_{stage}",
             f"-p {pipelineYaml}",
             '--register-dataset-types']
+    # We do not have pre-existing crosstalk matrix so turn off for calib
+    # production.
+    # TODO: DM-43195
+    if stage in ['bias', 'dark', 'flat']:
+        args.append(f"-c {stage}Isr:doCrosstalk=False")
     # Crosstalk solution not that good; discards many
     # amps. Turn it off for ISR of the science exposures.
     # See DM-34173; DM-35041
@@ -163,7 +168,7 @@ def getVerifyCmd(stage, expList, pipelineFile):
             f"-o ci_cpv_{stage}",
             f"-p {pipelineYaml}",
             '--register-dataset-types']
-    if stage in ('dark', 'flat'):
+    if stage in ('bias', 'dark', 'flat'):
         args.append(f"-c verify{stage.capitalize()}Apply:doCrosstalk=False")
 
     return getExecutableCmd('ctrl_mpexec', 'pipetask', *args)
