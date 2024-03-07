@@ -107,11 +107,7 @@ def getPipeTaskCmd(stage, expList, pipelineFile):
     if stage in ['science']:
         args.append("-c isr:doCrosstalk=False")
     # Combined defects need RUN collections
-    if stage in ['bias']:
-        args.append(f"--output-run ci_cpp_{stage}/run")
-    if stage in ['dark_for_defects']:
-        args.append(f"--output-run ci_cpp_{stage}/run")
-    if stage in ['flat_for_defects']:
+    if stage in ['bias', 'dark_for_defects', 'flat_for_defects']:
         args.append(f"--output-run ci_cpp_{stage}/run")
 
     return getExecutableCmd('ctrl_mpexec', 'pipetask', *args)
@@ -227,7 +223,6 @@ dark_for_defects = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_dark_for_defects
                                 os.path.join(REPO_ROOT, 'calib', 'v00', 'dark_for_defects')],
                                bias,
                                [getPipeTaskCmd('dark_for_defects', exposureDict['darkExposures'], 'cpDarkForDefects.yaml')])
-                                # getCertifyCmd('dark_for_defects'),])
 env.Alias('dark_for_defects', dark_for_defects)
 
 # Create FLAT FOR DEFECTS
@@ -235,7 +230,6 @@ flat_for_defects = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_flat_for_defects
                                 os.path.join(REPO_ROOT, 'calib', 'v00', 'flat_for_defects')],
                                dark_for_defects,
                                [getPipeTaskCmd('flat_for_defects', exposureDict['flatExposures'], 'cpFlat.yaml')])
-                               # getCertifyCmd('flat_for_defects')])
 env.Alias('flat_for_defects', flat_for_defects)
 
 # Create DEFECTS using combined bias, dark, flats.
