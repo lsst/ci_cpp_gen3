@@ -64,7 +64,7 @@ class DarkTestCases(lsst.utils.tests.TestCase):
         config.doCrosstalk = False
         config.doWidenSaturationTrails = False
         config.doBrighterFatter = False
-        config.doDefect = False
+        config.doDefect = True
         config.doSaturationInterpolation = False
         config.doStrayLight = False
         config.doFlat = False
@@ -86,9 +86,11 @@ class DarkTestCases(lsst.utils.tests.TestCase):
         cls.bias = butler.get('bias', rawDataId)
         cls.dark = butler.get('dark', rawDataId)
         cls.camera = butler.get('camera', rawDataId)
+        cls.defects = butler.get('defects', rawDataId)
 
         results = isrTask.run(cls.raw, camera=cls.camera,
-                              bias=cls.bias, dark=cls.dark)
+                              bias=cls.bias, dark=cls.dark,
+                              defects=cls.defects)
 
         cls.exposure = results.outputExposure
 
