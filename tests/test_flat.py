@@ -26,6 +26,7 @@ import lsst.afw.math as afwMath
 import lsst.daf.butler as dafButler
 import lsst.ip.isr as ipIsr
 import lsst.utils.tests
+from lsst.utils import getPackageDir
 
 
 # TODO: DM-26396
@@ -42,8 +43,8 @@ class FlatTestCases(lsst.utils.tests.TestCase):
         Process an independent dark frame through the ISR including
         overscan correction, bias subtraction, dark subtraction.
         """
-        repoDir = os.path.join("DATA/")
-        butler = dafButler.Butler(repoDir, collections=['LATISS/raw/all', 'LATISS/calib', 'calib/v00'])
+        repoDir = os.path.join(getPackageDir("ci_cpp_gen3"), "DATA/")
+        butler = dafButler.Butler(repoDir, collections=['LATISS/raw/all', 'calib/v00', 'LATISS/calib'])
 
         config = ipIsr.IsrTaskConfig()
         config.doSaturation = True
@@ -61,7 +62,7 @@ class FlatTestCases(lsst.utils.tests.TestCase):
         config.doCrosstalk = False
         config.doWidenSaturationTrails = False
         config.doBrighterFatter = False
-        config.doDefect = False
+        config.doDefect = True
         config.doSaturationInterpolation = False
         config.doStrayLight = False
         config.doApplyGains = False
@@ -83,9 +84,11 @@ class FlatTestCases(lsst.utils.tests.TestCase):
         cls.dark = butler.get('dark', rawDataId)
         cls.flat = butler.get('flat', rawDataId)
         cls.camera = butler.get('camera', rawDataId)
+        cls.defects = butler.get('defects', rawDataId)
 
         results = isrTask.run(cls.raw, camera=cls.camera,
-                              bias=cls.bias, dark=cls.dark, flat=cls.flat)
+                              bias=cls.bias, dark=cls.dark,
+                              flat=cls.flat, defects=cls.defects)
         cls.exposure = results.outputExposure
 
     def test_independentFrameLevel(self):

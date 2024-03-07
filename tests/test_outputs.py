@@ -45,7 +45,7 @@ class OutputTestCases(lsst.utils.tests.TestCase):
 
         """
         repoDir = os.path.join(getPackageDir("ci_cpp_gen3"), "DATA/")
-        cls.collections = ["LATISS/raw/all", "LATISS/calib", "calib/v00"]
+        cls.collections = ["LATISS/raw/all", "calib/v00", "LATISS/calib"]
         cls.butler = dafButler.Butler(repoDir, collections=cls.collections)
         cls.rawDataId = {'detector': 0, 'exposure': 2021052500015, 'instrument': 'LATISS'}
 

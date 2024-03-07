@@ -27,6 +27,7 @@ import lsst.daf.butler as dafButler
 import lsst.ip.isr as ipIsr
 import lsst.meas.algorithms as measAlg
 import lsst.utils.tests
+from lsst.utils import getPackageDir
 from lsst.pipe.tasks.repair import RepairTask
 
 
@@ -45,8 +46,8 @@ class BiasTestCases(lsst.utils.tests.TestCase):
         overscan correction and bias subtraction
 
         """
-        repoDir = os.path.join("DATA/")
-        butler = dafButler.Butler(repoDir, collections=['LATISS/raw/all', 'LATISS/calib', 'calib/v00'])
+        repoDir = os.path.join(getPackageDir("ci_cpp_gen3"), "DATA/")
+        butler = dafButler.Butler(repoDir, collections=['LATISS/raw/all', 'calib/v00', 'LATISS/calib'])
 
         config = ipIsr.IsrTaskConfig()
         config.doSaturation = True

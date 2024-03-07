@@ -62,10 +62,12 @@ def getPipeTaskCmd(stage, expList, pipelineFile):
     """
     if stage == 'bias':
         inputCollections = 'LATISS/raw/all,LATISS/calib'
-    elif stage == 'defectsCombined':
-        inputCollections = 'ci_cpp_dark/run,ci_cpp_flat/run,LATISS/raw/all,LATISS/calib'
+    elif stage == 'flat_for_defects':
+        inputCollections = 'ci_cpp_bias/run,ci_cpp_dark_for_defects/run,LATISS/raw/all,LATISS/calib'
+    elif stage == 'defects':
+        inputCollections = 'ci_cpp_bias/run,ci_cpp_dark_for_defects/run,ci_cpp_flat_for_defects/run,LATISS/raw/all,LATISS/calib'
     else:
-        inputCollections = 'LATISS/raw/all,LATISS/calib,calib/v00'
+        inputCollections = 'LATISS/raw/all,calib/v00,LATISS/calib'
 
     # Handle subsets correctly:
     if "#" in pipelineFile:
@@ -90,15 +92,22 @@ def getPipeTaskCmd(stage, expList, pipelineFile):
             f"-o ci_cpp_{stage}",
             f"-p {pipelineYaml}",
             '--register-dataset-types']
+    # We do not have pre-existing crosstalk matrix so turn off for calib
+    # production.
+    # TODO: DM-43195
+    if stage in ['bias', 'dark', 'flat']:
+        args.append(f"-c {stage}Isr:doCrosstalk=False")
+    elif stage in ['dark_for_defects']:
+        args.append("-c darkIsrForDefects:doCrosstalk=False")
+    elif stage in ['flat_for_defects']:
+        args.append("-c flatIsr:doCrosstalk=False")
     # Crosstalk solution not that good; discards many
     # amps. Turn it off for ISR of the science exposures.
     # See DM-34173; DM-35041
     if stage in ['science']:
         args.append("-c isr:doCrosstalk=False")
     # Combined defects need RUN collections
-    if stage in ['dark']:
-        args.append(f"--output-run ci_cpp_{stage}/run")
-    if stage in ['flat']:
+    if stage in ['bias', 'dark_for_defects', 'flat_for_defects']:
         args.append(f"--output-run ci_cpp_{stage}/run")
 
     return getExecutableCmd('ctrl_mpexec', 'pipetask', *args)
@@ -125,6 +134,10 @@ def getCertifyCmd(stage):
         calibName = 'cpPtcExtract'
     if stage == 'cti':
         calibName = 'cpCtiCalib'
+    if stage == 'dark_for_defects':
+        calibName = 'dark'
+    if stage == 'flat_for_defects':
+        calibName = 'flat'
     return getExecutableCmd('daf_butler', 'butler', 'certify-calibrations',
                             f"{REPO_ROOT}", f"ci_cpp_{stage}", 'calib/v00',
                             '--begin-date 1980-01-01', '--end-date 2050-01-01', calibName)
@@ -163,7 +176,7 @@ def getVerifyCmd(stage, expList, pipelineFile):
             f"-o ci_cpv_{stage}",
             f"-p {pipelineYaml}",
             '--register-dataset-types']
-    if stage in ('dark', 'flat'):
+    if stage in ('bias', 'dark', 'flat'):
         args.append(f"-c verify{stage.capitalize()}Apply:doCrosstalk=False")
 
     return getExecutableCmd('ctrl_mpexec', 'pipetask', *args)
@@ -205,10 +218,35 @@ bias = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_bias'),
                     ])
 env.Alias('bias', bias)
 
-# Create DARK
+# Create DARK FOR DEFECTS
+dark_for_defects = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_dark_for_defects'),
+                                os.path.join(REPO_ROOT, 'calib', 'v00', 'dark_for_defects')],
+                               bias,
+                               [getPipeTaskCmd('dark_for_defects', exposureDict['darkExposures'], 'cpDarkForDefects.yaml')])
+env.Alias('dark_for_defects', dark_for_defects)
+
+# Create FLAT FOR DEFECTS
+flat_for_defects = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_flat_for_defects'),
+                                os.path.join(REPO_ROOT, 'calib', 'v00', 'flat_for_defects')],
+                               dark_for_defects,
+                               [getPipeTaskCmd('flat_for_defects', exposureDict['flatExposures'], 'cpFlat.yaml')])
+env.Alias('flat_for_defects', flat_for_defects)
+
+# Create DEFECTS using combined bias, dark, flats.
+defects = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_defects'),
+                       os.path.join(REPO_ROOT, 'calib', 'v00', 'defects')],
+                      [bias, dark_for_defects, flat_for_defects],
+                      [getPipeTaskCmd('defects', exposureDict['flatExposures'] +
+                                      exposureDict['darkExposures'] + exposureDict['biasExposures'],
+                                      'findDefectsCombined.yaml'),
+                       getCertifyCmd('defects')])
+env.Alias('defects', defects)
+
+# Create DARK, including defects (which are used to help with CR rejection).
 dark = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_dark'),
                     os.path.join(REPO_ROOT, 'ci_cpv_dark'),
-                    os.path.join(REPO_ROOT, 'calib', 'v00', 'dark')], bias,
+                    os.path.join(REPO_ROOT, 'calib', 'v00', 'dark')],
+                   defects,
                    [getPipeTaskCmd('dark', exposureDict['darkExposures'], 'cpDark.yaml'),
                     getCertifyCmd('dark'),
                     getVerifyCmd('dark', exposureDict['darkExposures'], 'VerifyDark.yaml'),
@@ -218,7 +256,8 @@ env.Alias('dark', dark)
 # Create FLAT
 flat = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_flat'),
                     os.path.join(REPO_ROOT, 'ci_cpv_flat'),
-                    os.path.join(REPO_ROOT, 'calib', 'v00', 'flat')], dark,
+                    os.path.join(REPO_ROOT, 'calib', 'v00', 'flat')],
+                   dark,
                    [getPipeTaskCmd('flat', exposureDict['flatExposures'], 'cpFlat.yaml'),
                     getCertifyCmd('flat'),
                     getVerifyCmd('flat', exposureDict['flatExposures'], 'VerifyFlat.yaml'),
@@ -237,7 +276,7 @@ crosstalk = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_crosstalk'),
                         ])
 env.Alias('crosstalk', crosstalk)
 
-#PTC
+# Create PTC
 ptc = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_ptc'),
                    os.path.join(REPO_ROOT, 'ci_cpv_ptc'),
                    os.path.join(REPO_ROOT, "calib", 'v00', "ptc")], crosstalk,
@@ -249,7 +288,7 @@ ptc = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_ptc'),
                   ])
 env.Alias('ptc', ptc)
 
-#Gain from flat pairs
+# Gain from flat pairs
 gain = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_gain'),
                    os.path.join(REPO_ROOT, "calib", 'v00', "gain")],
                    # This only really depends on crosstalk, but we don't want
@@ -302,34 +341,6 @@ science = env.Command(os.path.join(REPO_ROOT, 'ci_cpp_science'),
                                       'runIsr.yaml')])
 env.Alias('science', science)
 
-# Create DEFECTS
-defects = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_defects'),
-                       os.path.join(REPO_ROOT, "calib", 'v00', "defects")],
-                       # While this pipeline doesn't actually depend on all of
-                       # these, we declare these dependencies to scons to avoid
-                       # database contention.
-                       [crosstalk, science],
-                      [getPipeTaskCmd('defects', exposureDict['flatExposures'] +
-                                      exposureDict['darkExposures'],
-                                      'findDefects.yaml'),
-                       getCertifyCmd('defects')])
-env.Alias('defects', defects)
-
-# Create DEFECTS using combined darks and flats.
-# Don't certify these, as doing so would cause a clash with the
-# defects from individual images, which have the same dataset type.
-defectsCombined = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_defectsCombined'),
-                       os.path.join(REPO_ROOT, "calib", 'v00', "defectsCombined")],
-                       # While this pipeline doesn't actually depend on all of
-                       # these, we declare these dependencies to scons to avoid
-                       # database contention.
-                       [crosstalk, bias, dark, science],
-                      [getPipeTaskCmd('defectsCombined', exposureDict['flatExposures'] +
-                                      exposureDict['darkExposures'],
-                                      'findDefectsCombined.yaml')])
-env.Alias('defectsCombined', defectsCombined)
-
-
 # Create SKY
 sky = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_sky'),
                    os.path.join(REPO_ROOT, "calib", "v00", "sky")],
@@ -368,6 +379,9 @@ env.Alias('ctiProc', ctiProc)
 env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, "LATISS", "calib"))
 env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, "LATISS", "raw"))
 env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_bias'))
+env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_dark_for_defects'))
+env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_flat_for_defects'))
+env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_defects'))
 env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_dark'))
 env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_flat'))
 env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_crosstalk'))
@@ -375,16 +389,14 @@ env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_ptc'))
 env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_gain'))
 env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_bfk'))
 env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_linearizer'))
-env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_defects'))
-env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_defectsCombined'))
 env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_science'))
 env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_sky'))
 env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_cti'))
 env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_ctiProc'))
 
 # Set up things to clean.
-targets = [ctiProc, cti, sky, defects, defectsCombined, bfk, linearizer, science, gain,
-           ptc, crosstalk, flat, dark, bias, ingest, butler]
+targets = [ctiProc, cti, sky, defects, bfk, linearizer, science, gain,
+           ptc, crosstalk, flat, dark_for_defects, flat_for_defects, dark, bias, ingest, butler]
 env.Clean(targets, [y for x in targets for y in x] +
           [os.path.join(REPO_ROOT, "calib"), os.path.join(REPO_ROOT, "LATISS")])
 
