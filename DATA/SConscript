@@ -239,7 +239,8 @@ defects = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_defects'),
                       [getPipeTaskCmd('defects', exposureDict['flatExposures'] +
                                       exposureDict['darkExposures'] + exposureDict['biasExposures'],
                                       'findDefectsCombined.yaml'),
-                       getCertifyCmd('defects')])
+                       getCertifyCmd('defects'),
+                      ])
 env.Alias('defects', defects)
 
 # Create DARK, including defects (which are used to help with CR rejection).
@@ -275,6 +276,13 @@ crosstalk = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_crosstalk'),
                                       'VerifyCrosstalk.yaml'),
                         ])
 env.Alias('crosstalk', crosstalk)
+
+# We can now verify DEFECTS:
+defectsVerify = env.Command(os.path.join(REPO_ROOT, 'ci_cpv_defects'),
+                            [crosstalk],
+                            getVerifyCmd('defects', exposureDict['scienceExposures'], 'VerifyCombinedDefect.yaml'),
+                            )
+env.Alias('defectsVerify', defectsVerify)
 
 # Create PTC
 ptc = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_ptc'),
@@ -385,6 +393,7 @@ env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_defects'))
 env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_dark'))
 env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_flat'))
 env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_crosstalk'))
+env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpv_defects'))
 env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_ptc'))
 env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_gain'))
 env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_bfk'))
@@ -395,8 +404,8 @@ env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_cti'))
 env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_ctiProc'))
 
 # Set up things to clean.
-targets = [ctiProc, cti, sky, defects, bfk, linearizer, science, gain,
-           ptc, crosstalk, flat, dark_for_defects, flat_for_defects, dark, bias, ingest, butler]
+targets = [ctiProc, cti, sky, defects, bfk, linearizer, science, gain, ptc, crosstalk,
+           flat, defectsVerify, dark_for_defects, flat_for_defects, dark, bias, ingest, butler]
 env.Clean(targets, [y for x in targets for y in x] +
           [os.path.join(REPO_ROOT, "calib"), os.path.join(REPO_ROOT, "LATISS")])
 
