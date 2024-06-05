@@ -4,7 +4,7 @@ import yaml
 import lsst.sconsUtils as utils
 from lsst.sconsUtils.utils import libraryLoaderEnvironment
 
-from SCons.Script import SConscript, GetOption
+from SCons.Script import SConscript, GetOption, File, Dir
 
 
 env = utils.env.Clone(ENV=os.environ)
@@ -183,9 +183,9 @@ def getVerifyCmd(stage, expList, pipelineFile):
 
 # Begin ci_cpp build commands.
 # Create the butler, register the instrument, and add calibs.
-butler = env.Command([os.path.join(REPO_ROOT, "gen3.sqlite3"),
-                      os.path.join(REPO_ROOT, "butler.yaml"),
-                      os.path.join(REPO_ROOT, "LATISS", "calib")], None,
+butler = env.Command([File(os.path.join(REPO_ROOT, "gen3.sqlite3")),
+                      File(os.path.join(REPO_ROOT, "butler.yaml")),
+                      Dir(os.path.join(REPO_ROOT, "LATISS", "calib"))], None,
                      [getExecutableCmd("daf_butler", "butler",
                                        "create", REPO_ROOT),
                       getExecutableCmd("daf_butler", "butler",
