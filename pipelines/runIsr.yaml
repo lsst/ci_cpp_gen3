@@ -2,7 +2,7 @@ description: ip_isr for ci_cpp_gen3
 instrument: lsst.obs.lsst.Latiss
 tasks:
   isr:
-    class: lsst.ip.isr.isrTask.IsrTask
+    class: lsst.ip.isr.IsrTask
     config:
       connections.newBFKernel: bfk
       doLinearize: False
