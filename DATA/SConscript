@@ -77,7 +77,7 @@ def getPipeTaskCmd(stage, expList, pipelineFile):
 
     pipelineYaml = os.path.join(PKG_ROOT, "pipelines", pipelineFile)
     if not os.path.exists(pipelineYaml):
-        pipelineYaml = os.path.join(env.ProductDir('cp_pipe'), 'pipelines', 'Latiss', pipelineFile)
+        pipelineYaml = os.path.join(env.ProductDir('cp_pipe'), 'pipelines', 'LATISS', pipelineFile)
     if not os.path.exists(pipelineYaml):
         pipelineYaml = os.path.join(env.ProductDir('cp_pipe'), 'pipelines', pipelineFile)
     if extension != "":
@@ -96,11 +96,11 @@ def getPipeTaskCmd(stage, expList, pipelineFile):
     # production.
     # TODO: DM-43195
     if stage in ['bias', 'dark', 'flat']:
-        args.append(f"-c {stage}Isr:doCrosstalk=False")
+        args.append(f"-c cp{stage.capitalize()}Isr:doCrosstalk=False")
     elif stage in ['dark_for_defects']:
-        args.append("-c darkIsrForDefects:doCrosstalk=False")
+        args.append("-c cpDarkForDefectsIsr:doCrosstalk=False")
     elif stage in ['flat_for_defects']:
-        args.append("-c flatIsr:doCrosstalk=False")
+        args.append("-c cpFlatIsr:doCrosstalk=False")
     # Crosstalk solution not that good; discards many
     # amps. Turn it off for ISR of the science exposures.
     # See DM-34173; DM-35041
@@ -128,12 +128,10 @@ def getCertifyCmd(stage):
     """
     calibName = stage
     # 'gain' corresponds to 'gain from flat pairs' method.
-    # These gain estimates are stored in the dataset 'cpPtcExtract'
-    # (formerly known as 'cpCovariances').
+    # These gain estimates are stored in the dataset 'cpPtcPartial'
+    # (formerly known as 'cpPtcExtract' or 'cpCovariances').
     if stage == 'gain':
-        calibName = 'cpPtcExtract'
-    if stage == 'cti':
-        calibName = 'cpCtiCalib'
+        calibName = 'cpPtcPartial'
     if stage == 'dark_for_defects':
         calibName = 'dark'
     if stage == 'flat_for_defects':
@@ -165,7 +163,7 @@ def getVerifyCmd(stage, expList, pipelineFile):
 
     pipelineYaml = os.path.join(PKG_ROOT, "pipelines", pipelineFile)
     if not os.path.exists(pipelineYaml):
-        pipelineYaml = os.path.join(env.ProductDir('cp_verify'), 'pipelines', 'Latiss', pipelineFile)
+        pipelineYaml = os.path.join(env.ProductDir('cp_verify'), 'pipelines', 'LATISS', pipelineFile)
 
     args = ['run ',
             '-j', str(num_process),
@@ -177,7 +175,7 @@ def getVerifyCmd(stage, expList, pipelineFile):
             f"-p {pipelineYaml}",
             '--register-dataset-types']
     if stage in ('bias', 'dark', 'flat'):
-        args.append(f"-c verify{stage.capitalize()}Apply:doCrosstalk=False")
+        args.append(f"-c verify{stage.capitalize()}Isr:doCrosstalk=False")
 
     return getExecutableCmd('ctrl_mpexec', 'pipetask', *args)
 
@@ -214,7 +212,7 @@ bias = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_bias'),
                     os.path.join(REPO_ROOT, 'calib', 'v00', 'bias')], ingest,
                    [getPipeTaskCmd('bias', exposureDict['biasExposures'], 'cpBias.yaml'),
                     getCertifyCmd('bias'),
-                    getVerifyCmd('bias', exposureDict['biasExposures'], 'VerifyBias.yaml'),
+                    getVerifyCmd('bias', exposureDict['biasExposures'], 'verifyBias.yaml'),
                     ])
 env.Alias('bias', bias)
 
@@ -238,7 +236,7 @@ defects = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_defects'),
                       [bias, dark_for_defects, flat_for_defects],
                       [getPipeTaskCmd('defects', exposureDict['flatExposures'] +
                                       exposureDict['darkExposures'] + exposureDict['biasExposures'],
-                                      'findDefectsCombined.yaml'),
+                                      'cpDefects.yaml'),
                        getCertifyCmd('defects'),
                       ])
 env.Alias('defects', defects)
@@ -250,7 +248,7 @@ dark = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_dark'),
                    defects,
                    [getPipeTaskCmd('dark', exposureDict['darkExposures'], 'cpDark.yaml'),
                     getCertifyCmd('dark'),
-                    getVerifyCmd('dark', exposureDict['darkExposures'], 'VerifyDark.yaml'),
+                    getVerifyCmd('dark', exposureDict['darkExposures'], 'verifyDark.yaml'),
                    ])
 env.Alias('dark', dark)
 
@@ -261,7 +259,7 @@ flat = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_flat'),
                    dark,
                    [getPipeTaskCmd('flat', exposureDict['flatExposures'], 'cpFlat.yaml'),
                     getCertifyCmd('flat'),
-                    getVerifyCmd('flat', exposureDict['flatExposures'], 'VerifyFlat.yaml'),
+                    getVerifyCmd('flat', exposureDict['flatExposures'], 'verifyFlat.yaml'),
                    ])
 env.Alias('flat', flat)
 
@@ -270,17 +268,17 @@ crosstalk = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_crosstalk'),
                          os.path.join(REPO_ROOT, 'ci_cpv_crosstalk'),
                          os.path.join(REPO_ROOT, "calib", 'v00', "crosstalk")], flat,
                         [getPipeTaskCmd('crosstalk', exposureDict['scienceExposures'],
-                                        'measureCrosstalk.yaml'),
+                                        'cpCrosstalk.yaml'),
                          getCertifyCmd('crosstalk'),
                          getVerifyCmd('crosstalk', exposureDict['scienceExposures'],
-                                      'VerifyCrosstalk.yaml'),
+                                      'verifyCrosstalk.yaml'),
                         ])
 env.Alias('crosstalk', crosstalk)
 
 # We can now verify DEFECTS:
 defectsVerify = env.Command(os.path.join(REPO_ROOT, 'ci_cpv_defects'),
                             [crosstalk],
-                            getVerifyCmd('defects', exposureDict['scienceExposures'], 'VerifyCombinedDefect.yaml'),
+                            getVerifyCmd('defects', exposureDict['scienceExposures'], 'verifyDefects.yaml'),
                             )
 env.Alias('defectsVerify', defectsVerify)
 
@@ -292,7 +290,7 @@ ptc = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_ptc'),
                                   'cpPtc.yaml'),
                    getCertifyCmd('ptc'),
                    getVerifyCmd('ptc', [exposureDict['ptcExposurePairs'][0]],
-                                'VerifyPtc.yaml'),
+                                'verifyPtc.yaml'),
                   ])
 env.Alias('ptc', ptc)
 
@@ -305,7 +303,7 @@ gain = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_gain'),
                    # we pretend it depends on ptc as well.
                    [crosstalk, ptc],
                   [getPipeTaskCmd('gain', exposureDict['ptcExposurePairs'],
-                                  'cpPtc.yaml#gainFromFlatPairs'),
+                                  'cpPtc.yaml#cpPtcGainFromFlatPairs'),
                    getCertifyCmd('gain')])
 env.Alias('gain', gain)
 
@@ -318,7 +316,7 @@ bfk = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_bfk'),
                    # database contention.
                    [ptc, gain],
                   [getPipeTaskCmd('bfk', [exposureDict['allFlatExposures'][0]],
-                                  'cpBfkSolve.yaml'),
+                                  'cpBfk.yaml'),
                    getCertifyCmd('bfk'),
                   ])
 env.Alias('bfk', bfk)
@@ -332,10 +330,10 @@ linearizer = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_linearizer'),
                           # database contention.
                          [ptc, bfk],
                          [getPipeTaskCmd('linearizer', [exposureDict['allFlatExposures'][0]],
-                                         'cpLinearitySolve.yaml'),
+                                         'cpLinearizer.yaml'),
                           getCertifyCmd('linearizer'),
                           getVerifyCmd('linearizer', exposureDict['ptcExposurePairs'],
-                                       'VerifyLinearity.yaml'),
+                                       'verifyLinearizer.yaml'),
                          ])
 env.Alias('linearizer', linearizer)
 
@@ -373,7 +371,7 @@ cti = env.Command([os.path.join(REPO_ROOT, "ci_cpp_cti"),
                    # pretend it depends on sky as well.
                    [ptc, sky],
                   [getPipeTaskCmd('cti', exposureDict['ptcExposurePairs'],
-                                  'cpDeferredCharge.yaml'),
+                                  'cpCti.yaml'),
                    getCertifyCmd('cti')])
 env.Alias('cti', cti)
 
