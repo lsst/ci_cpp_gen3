@@ -103,7 +103,7 @@ class OutputTestCases(lsst.utils.tests.TestCase):
     def test_gainOutput(self):
         # These are certified on a per-exposure basis.
         dataId = {'detector': 0, 'exposure': 2021052500079, 'instrument': 'LATISS'}
-        self.assertIsInstance(self.getExpectedProduct('cpPtcExtract', dataId=dataId),
+        self.assertIsInstance(self.getExpectedProduct('cpPtcPartial', dataId=dataId),
                               PhotonTransferCurveDataset)
 
     def test_linearityOutput(self):
@@ -124,7 +124,7 @@ class OutputTestCases(lsst.utils.tests.TestCase):
         self.assertIsInstance(self.getExpectedProduct('sky'), Exposure)
 
     def test_ctiOutput(self):
-        self.assertIsInstance(self.getExpectedProduct('cpCtiCalib'), DeferredChargeCalib)
+        self.assertIsInstance(self.getExpectedProduct('cti'), DeferredChargeCalib)
 
     def test_ctiProcOutput(self):
         # This needs one of the actual exposures and the specific
