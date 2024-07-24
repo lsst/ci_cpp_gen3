@@ -49,7 +49,7 @@ def getExecutableCmd(package, script, *args):
     return " ".join(cmds)
 
 def getPipeTaskCmdLegacy(stage, expList, pipelineFile):
-    """Construct a pipetask command in a uniform way.
+    """Construct a pipetask command in a uniform way (legacy pipelines).
 
     Parameters
     ---------
@@ -82,9 +82,7 @@ def getPipeTaskCmdLegacy(stage, expList, pipelineFile):
 
     pipelineYaml = os.path.join(PKG_ROOT, "pipelines", pipelineFile)
     if not os.path.exists(pipelineYaml):
-        pipelineYaml = os.path.join(env.ProductDir('cp_pipe'), 'pipelines', 'LATISS', pipelineFile)
-    if not os.path.exists(pipelineYaml):
-        pipelineYaml = os.path.join(env.ProductDir('cp_pipe'), 'pipelines', pipelineFile)
+        pipelineYaml = os.path.join(PKG_ROOT, 'pipelines', 'LATISS_legacy', pipelineFile)
     if extension != "":
         pipelineYaml = f"{pipelineYaml}#{extension}"
 
@@ -119,7 +117,7 @@ def getPipeTaskCmdLegacy(stage, expList, pipelineFile):
 
 def getCertifyCmdLegacy(stage):
     """
-    Construct a certify command in a uniform way.
+    Construct a certify command in a uniform way (legacy pipelines).
 
     Parameters
     ----------
@@ -146,7 +144,7 @@ def getCertifyCmdLegacy(stage):
                             '--begin-date 1980-01-01', '--end-date 2050-01-01', calibName)
 
 def getVerifyCmdLegacy(stage, expList, pipelineFile):
-    """Construct the verify command in a uniform way.
+    """Construct the verify command in a uniform way (legacy pipelines).
 
     Parameters
     ----------
