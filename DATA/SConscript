@@ -14,6 +14,11 @@ REPO_ROOT = os.path.join(PKG_ROOT, "DATA")
 TESTDATA_ROOT = env.ProductDir("testdata_latiss_cpp")
 CAMERA = "lsst.obs.lsst.Latiss"
 
+# If the env var CI_CPP_LEGACY is set to anything except "0" then
+# this will run the "old" IsrTask based pipelines. Default is to
+# run the new IsrTaskLSST pipelines.
+LEGACY_MODE = os.environ.get("CI_CPP_LEGACY", 0)
+
 num_process = GetOption('num_jobs')
 
 # Load the exposure dictionary.
@@ -43,7 +48,7 @@ def getExecutableCmd(package, script, *args):
     cmds.extend(args)
     return " ".join(cmds)
 
-def getPipeTaskCmd(stage, expList, pipelineFile):
+def getPipeTaskCmdLegacy(stage, expList, pipelineFile):
     """Construct a pipetask command in a uniform way.
 
     Parameters
@@ -112,7 +117,7 @@ def getPipeTaskCmd(stage, expList, pipelineFile):
 
     return getExecutableCmd('ctrl_mpexec', 'pipetask', *args)
 
-def getCertifyCmd(stage):
+def getCertifyCmdLegacy(stage):
     """
     Construct a certify command in a uniform way.
 
@@ -140,7 +145,7 @@ def getCertifyCmd(stage):
                             f"{REPO_ROOT}", f"ci_cpp_{stage}", 'calib/v00',
                             '--begin-date 1980-01-01', '--end-date 2050-01-01', calibName)
 
-def getVerifyCmd(stage, expList, pipelineFile):
+def getVerifyCmdLegacy(stage, expList, pipelineFile):
     """Construct the verify command in a uniform way.
 
     Parameters
@@ -179,232 +184,238 @@ def getVerifyCmd(stage, expList, pipelineFile):
 
     return getExecutableCmd('ctrl_mpexec', 'pipetask', *args)
 
-# Begin ci_cpp build commands.
-# Create the butler, register the instrument, and add calibs.
-butler = env.Command([File(os.path.join(REPO_ROOT, "gen3.sqlite3")),
-                      File(os.path.join(REPO_ROOT, "butler.yaml")),
-                      Dir(os.path.join(REPO_ROOT, "LATISS", "calib"))], None,
-                     [getExecutableCmd("daf_butler", "butler",
-                                       "create", REPO_ROOT),
-                      getExecutableCmd("daf_butler", "butler",
-                                       "register-instrument", REPO_ROOT, CAMERA),
-                      getExecutableCmd("daf_butler", "butler",
-                                       "write-curated-calibrations", REPO_ROOT,
-                                       CAMERA),
-                  ])
-env.Alias("butler", butler)
+if LEGACY_MODE == 0:
+    # New LSST ISR task pipelines.
+    pass
+else:
+    # Old Legacy ISR task pipelines.
 
-# Ingest the raw data.
-RAW_ROOT = os.path.join(TESTDATA_ROOT, "raw", "2021-05-25")
-ingest = env.Command(os.path.join(REPO_ROOT, "LATISS", "raw"), butler,
-                     [getExecutableCmd("daf_butler", "butler",
-                                       "ingest-raws", REPO_ROOT,
-                                       RAW_ROOT),
-                      getExecutableCmd("daf_butler", "butler",
-                                       "define-visits", REPO_ROOT, CAMERA),
-                     ])
-
-env.Alias("ingest", ingest)
-
-# Create BIAS
-bias = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_bias'),
-                    os.path.join(REPO_ROOT, 'ci_cpv_bias'),
-                    os.path.join(REPO_ROOT, 'calib', 'v00', 'bias')], ingest,
-                   [getPipeTaskCmd('bias', exposureDict['biasExposures'], 'cpBias.yaml'),
-                    getCertifyCmd('bias'),
-                    getVerifyCmd('bias', exposureDict['biasExposures'], 'verifyBias.yaml'),
-                    ])
-env.Alias('bias', bias)
-
-# Create DARK FOR DEFECTS
-dark_for_defects = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_dark_for_defects'),
-                                os.path.join(REPO_ROOT, 'calib', 'v00', 'dark_for_defects')],
-                               bias,
-                               [getPipeTaskCmd('dark_for_defects', exposureDict['darkExposures'], 'cpDarkForDefects.yaml')])
-env.Alias('dark_for_defects', dark_for_defects)
-
-# Create FLAT FOR DEFECTS
-flat_for_defects = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_flat_for_defects'),
-                                os.path.join(REPO_ROOT, 'calib', 'v00', 'flat_for_defects')],
-                               dark_for_defects,
-                               [getPipeTaskCmd('flat_for_defects', exposureDict['flatExposures'], 'cpFlat.yaml')])
-env.Alias('flat_for_defects', flat_for_defects)
-
-# Create DEFECTS using combined bias, dark, flats.
-defects = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_defects'),
-                       os.path.join(REPO_ROOT, 'calib', 'v00', 'defects')],
-                      [bias, dark_for_defects, flat_for_defects],
-                      [getPipeTaskCmd('defects', exposureDict['flatExposures'] +
-                                      exposureDict['darkExposures'] + exposureDict['biasExposures'],
-                                      'cpDefects.yaml'),
-                       getCertifyCmd('defects'),
+    # Begin ci_cpp build commands.
+    # Create the butler, register the instrument, and add calibs.
+    butler = env.Command([File(os.path.join(REPO_ROOT, "gen3.sqlite3")),
+                          File(os.path.join(REPO_ROOT, "butler.yaml")),
+                          Dir(os.path.join(REPO_ROOT, "LATISS", "calib"))], None,
+                         [getExecutableCmd("daf_butler", "butler",
+                                           "create", REPO_ROOT),
+                          getExecutableCmd("daf_butler", "butler",
+                                           "register-instrument", REPO_ROOT, CAMERA),
+                          getExecutableCmd("daf_butler", "butler",
+                                           "write-curated-calibrations", REPO_ROOT,
+                                           CAMERA),
                       ])
-env.Alias('defects', defects)
+    env.Alias("butler", butler)
 
-# Create DARK, including defects (which are used to help with CR rejection).
-dark = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_dark'),
-                    os.path.join(REPO_ROOT, 'ci_cpv_dark'),
-                    os.path.join(REPO_ROOT, 'calib', 'v00', 'dark')],
-                   defects,
-                   [getPipeTaskCmd('dark', exposureDict['darkExposures'], 'cpDark.yaml'),
-                    getCertifyCmd('dark'),
-                    getVerifyCmd('dark', exposureDict['darkExposures'], 'verifyDark.yaml'),
-                   ])
-env.Alias('dark', dark)
+    # Ingest the raw data.
+    RAW_ROOT = os.path.join(TESTDATA_ROOT, "raw", "2021-05-25")
+    ingest = env.Command(os.path.join(REPO_ROOT, "LATISS", "raw"), butler,
+                         [getExecutableCmd("daf_butler", "butler",
+                                           "ingest-raws", REPO_ROOT,
+                                           RAW_ROOT),
+                          getExecutableCmd("daf_butler", "butler",
+                                           "define-visits", REPO_ROOT, CAMERA),
+                         ])
 
-# Create FLAT
-flat = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_flat'),
-                    os.path.join(REPO_ROOT, 'ci_cpv_flat'),
-                    os.path.join(REPO_ROOT, 'calib', 'v00', 'flat')],
-                   dark,
-                   [getPipeTaskCmd('flat', exposureDict['flatExposures'], 'cpFlat.yaml'),
-                    getCertifyCmd('flat'),
-                    getVerifyCmd('flat', exposureDict['flatExposures'], 'verifyFlat.yaml'),
-                   ])
-env.Alias('flat', flat)
+    env.Alias("ingest", ingest)
 
-# Create CROSSTALK
-crosstalk = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_crosstalk'),
-                         os.path.join(REPO_ROOT, 'ci_cpv_crosstalk'),
-                         os.path.join(REPO_ROOT, "calib", 'v00', "crosstalk")], flat,
-                        [getPipeTaskCmd('crosstalk', exposureDict['scienceExposures'],
-                                        'cpCrosstalk.yaml'),
-                         getCertifyCmd('crosstalk'),
-                         getVerifyCmd('crosstalk', exposureDict['scienceExposures'],
-                                      'verifyCrosstalk.yaml'),
+    # Create BIAS
+    bias = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_bias'),
+                        os.path.join(REPO_ROOT, 'ci_cpv_bias'),
+                        os.path.join(REPO_ROOT, 'calib', 'v00', 'bias')], ingest,
+                       [getPipeTaskCmdLegacy('bias', exposureDict['biasExposures'], 'cpBias.yaml'),
+                        getCertifyCmdLegacy('bias'),
+                        getVerifyCmdLegacy('bias', exposureDict['biasExposures'], 'verifyBias.yaml'),
                         ])
-env.Alias('crosstalk', crosstalk)
+    env.Alias('bias', bias)
 
-# We can now verify DEFECTS:
-defectsVerify = env.Command(os.path.join(REPO_ROOT, 'ci_cpv_defects'),
-                            [crosstalk],
-                            getVerifyCmd('defects', exposureDict['scienceExposures'], 'verifyDefects.yaml'),
-                            )
-env.Alias('defectsVerify', defectsVerify)
+    # Create DARK FOR DEFECTS
+    dark_for_defects = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_dark_for_defects'),
+                                    os.path.join(REPO_ROOT, 'calib', 'v00', 'dark_for_defects')],
+                                   bias,
+                                   [getPipeTaskCmdLegacy('dark_for_defects', exposureDict['darkExposures'], 'cpDarkForDefects.yaml')])
+    env.Alias('dark_for_defects', dark_for_defects)
 
-# Create PTC
-ptc = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_ptc'),
-                   os.path.join(REPO_ROOT, 'ci_cpv_ptc'),
-                   os.path.join(REPO_ROOT, "calib", 'v00', "ptc")], crosstalk,
-                  [getPipeTaskCmd('ptc', exposureDict['ptcExposurePairs'],
-                                  'cpPtc.yaml'),
-                   getCertifyCmd('ptc'),
-                   getVerifyCmd('ptc', [exposureDict['ptcExposurePairs'][0]],
-                                'verifyPtc.yaml'),
-                  ])
-env.Alias('ptc', ptc)
+    # Create FLAT FOR DEFECTS
+    flat_for_defects = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_flat_for_defects'),
+                                    os.path.join(REPO_ROOT, 'calib', 'v00', 'flat_for_defects')],
+                                   dark_for_defects,
+                                   [getPipeTaskCmdLegacy('flat_for_defects', exposureDict['flatExposures'], 'cpFlat.yaml')])
+    env.Alias('flat_for_defects', flat_for_defects)
 
-# Gain from flat pairs
-gain = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_gain'),
-                   os.path.join(REPO_ROOT, "calib", 'v00', "gain")],
-                   # This only really depends on crosstalk, but we don't want
-                   # scons to run multiple pipelines at a time, since that
-                   # leads to a lot of contention on the SQLite database, so
-                   # we pretend it depends on ptc as well.
-                   [crosstalk, ptc],
-                  [getPipeTaskCmd('gain', exposureDict['ptcExposurePairs'],
-                                  'cpPtc.yaml#cpPtcGainFromFlatPairs'),
-                   getCertifyCmd('gain')])
-env.Alias('gain', gain)
+    # Create DEFECTS using combined bias, dark, flats.
+    defects = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_defects'),
+                           os.path.join(REPO_ROOT, 'calib', 'v00', 'defects')],
+                          [bias, dark_for_defects, flat_for_defects],
+                          [getPipeTaskCmdLegacy('defects', exposureDict['flatExposures'] +
+                                          exposureDict['darkExposures'] + exposureDict['biasExposures'],
+                                          'cpDefects.yaml'),
+                           getCertifyCmdLegacy('defects'),
+                          ])
+    env.Alias('defects', defects)
 
-# Brighter-fatter Kernel
-bfk = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_bfk'),
-                   os.path.join(REPO_ROOT, 'ci_cpv_bfk'),
-                   os.path.join(REPO_ROOT, "calib", 'v00', "bfk")],
-                   # While this pipeline doesn't actually depend on all of
-                   # these, we declare these dependencies to scons to avoid
-                   # database contention.
-                   [ptc, gain],
-                  [getPipeTaskCmd('bfk', [exposureDict['allFlatExposures'][0]],
-                                  'cpBfk.yaml'),
-                   getCertifyCmd('bfk'),
-                  ])
-env.Alias('bfk', bfk)
+    # Create DARK, including defects (which are used to help with CR rejection).
+    dark = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_dark'),
+                        os.path.join(REPO_ROOT, 'ci_cpv_dark'),
+                        os.path.join(REPO_ROOT, 'calib', 'v00', 'dark')],
+                       defects,
+                       [getPipeTaskCmdLegacy('dark', exposureDict['darkExposures'], 'cpDark.yaml'),
+                        getCertifyCmdLegacy('dark'),
+                        getVerifyCmdLegacy('dark', exposureDict['darkExposures'], 'verifyDark.yaml'),
+                       ])
+    env.Alias('dark', dark)
 
-# linearizer
-linearizer = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_linearizer'),
-                          os.path.join(REPO_ROOT, 'ci_cpv_linearizer'),
-                          os.path.join(REPO_ROOT, "calib", 'v00', "linearizer")],
+    # Create FLAT
+    flat = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_flat'),
+                        os.path.join(REPO_ROOT, 'ci_cpv_flat'),
+                        os.path.join(REPO_ROOT, 'calib', 'v00', 'flat')],
+                       dark,
+                       [getPipeTaskCmdLegacy('flat', exposureDict['flatExposures'], 'cpFlat.yaml'),
+                        getCertifyCmdLegacy('flat'),
+                        getVerifyCmdLegacy('flat', exposureDict['flatExposures'], 'verifyFlat.yaml'),
+                       ])
+    env.Alias('flat', flat)
+
+    # Create CROSSTALK
+    crosstalk = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_crosstalk'),
+                             os.path.join(REPO_ROOT, 'ci_cpv_crosstalk'),
+                             os.path.join(REPO_ROOT, "calib", 'v00', "crosstalk")], flat,
+                            [getPipeTaskCmdLegacy('crosstalk', exposureDict['scienceExposures'],
+                                            'cpCrosstalk.yaml'),
+                             getCertifyCmdLegacy('crosstalk'),
+                             getVerifyCmdLegacy('crosstalk', exposureDict['scienceExposures'],
+                                          'verifyCrosstalk.yaml'),
+                            ])
+    env.Alias('crosstalk', crosstalk)
+
+    # We can now verify DEFECTS:
+    defectsVerify = env.Command(os.path.join(REPO_ROOT, 'ci_cpv_defects'),
+                                [crosstalk],
+                                getVerifyCmdLegacy('defects', exposureDict['scienceExposures'], 'verifyDefects.yaml'),
+                                )
+    env.Alias('defectsVerify', defectsVerify)
+
+    # Create PTC
+    ptc = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_ptc'),
+                       os.path.join(REPO_ROOT, 'ci_cpv_ptc'),
+                       os.path.join(REPO_ROOT, "calib", 'v00', "ptc")], crosstalk,
+                      [getPipeTaskCmdLegacy('ptc', exposureDict['ptcExposurePairs'],
+                                      'cpPtc.yaml'),
+                       getCertifyCmdLegacy('ptc'),
+                       getVerifyCmdLegacy('ptc', [exposureDict['ptcExposurePairs'][0]],
+                                    'verifyPtc.yaml'),
+                      ])
+    env.Alias('ptc', ptc)
+
+    # Gain from flat pairs
+    gain = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_gain'),
+                       os.path.join(REPO_ROOT, "calib", 'v00', "gain")],
+                       # This only really depends on crosstalk, but we don't want
+                       # scons to run multiple pipelines at a time, since that
+                       # leads to a lot of contention on the SQLite database, so
+                       # we pretend it depends on ptc as well.
+                       [crosstalk, ptc],
+                      [getPipeTaskCmdLegacy('gain', exposureDict['ptcExposurePairs'],
+                                      'cpPtc.yaml#cpPtcGainFromFlatPairs'),
+                       getCertifyCmdLegacy('gain')])
+    env.Alias('gain', gain)
+
+    # Brighter-fatter Kernel
+    bfk = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_bfk'),
+                       os.path.join(REPO_ROOT, 'ci_cpv_bfk'),
+                       os.path.join(REPO_ROOT, "calib", 'v00', "bfk")],
+                       # While this pipeline doesn't actually depend on all of
+                       # these, we declare these dependencies to scons to avoid
+                       # database contention.
+                       [ptc, gain],
+                      [getPipeTaskCmdLegacy('bfk', [exposureDict['allFlatExposures'][0]],
+                                      'cpBfk.yaml'),
+                       getCertifyCmdLegacy('bfk'),
+                      ])
+    env.Alias('bfk', bfk)
+
+    # linearizer
+    linearizer = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_linearizer'),
+                              os.path.join(REPO_ROOT, 'ci_cpv_linearizer'),
+                              os.path.join(REPO_ROOT, "calib", 'v00', "linearizer")],
+                              # While this pipeline doesn't actually depend on all of
+                              # these, we declare these dependencies to scons to avoid
+                              # database contention.
+                             [ptc, bfk],
+                             [getPipeTaskCmdLegacy('linearizer', [exposureDict['allFlatExposures'][0]],
+                                             'cpLinearizer.yaml'),
+                              getCertifyCmdLegacy('linearizer'),
+                              getVerifyCmdLegacy('linearizer', exposureDict['ptcExposurePairs'],
+                                           'verifyLinearizer.yaml'),
+                             ])
+    env.Alias('linearizer', linearizer)
+
+    # Run a science exposure
+    science = env.Command(os.path.join(REPO_ROOT, 'ci_cpp_science'),
                           # While this pipeline doesn't actually depend on all of
                           # these, we declare these dependencies to scons to avoid
                           # database contention.
-                         [ptc, bfk],
-                         [getPipeTaskCmd('linearizer', [exposureDict['allFlatExposures'][0]],
-                                         'cpLinearizer.yaml'),
-                          getCertifyCmd('linearizer'),
-                          getVerifyCmd('linearizer', exposureDict['ptcExposurePairs'],
-                                       'verifyLinearizer.yaml'),
-                         ])
-env.Alias('linearizer', linearizer)
+                          [bfk, linearizer],
+                          [getPipeTaskCmdLegacy('science', exposureDict['scienceExposures'],
+                                          'runIsr.yaml')])
+    env.Alias('science', science)
 
-# Run a science exposure
-science = env.Command(os.path.join(REPO_ROOT, 'ci_cpp_science'),
-                      # While this pipeline doesn't actually depend on all of
-                      # these, we declare these dependencies to scons to avoid
-                      # database contention.
-                      [bfk, linearizer],
-                      [getPipeTaskCmd('science', exposureDict['scienceExposures'],
-                                      'runIsr.yaml')])
-env.Alias('science', science)
+    # Create SKY
+    sky = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_sky'),
+                       os.path.join(REPO_ROOT, "calib", "v00", "sky")],
+                       # This only really depends on science, but we don't want
+                       # scons to run multiple pipelines at a time, since database,
+                       # so we pretend it depends on defects as well.  that leads
+                       # to a lot of contention on the SQLite, so we pretend it
+                       # depends on science as well.
+                       science,
+                      [getPipeTaskCmdLegacy('sky', exposureDict['scienceExposures'],
+                                      'cpSky.yaml'),
+                       getCertifyCmdLegacy('sky')])
+    env.Alias('sky', sky)
 
-# Create SKY
-sky = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_sky'),
-                   os.path.join(REPO_ROOT, "calib", "v00", "sky")],
-                   # This only really depends on science, but we don't want
-                   # scons to run multiple pipelines at a time, since database,
-                   # so we pretend it depends on defects as well.  that leads
-                   # to a lot of contention on the SQLite, so we pretend it
-                   # depends on science as well.
-                   science,
-                  [getPipeTaskCmd('sky', exposureDict['scienceExposures'],
-                                  'cpSky.yaml'),
-                   getCertifyCmd('sky')])
-env.Alias('sky', sky)
+    # Create CTI
+    cti = env.Command([os.path.join(REPO_ROOT, "ci_cpp_cti"),
+                       os.path.join(REPO_ROOT, "calib", "v00", "cti")],
+                       # This only really depends on ptc, but we don't
+                       # want scons to run multiple pipelines at a time, since
+                       # database, so we pretend it depends on gain as well.
+                       # that leads to a lot of contention on the SQLite, so we
+                       # pretend it depends on sky as well.
+                       [ptc, sky],
+                      [getPipeTaskCmdLegacy('cti', exposureDict['ptcExposurePairs'],
+                                      'cpCti.yaml'),
+                       getCertifyCmdLegacy('cti')])
+    env.Alias('cti', cti)
 
-# Create CTI
-cti = env.Command([os.path.join(REPO_ROOT, "ci_cpp_cti"),
-                   os.path.join(REPO_ROOT, "calib", "v00", "cti")],
-                   # This only really depends on ptc, but we don't
-                   # want scons to run multiple pipelines at a time, since
-                   # database, so we pretend it depends on gain as well.
-                   # that leads to a lot of contention on the SQLite, so we
-                   # pretend it depends on sky as well.
-                   [ptc, sky],
-                  [getPipeTaskCmd('cti', exposureDict['ptcExposurePairs'],
-                                  'cpCti.yaml'),
-                   getCertifyCmd('cti')])
-env.Alias('cti', cti)
+    ctiProc = env.Command(os.path.join(REPO_ROOT, 'ci_cpp_ctiProc'), cti,
+                          [getPipeTaskCmdLegacy('ctiProc', [exposureDict['ptcExposurePairs'][0]],
+                                           'runCti.yaml')])
+    env.Alias('ctiProc', ctiProc)
 
-ctiProc = env.Command(os.path.join(REPO_ROOT, 'ci_cpp_ctiProc'), cti,
-                      [getPipeTaskCmd('ctiProc', [exposureDict['ptcExposurePairs'][0]],
-                                       'runCti.yaml')])
-env.Alias('ctiProc', ctiProc)
+    # Set up dependencies.  Any new targets should have a matching entry
+    # in tests/test_outputs.py.
+    env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, "LATISS", "calib"))
+    env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, "LATISS", "raw"))
+    env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_bias'))
+    env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_dark_for_defects'))
+    env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_flat_for_defects'))
+    env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_defects'))
+    env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_dark'))
+    env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_flat'))
+    env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_crosstalk'))
+    env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpv_defects'))
+    env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_ptc'))
+    env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_gain'))
+    env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_bfk'))
+    env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_linearizer'))
+    env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_science'))
+    env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_sky'))
+    env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_cti'))
+    env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_ctiProc'))
 
-# Set up dependencies.  Any new targets should have a matching entry
-# in tests/test_outputs.py.
-env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, "LATISS", "calib"))
-env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, "LATISS", "raw"))
-env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_bias'))
-env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_dark_for_defects'))
-env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_flat_for_defects'))
-env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_defects'))
-env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_dark'))
-env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_flat'))
-env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_crosstalk'))
-env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpv_defects'))
-env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_ptc'))
-env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_gain'))
-env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_bfk'))
-env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_linearizer'))
-env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_science'))
-env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_sky'))
-env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_cti'))
-env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_ctiProc'))
+    # Set up things to clean.
+    targets = [ctiProc, cti, sky, defects, bfk, linearizer, science, gain, ptc, crosstalk,
+               flat, defectsVerify, dark_for_defects, flat_for_defects, dark, bias, ingest, butler]
+    env.Clean(targets, [y for x in targets for y in x] +
+              [os.path.join(REPO_ROOT, "calib"), os.path.join(REPO_ROOT, "LATISS")])
 
-# Set up things to clean.
-targets = [ctiProc, cti, sky, defects, bfk, linearizer, science, gain, ptc, crosstalk,
-           flat, defectsVerify, dark_for_defects, flat_for_defects, dark, bias, ingest, butler]
-env.Clean(targets, [y for x in targets for y in x] +
-          [os.path.join(REPO_ROOT, "calib"), os.path.join(REPO_ROOT, "LATISS")])
-
-env.Alias('install', 'SConscript')
+    env.Alias('install', 'SConscript')
