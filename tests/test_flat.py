@@ -28,10 +28,14 @@ import lsst.ip.isr as ipIsr
 import lsst.utils.tests
 from lsst.utils import getPackageDir
 
+LEGACY_MODE = os.environ.get("CI_CPP_LEGACY", "0")
+
 
 # TODO: DM-26396
 #       Update these tests to validate calibration construction.
-class FlatTestCases(lsst.utils.tests.TestCase):
+
+@unittest.skipUnless(LEGACY_MODE != "0", "Skipping legacy tests.")
+class FlatTestCasesLegacy(lsst.utils.tests.TestCase):
     @classmethod
     def setUpClass(cls):
         """Setup butler and generate an ISR processed exposure.

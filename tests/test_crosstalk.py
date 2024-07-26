@@ -19,13 +19,17 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import os
 import unittest
 import lsst.utils.tests
+
+LEGACY_MODE = os.environ.get("CI_CPP_LEGACY", "0")
 
 
 # TODO: DM-26396
 #       Update these tests to validate calibration construction.
-class CrosstalkTestCases(lsst.utils.tests.TestCase):
+@unittest.skipUnless(LEGACY_MODE != "0", "Skipping legacy tests.")
+class CrosstalkTestCasesLegacy(lsst.utils.tests.TestCase):
 
     def setup_independentFrame(self):
         """Missing data.

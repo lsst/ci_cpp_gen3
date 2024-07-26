@@ -28,8 +28,11 @@ import lsst.utils.tests
 
 from lsst.utils import getPackageDir
 
+LEGACY_MODE = os.environ.get("CI_CPP_LEGACY", "0")
 
-class VerificationTestCases(lsst.utils.tests.TestCase):
+
+@unittest.skipUnless(LEGACY_MODE != "0", "Skipping legacy tests.")
+class VerificationTestCasesLegacy(lsst.utils.tests.TestCase):
     @classmethod
     def setUpClass(cls):
         """Setup butler."""

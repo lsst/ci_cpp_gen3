@@ -30,8 +30,11 @@ from lsst.ip.isr import (Defects, BrighterFatterKernel, CrosstalkCalib, Deferred
                          PhotonTransferCurveDataset)
 from lsst.utils import getPackageDir
 
+LEGACY_MODE = os.environ.get("CI_CPP_LEGACY", "0")
 
-class OutputTestCases(lsst.utils.tests.TestCase):
+
+@unittest.skipUnless(LEGACY_MODE != "0", "Skipping legacy tests.")
+class OutputTestCasesLegacy(lsst.utils.tests.TestCase):
     @classmethod
     def setUpClass(cls):
         """Setup butler, and generate an ISR processed exposure.
