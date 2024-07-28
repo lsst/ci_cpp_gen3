@@ -51,7 +51,7 @@ def getExecutableCmd(package, script, *args):
 
 
 def getPipeTaskCmd(stage, expList, pipelineFile):
-    """Construct a pipetask command in a uniform way (legacy pipelines).
+    """Construct a pipetask command in a uniform way.
 
     Parameters
     ---------
@@ -103,8 +103,8 @@ def getPipeTaskCmd(stage, expList, pipelineFile):
             "--register-dataset-types"]
 
     # We need to override the default linearity configs for the ci dataset.
-    if stage == "linearity":
-        args.append(f"-c cpLinearizerSolve:splineKnots=3")
+    if stage == "linearizer":
+        args.append(f"-c cpLinearizerSolve:splineKnots=5")
 
     # Bootstrap calibrations need to output to RUN collections.
     if "Bootstrap" in stage:
@@ -339,7 +339,7 @@ if LEGACY_MODE == "0":
                 exposureDict["darkExposures"],
                 "cpDarkBootstrap.yaml",
             ),
-        ]
+        ],
     )
     env.Alias("darkBootstrap", darkBootstrap)
 
@@ -357,7 +357,7 @@ if LEGACY_MODE == "0":
                 exposureDict["flatExposures"],
                 "cpFlatBootstrap.yaml",
             ),
-        ]
+        ],
     )
     env.Alias("flatBootstrap", flatBootstrap)
 
@@ -371,9 +371,79 @@ if LEGACY_MODE == "0":
         [
             getPipeTaskCmd("defects", [exposureDict["flatExposures"][0]], "cpDefects.yaml"),
             getCertifyCmd("defects"),
-        ]
+        ],
     )
     env.Alias("defects", defects)
+
+    # Create a linearizer and certify.
+    linearizer = env.Command(
+        [
+            os.path.join(REPO_ROOT, "ci_cpp_linearizer"),
+            os.path.join(REPO_ROOT, "calib", "v00", "linearizer"),
+        ],
+        [defects],
+        [
+            getPipeTaskCmd("linearizer", exposureDict["ptcExposurePairs"], "cpLinearizer.yaml"),
+            getCertifyCmd("linearizer"),
+        ],
+    )
+    env.Alias("linearizer", linearizer)
+
+    # Create a ptc and certify.
+    ptc = env.Command(
+        [
+            os.path.join(REPO_ROOT, "ci_cpp_ptc"),
+            os.path.join(REPO_ROOT, "calib", "v00", "ptc"),
+        ],
+        [linearizer],
+        [
+            getPipeTaskCmd("ptc", exposureDict["ptcExposurePairs"], "cpPtc.yaml"),
+            getCertifyCmd("ptc"),
+        ],
+    )
+    env.Alias("ptc", ptc)
+
+    # Create a bias and certify.
+    bias = env.Command(
+        [
+            os.path.join(REPO_ROOT, "ci_cpp_bias"),
+            os.path.join(REPO_ROOT, "calib", "v00", "bias"),
+        ],
+        [ptc],
+        [
+            getPipeTaskCmd("bias", exposureDict["biasExposures"], "cpBias.yaml"),
+            getCertifyCmd("bias"),
+        ],
+    )
+    env.Alias("bias", bias)
+
+    # Create a dark and certify.
+    dark = env.Command(
+        [
+            os.path.join(REPO_ROOT, "ci_cpp_dark"),
+            os.path.join(REPO_ROOT, "calib", "v00", "dark"),
+        ],
+        [bias],
+        [
+            getPipeTaskCmd("dark", exposureDict["darkExposures"], "cpDark.yaml"),
+            getCertifyCmd("dark"),
+        ],
+    )
+    env.Alias("dark", dark)
+
+    # Create a flat and certify.
+    flat = env.Command(
+        [
+            os.path.join(REPO_ROOT, "ci_cpp_flat"),
+            os.path.join(REPO_ROOT, "calib", "v00", "flat"),
+        ],
+        [dark],
+        [
+            getPipeTaskCmd("flat", exposureDict["flatExposures"], "cpFlat.yaml"),
+            getCertifyCmd("flat"),
+        ],
+    )
+    env.Alias("flat", flat)
 
     # Set up test dependencies.
     env.Depends(utils.targets["tests"], os.path.join(REPO_ROOT, "LATISS", "calib"))
@@ -382,6 +452,11 @@ if LEGACY_MODE == "0":
     env.Depends(utils.targets["tests"], os.path.join(REPO_ROOT, "ci_cpp_darkBootstrap"))
     env.Depends(utils.targets["tests"], os.path.join(REPO_ROOT, "ci_cpp_flatBootstrap"))
     env.Depends(utils.targets["tests"], os.path.join(REPO_ROOT, "ci_cpp_defects"))
+    env.Depends(utils.targets["tests"], os.path.join(REPO_ROOT, "ci_cpp_linearizer"))
+    env.Depends(utils.targets["tests"], os.path.join(REPO_ROOT, "ci_cpp_ptc"))
+    env.Depends(utils.targets["tests"], os.path.join(REPO_ROOT, "ci_cpp_bias"))
+    env.Depends(utils.targets["tests"], os.path.join(REPO_ROOT, "ci_cpp_dark"))
+    env.Depends(utils.targets["tests"], os.path.join(REPO_ROOT, "ci_cpp_flat"))
 
     # Set up things to clean.
     targets = [
@@ -389,6 +464,11 @@ if LEGACY_MODE == "0":
         darkBootstrap,
         flatBootstrap,
         defects,
+        linearizer,
+        ptc,
+        bias,
+        dark,
+        flat,
     ]
     env.Clean(targets, [y for x in targets for y in x] +
               [os.path.join(REPO_ROOT, "calib"), os.path.join(REPO_ROOT, "LATISS")])
