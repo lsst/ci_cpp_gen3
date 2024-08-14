@@ -104,7 +104,10 @@ def getPipeTaskCmd(stage, expList, pipelineFile):
 
     # We need to override the default linearity configs for the ci dataset.
     if stage == "linearizer":
-        args.append(f"-c cpLinearizerSolve:splineKnots=5")
+        args.append("-c cpLinearizerPtcExtract:useEfdPhotodiodeData=False "
+                    "-c cpLinearizerSolve:splineKnots=5")
+    if stage == "ptc":
+        args.append("-c cpPtcExtract:useEfdPhotodiodeData=False")
 
     # Bootstrap calibrations need to output to RUN collections.
     if "Bootstrap" in stage:
