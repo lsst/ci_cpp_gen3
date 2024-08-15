@@ -1,0 +1,4 @@
+description: cp_verify Photon Transfer Curve calibration verification
+instrument: lsst.obs.lsst.Latiss
+imports:
+  - location: $CP_VERIFY_DIR/pipelines/_ingredients/verifyPtc.yaml

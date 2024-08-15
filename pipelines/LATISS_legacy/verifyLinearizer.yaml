@@ -1,0 +1,11 @@
+description: cp_verify LINEARITY calibration verification
+instrument: lsst.obs.lsst.Latiss
+imports:
+  - location: $CP_VERIFY_DIR/pipelines/_ingredients/verifyLinearizer.yaml
+tasks:
+  verifyLinearizerSecondLinearizer:
+    class: lsst.cp.verify.CpvLinearitySolveTask
+    config:
+      linearityType: Spline
+      splineKnots: 10
+      maxLinearAdu: 120000

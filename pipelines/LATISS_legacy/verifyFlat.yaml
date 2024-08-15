@@ -1,0 +1,9 @@
+description: cp_verify FLAT calibration verification
+instrument: lsst.obs.lsst.Latiss
+imports:
+  - location: $CP_VERIFY_DIR/pipelines/_ingredients/verifyFlat.yaml
+tasks:
+  verifyFlatIsr:
+    class: lsst.ip.isr.IsrTask
+    config:
+      overscan.fitType: "MEDIAN_PER_ROW"

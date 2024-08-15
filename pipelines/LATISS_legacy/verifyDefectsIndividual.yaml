@@ -1,0 +1,9 @@
+description: cp_verify DEFECT calibration verification
+instrument: lsst.obs.lsst.Latiss
+imports:
+  - location: $CP_VERIFY_DIR/pipelines/_ingredients/verifyDefectsIndividual.yaml
+tasks:
+  verifyDefectsIndividualIsr:
+    class: lsst.ip.isr.IsrTask
+    config:
+      overscan.fitType: "MEDIAN_PER_ROW"

@@ -1,0 +1,4 @@
+description: cp_verify gain-from-flat-pairs calibration verification
+instrument: lsst.obs.lsst.Latiss
+imports:
+  - location: $CP_VERIFY_DIR/pipelines/_ingredients/verifyGain.yaml
