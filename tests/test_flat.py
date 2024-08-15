@@ -34,8 +34,90 @@ LEGACY_MODE = os.environ.get("CI_CPP_LEGACY", "0")
 # TODO: DM-26396
 #       Update these tests to validate calibration construction.
 
+@unittest.skipIf(LEGACY_MODE != "0", "Skipping new tests in legacy mode.")
+class FlatTestCases(lsst.utils.tests.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        """Setup butler and generate an ISR processed exposure.
+
+        Notes
+        -----
+        DMTN-101 5.1:
+
+        Process an independent dark frame through the ISR including
+        overscan correction, bias subtraction, dark subtraction.
+        """
+        repoDir = os.path.join(getPackageDir("ci_cpp_gen3"), "DATA/")
+        butler = dafButler.Butler(repoDir, collections=['LATISS/raw/all', 'calib/v00', 'LATISS/calib'])
+
+        config = ipIsr.IsrTaskLSSTConfig()
+        config.doBias = True
+        config.expectWcs = False
+        config.doDefect = True
+        config.doDark = True
+        config.doFlat = True
+        config.doDiffNonLinearCorrection = False
+        config.doBootstrap = False
+        config.doDeferredCharge = False
+        config.doLinearize = True
+        config.doCorrectGains = False
+        config.doApplyGains = True
+        config.doVariance = True
+        config.doSaturation = True
+        config.doSuspect = True
+        config.doCrosstalk = True
+        config.doWidenSaturationTrails = False
+        config.doInterpolate = True
+        config.doSetBadRegions = True
+        config.doBrighterFatter = False
+
+        isrTaskLSST = ipIsr.IsrTaskLSST(config=config)
+        rawDataId = {"detector": 0, "exposure": 2021052500080, "instrument": "LATISS"}
+        # TODO: DM-26396
+        # This is not an independent frame.
+        cls.raw = butler.get("raw", dataId=rawDataId)
+        cls.bias = butler.get("bias", rawDataId)
+        cls.camera = butler.get("camera", rawDataId)
+        cls.ptc = butler.get("ptc", rawDataId)
+        cls.linearizer = butler.get("linearizer", rawDataId)
+        cls.crosstalk = butler.get("crosstalk", rawDataId)
+        cls.defects = butler.get("defects", rawDataId)
+        cls.dark = butler.get("dark", rawDataId)
+        cls.flat = butler.get("flat", rawDataId)
+
+        results = isrTaskLSST.run(
+            cls.raw,
+            camera=cls.camera,
+            bias=cls.bias,
+            ptc=cls.ptc,
+            linearizer=cls.linearizer,
+            crosstalk=cls.crosstalk,
+            defects=cls.defects,
+            dark=cls.dark,
+            flat=cls.flat,
+        )
+
+        cls.exposure = results.outputExposure
+
+    def test_independentFrameLevel(self):
+        """Test image mean and sigma are plausible.
+
+        Notes
+        -----
+        DMTN-101 10.X:
+        """
+        mean = afwMath.makeStatistics(self.exposure.getImage(), afwMath.MEAN).getValue()
+        sigma = afwMath.makeStatistics(self.exposure.getImage(), afwMath.STDEV).getValue()
+        expectMean = 10600
+        expectSigmaMax = 3000
+        self.assertLess(np.abs(mean - expectMean), sigma,
+                        msg=f"Test 10.X: {mean} {expectMean} {sigma}")
+        self.assertLess(sigma, expectSigmaMax,
+                        msg=f"Test 10.X2: {sigma} {expectSigmaMax}")
+
+
 @unittest.skipUnless(LEGACY_MODE != "0", "Skipping legacy tests.")
-class FlatTestCasesLegacy(lsst.utils.tests.TestCase):
+class FlatTestCasesLegacy(FlatTestCases):
     @classmethod
     def setUpClass(cls):
         """Setup butler and generate an ISR processed exposure.
@@ -94,22 +176,6 @@ class FlatTestCasesLegacy(lsst.utils.tests.TestCase):
                               bias=cls.bias, dark=cls.dark,
                               flat=cls.flat, defects=cls.defects)
         cls.exposure = results.outputExposure
-
-    def test_independentFrameLevel(self):
-        """Test image mean and sigma are plausible.
-
-        Notes
-        -----
-        DMTN-101 10.X:
-        """
-        mean = afwMath.makeStatistics(self.exposure.getImage(), afwMath.MEAN).getValue()
-        sigma = afwMath.makeStatistics(self.exposure.getImage(), afwMath.STDEV).getValue()
-        expectMean = 10000
-        expectSigmaMax = 3000
-        self.assertLess(np.abs(mean - expectMean), sigma,
-                        msg=f"Test 10.X: {mean} {expectMean} {sigma}")
-        self.assertLess(sigma, expectSigmaMax,
-                        msg=f"Test 10.X2: {sigma} {expectSigmaMax}")
 
 
 class MemoryTester(lsst.utils.tests.MemoryTestCase):
