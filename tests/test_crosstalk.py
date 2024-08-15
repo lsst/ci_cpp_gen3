@@ -28,8 +28,8 @@ LEGACY_MODE = os.environ.get("CI_CPP_LEGACY", "0")
 
 # TODO: DM-26396
 #       Update these tests to validate calibration construction.
-@unittest.skipUnless(LEGACY_MODE != "0", "Skipping legacy tests.")
-class CrosstalkTestCasesLegacy(lsst.utils.tests.TestCase):
+
+class CrosstalkTestCases(lsst.utils.tests.TestCase):
 
     def setup_independentFrame(self):
         """Missing data.
