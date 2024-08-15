@@ -33,8 +33,7 @@ from lsst.utils import getPackageDir
 LEGACY_MODE = os.environ.get("CI_CPP_LEGACY", "0")
 
 
-@unittest.skipUnless(LEGACY_MODE != "0", "Skipping legacy tests.")
-class OutputTestCasesLegacy(lsst.utils.tests.TestCase):
+class OutputTestCases(lsst.utils.tests.TestCase):
     @classmethod
     def setUpClass(cls):
         """Setup butler, and generate an ISR processed exposure.
@@ -100,9 +99,11 @@ class OutputTestCasesLegacy(lsst.utils.tests.TestCase):
     def test_ptcOutput(self):
         self.assertIsInstance(self.getExpectedProduct('ptc'), PhotonTransferCurveDataset)
 
+    @unittest.skipUnless(LEGACY_MODE != "0", "Skipping BFK test until we have BFK.")
     def test_bfkOutput(self):
         self.assertIsInstance(self.getExpectedProduct('bfk'), BrighterFatterKernel)
 
+    @unittest.skipUnless(LEGACY_MODE != "0", "Skipping legacy partial ptc test.")
     def test_gainOutput(self):
         # These are certified on a per-exposure basis.
         dataId = {'detector': 0, 'exposure': 2021052500079, 'instrument': 'LATISS'}
@@ -126,9 +127,11 @@ class OutputTestCasesLegacy(lsst.utils.tests.TestCase):
     def test_skyOutput(self):
         self.assertIsInstance(self.getExpectedProduct('sky'), Exposure)
 
+    @unittest.skipUnless(LEGACY_MODE != "0", "Skipping CTI test until we have CTI done.")
     def test_ctiOutput(self):
         self.assertIsInstance(self.getExpectedProduct('cti'), DeferredChargeCalib)
 
+    @unittest.skipUnless(LEGACY_MODE != "0", "Skipping CTI processing test until we have CTI done.")
     def test_ctiProcOutput(self):
         # This needs one of the actual exposures and the specific
         # collection.
