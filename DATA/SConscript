@@ -448,6 +448,35 @@ if LEGACY_MODE == "0":
     )
     env.Alias("flat", flat)
 
+    # BFK TBD
+
+    # CTI TBD
+
+    # Run a science exposure.
+    science = env.Command(
+        [
+            os.path.join(REPO_ROOT, "ci_cpp_science"),
+        ],
+        [flat],
+        [
+            getPipeTaskCmd("science", exposureDict["scienceExposures"], "runIsrLSST.yaml"),
+        ],
+    )
+    env.Alias("science", science)
+
+    # Create a sky frame.
+    sky = env.Command(
+        [
+            os.path.join(REPO_ROOT, "ci_cpp_sky"),
+        ],
+        [science],
+        [
+            getPipeTaskCmd("sky", exposureDict["scienceExposures"], "cpSky.yaml"),
+            getCertifyCmd("sky"),
+        ],
+    )
+    env.Alias("sky", sky)
+
     # Set up test dependencies.
     env.Depends(utils.targets["tests"], os.path.join(REPO_ROOT, "LATISS", "calib"))
     env.Depends(utils.targets["tests"], os.path.join(REPO_ROOT, "LATISS", "raw"))
@@ -460,6 +489,8 @@ if LEGACY_MODE == "0":
     env.Depends(utils.targets["tests"], os.path.join(REPO_ROOT, "ci_cpp_bias"))
     env.Depends(utils.targets["tests"], os.path.join(REPO_ROOT, "ci_cpp_dark"))
     env.Depends(utils.targets["tests"], os.path.join(REPO_ROOT, "ci_cpp_flat"))
+    env.Depends(utils.targets["tests"], os.path.join(REPO_ROOT, "ci_cpp_science"))
+    env.Depends(utils.targets["tests"], os.path.join(REPO_ROOT, "ci_cpp_sky"))
 
     # Set up things to clean.
     targets = [
@@ -472,6 +503,8 @@ if LEGACY_MODE == "0":
         bias,
         dark,
         flat,
+        science,
+        sky,
     ]
     env.Clean(targets, [y for x in targets for y in x] +
               [os.path.join(REPO_ROOT, "calib"), os.path.join(REPO_ROOT, "LATISS")])
