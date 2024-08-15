@@ -242,6 +242,47 @@ def getCertifyCmdLegacy(stage):
                             '--begin-date 1980-01-01', '--end-date 2050-01-01', calibName)
 
 
+def getVerifyCmd(stage, expList, pipelineFile):
+    """Construct the verify command in a uniform way.
+
+    Parameters
+    ----------
+    stage : `str`
+        Name of the calibration stage to verify.
+    expList : `list` [`int`]
+        List of exposure ids to use in generating the calibration.
+    pipelineFile : `str`
+        Name of pipeline yaml to use.
+
+    Returns
+    -------
+    cmd : `str`
+        The constructed command.
+    """
+    inputCollections = "calib/v00,LATISS/calib,LATISS/raw/all"
+
+    pipelineYaml = os.path.join(PKG_ROOT, "pipelines", pipelineFile)
+    if not os.path.exists(pipelineYaml):
+        pipelineYaml = os.path.join(env.ProductDir('cp_verify'), 'pipelines', 'LATISS', pipelineFile)
+
+    args = ['run ',
+            '-j', str(num_process),
+            '-d "instrument=\'LATISS\' AND detector=0 AND exposure IN (',
+            ','.join(str(exp) for exp in expList), ')"',
+            f"-b {REPO_ROOT}/butler.yaml",
+            f"-i {inputCollections}",
+            f"-o ci_cpv_{stage}",
+            f"-p {pipelineYaml}",
+            '--register-dataset-types']
+
+    # We need to override the default linearity configs for the ci dataset.
+    if stage == "linearizer":
+        args.append("-c verifyLinearizerPtcExtract:useEfdPhotodiodeData=False "
+                    "-c verifyLinearizerSecondLinearizer:splineKnots=5")
+
+    return getExecutableCmd('ctrl_mpexec', 'pipetask', *args)
+
+
 def getVerifyCmdLegacy(stage, expList, pipelineFile):
     """Construct the verify command in a uniform way (legacy pipelines).
 
@@ -265,7 +306,7 @@ def getVerifyCmdLegacy(stage, expList, pipelineFile):
 
     pipelineYaml = os.path.join(PKG_ROOT, "pipelines", pipelineFile)
     if not os.path.exists(pipelineYaml):
-        pipelineYaml = os.path.join(env.ProductDir('cp_verify'), 'pipelines', 'LATISS', pipelineFile)
+        pipelineYaml = os.path.join(PKG_ROOT, "pipelines", "LATISS_legacy", pipelineFile)
 
     args = ['run ',
             '-j', str(num_process),
@@ -382,12 +423,14 @@ if LEGACY_MODE == "0":
     linearizer = env.Command(
         [
             os.path.join(REPO_ROOT, "ci_cpp_linearizer"),
+            os.path.join(REPO_ROOT, "ci_cpv_linearizer"),
             os.path.join(REPO_ROOT, "calib", "v00", "linearizer"),
         ],
         [defects],
         [
             getPipeTaskCmd("linearizer", exposureDict["ptcExposurePairs"], "cpLinearizer.yaml"),
             getCertifyCmd("linearizer"),
+            getVerifyCmd("linearizer", exposureDict["ptcExposurePairs"], "verifyLinearizer.yaml"),
         ],
     )
     env.Alias("linearizer", linearizer)
@@ -396,12 +439,14 @@ if LEGACY_MODE == "0":
     ptc = env.Command(
         [
             os.path.join(REPO_ROOT, "ci_cpp_ptc"),
+            os.path.join(REPO_ROOT, "ci_cpv_ptc"),
             os.path.join(REPO_ROOT, "calib", "v00", "ptc"),
         ],
         [linearizer],
         [
             getPipeTaskCmd("ptc", exposureDict["ptcExposurePairs"], "cpPtc.yaml"),
             getCertifyCmd("ptc"),
+            getVerifyCmd("ptc", [exposureDict["ptcExposurePairs"][0]], "verifyPtc.yaml"),
         ],
     )
     env.Alias("ptc", ptc)
@@ -410,12 +455,14 @@ if LEGACY_MODE == "0":
     bias = env.Command(
         [
             os.path.join(REPO_ROOT, "ci_cpp_bias"),
+            os.path.join(REPO_ROOT, "ci_cpv_bias"),
             os.path.join(REPO_ROOT, "calib", "v00", "bias"),
         ],
         [ptc],
         [
             getPipeTaskCmd("bias", exposureDict["biasExposures"], "cpBias.yaml"),
             getCertifyCmd("bias"),
+            getVerifyCmd("bias", exposureDict["biasExposures"], "verifyBias.yaml"),
         ],
     )
     env.Alias("bias", bias)
@@ -424,12 +471,14 @@ if LEGACY_MODE == "0":
     dark = env.Command(
         [
             os.path.join(REPO_ROOT, "ci_cpp_dark"),
+            os.path.join(REPO_ROOT, "ci_cpv_dark"),
             os.path.join(REPO_ROOT, "calib", "v00", "dark"),
         ],
         [bias],
         [
             getPipeTaskCmd("dark", exposureDict["darkExposures"], "cpDark.yaml"),
             getCertifyCmd("dark"),
+            getVerifyCmd("dark", exposureDict["darkExposures"], "verifyDark.yaml"),
         ],
     )
     env.Alias("dark", dark)
@@ -438,12 +487,14 @@ if LEGACY_MODE == "0":
     flat = env.Command(
         [
             os.path.join(REPO_ROOT, "ci_cpp_flat"),
+            os.path.join(REPO_ROOT, "ci_cpv_flat"),
             os.path.join(REPO_ROOT, "calib", "v00", "flat"),
         ],
         [dark],
         [
             getPipeTaskCmd("flat", exposureDict["flatExposures"], "cpFlat.yaml"),
             getCertifyCmd("flat"),
+            getVerifyCmd("flat", exposureDict["flatExposures"], "verifyFlat.yaml"),
         ],
     )
     env.Alias("flat", flat)
@@ -451,6 +502,18 @@ if LEGACY_MODE == "0":
     # BFK TBD
 
     # CTI TBD
+
+    # Verify the defects.
+    defectsVerify = env.Command(
+        [
+            os.path.join(REPO_ROOT, "ci_cpv_defects"),
+        ],
+        [flat],
+        [
+            getVerifyCmd("defects", exposureDict["scienceExposures"], "verifyDefects.yaml"),
+        ],
+    )
+    env.Alias("defectsVerify", defectsVerify)
 
     # Run a science exposure.
     science = env.Command(
@@ -491,6 +554,7 @@ if LEGACY_MODE == "0":
     env.Depends(utils.targets["tests"], os.path.join(REPO_ROOT, "ci_cpp_flat"))
     env.Depends(utils.targets["tests"], os.path.join(REPO_ROOT, "ci_cpp_science"))
     env.Depends(utils.targets["tests"], os.path.join(REPO_ROOT, "ci_cpp_sky"))
+    env.Depends(utils.targets["tests"], os.path.join(REPO_ROOT, "ci_cpv_defects"))
 
     # Set up things to clean.
     targets = [
@@ -505,6 +569,7 @@ if LEGACY_MODE == "0":
         flat,
         science,
         sky,
+        defectsVerify,
     ]
     env.Clean(targets, [y for x in targets for y in x] +
               [os.path.join(REPO_ROOT, "calib"), os.path.join(REPO_ROOT, "LATISS")])
