@@ -105,7 +105,8 @@ def getPipeTaskCmd(stage, expList, pipelineFile):
     # We need to override the default linearity configs for the ci dataset.
     if stage == "linearizer":
         args.append("-c cpLinearizerPtcExtract:useEfdPhotodiodeData=False "
-                    "-c cpLinearizerSolve:splineKnots=5")
+                    "-c cpLinearizerSolve:splineKnots=5 "
+                    "-c cpLinearizerSolve:usePhotodiode=False")
     if stage == "ptc":
         args.append("-c cpPtcExtract:useEfdPhotodiodeData=False")
 
@@ -265,22 +266,23 @@ def getVerifyCmd(stage, expList, pipelineFile):
     if not os.path.exists(pipelineYaml):
         pipelineYaml = os.path.join(env.ProductDir('cp_verify'), 'pipelines', 'LATISS', pipelineFile)
 
-    args = ['run ',
-            '-j', str(num_process),
+    args = ["run ",
+            "-j", str(num_process),
             '-d "instrument=\'LATISS\' AND detector=0 AND exposure IN (',
-            ','.join(str(exp) for exp in expList), ')"',
+            ",".join(str(exp) for exp in expList), ')"',
             f"-b {REPO_ROOT}/butler.yaml",
             f"-i {inputCollections}",
             f"-o ci_cpv_{stage}",
             f"-p {pipelineYaml}",
-            '--register-dataset-types']
+            "--register-dataset-types"]
 
     # We need to override the default linearity configs for the ci dataset.
     if stage == "linearizer":
         args.append("-c verifyLinearizerPtcExtract:useEfdPhotodiodeData=False "
-                    "-c verifyLinearizerSecondLinearizer:splineKnots=5")
+                    "-c verifyLinearizerSecondLinearizer:splineKnots=5 "
+                    "-c verifyLinearizerSecondLinearizer:usePhotodiode=False")
 
-    return getExecutableCmd('ctrl_mpexec', 'pipetask', *args)
+    return getExecutableCmd("ctrl_mpexec", "pipetask", *args)
 
 
 def getVerifyCmdLegacy(stage, expList, pipelineFile):
