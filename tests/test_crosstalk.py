@@ -23,7 +23,7 @@ import os
 import unittest
 import lsst.utils.tests
 
-LEGACY_MODE = os.environ.get("CI_CPP_LEGACY", "0")
+LEGACY_MODE = int(os.environ.get("CI_CPP_LEGACY", "0"))
 
 
 # TODO: DM-26396

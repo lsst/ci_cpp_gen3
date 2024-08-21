@@ -28,13 +28,13 @@ import lsst.ip.isr as ipIsr
 import lsst.utils.tests
 from lsst.utils import getPackageDir
 
-LEGACY_MODE = os.environ.get("CI_CPP_LEGACY", "0")
+LEGACY_MODE = int(os.environ.get("CI_CPP_LEGACY", "0"))
 
 
 # TODO: DM-26396
 #       Update these tests to validate calibration construction.
 
-@unittest.skipIf(LEGACY_MODE != "0", "Skipping new tests in legacy mode.")
+@unittest.skipIf(LEGACY_MODE > 0, "Skipping new tests in legacy mode.")
 class FlatTestCases(lsst.utils.tests.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -116,7 +116,7 @@ class FlatTestCases(lsst.utils.tests.TestCase):
                         msg=f"Test 10.X2: {sigma} {expectSigmaMax}")
 
 
-@unittest.skipUnless(LEGACY_MODE != "0", "Skipping legacy tests.")
+@unittest.skipUnless(LEGACY_MODE > 0, "Skipping legacy tests.")
 class FlatTestCasesLegacy(FlatTestCases):
     @classmethod
     def setUpClass(cls):

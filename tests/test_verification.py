@@ -28,7 +28,7 @@ import lsst.utils.tests
 
 from lsst.utils import getPackageDir
 
-LEGACY_MODE = os.environ.get("CI_CPP_LEGACY", "0")
+LEGACY_MODE = int(os.environ.get("CI_CPP_LEGACY", "0"))
 
 
 class VerificationTestCasesLegacy(lsst.utils.tests.TestCase):
@@ -84,7 +84,7 @@ class VerificationTestCasesLegacy(lsst.utils.tests.TestCase):
         result : `dict`
             The archived result dictionary.
         """
-        if LEGACY_MODE != "0":
+        if LEGACY_MODE > 0:
             fileLocation = os.path.join(getPackageDir("ci_cpp_gen3"), "tests", "data", "legacy", filename)
         else:
             fileLocation = os.path.join(getPackageDir("ci_cpp_gen3"), "tests", "data", filename)
@@ -198,7 +198,7 @@ class VerificationTestCasesLegacy(lsst.utils.tests.TestCase):
         # self.genericComparison('ci_cpv_bfk', dataId, mapping)
         pass
 
-    @unittest.skipUnless(LEGACY_MODE == "0", "Skipping crosstalk verify test.")
+    @unittest.skipUnless(LEGACY_MODE == 0, "Skipping crosstalk verify test.")
     def test_linearizerVerify(self):
         """Run comparison for linearizer.
 
@@ -209,7 +209,7 @@ class VerificationTestCasesLegacy(lsst.utils.tests.TestCase):
                    'det': ('verifyLinearizerDetStats', 'linearizerDet.yaml')}
         self.genericComparison('ci_cpv_linearizer', dataId, mapping)
 
-    @unittest.skipUnless(LEGACY_MODE != "0", "Skipping crosstalk verify test.")
+    @unittest.skipUnless(LEGACY_MODE > 0, "Skipping crosstalk verify test.")
     def test_crosstalkVerify(self):
         """Run comparison for crosstalk."""
         dataId = {'instrument': 'LATISS', 'detector': 0}

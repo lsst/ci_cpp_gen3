@@ -30,13 +30,13 @@ import lsst.utils.tests
 from lsst.utils import getPackageDir
 from lsst.pipe.tasks.repair import RepairTask
 
-LEGACY_MODE = os.environ.get("CI_CPP_LEGACY", "0")
+LEGACY_MODE = int(os.environ.get("CI_CPP_LEGACY", "0"))
 
 
 # TODO: DM-26396
 #       Update these tests to validate calibration construction.
 
-@unittest.skipIf(LEGACY_MODE != "0", "Skipping new tests in legacy mode.")
+@unittest.skipIf(LEGACY_MODE > 0, "Skipping new tests in legacy mode.")
 class BiasTestCases(lsst.utils.tests.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -169,7 +169,7 @@ class BiasTestCases(lsst.utils.tests.TestCase):
             self.assertLess(fractionalError, 3.0, msg=f"Test 4.4: {amp.getName()} {fractionalError}")
 
 
-@unittest.skipUnless(LEGACY_MODE != "0", "Skipping legacy tests.")
+@unittest.skipUnless(LEGACY_MODE == 0, "Skipping legacy tests.")
 class BiasTestCasesLegacy(BiasTestCases):
     @classmethod
     def setUpClass(cls):

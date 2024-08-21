@@ -17,7 +17,7 @@ CAMERA = "lsst.obs.lsst.Latiss"
 # If the env var CI_CPP_LEGACY is set to anything except "0" then
 # this will run the "old" IsrTask based pipelines. Default is to
 # run the new IsrTaskLSST pipelines.
-LEGACY_MODE = os.environ.get("CI_CPP_LEGACY", "0")
+LEGACY_MODE = int(os.environ.get("CI_CPP_LEGACY", "0"))
 
 num_process = GetOption('num_jobs')
 
@@ -354,7 +354,7 @@ ingest = env.Command(
 env.Alias("ingest", ingest)
 
 
-if LEGACY_MODE == "0":
+if LEGACY_MODE < 1:
     # New LSST ISR task pipelines.
 
     # Create bootstrap bias
