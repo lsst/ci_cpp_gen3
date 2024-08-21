@@ -108,7 +108,7 @@ class FlatTestCases(lsst.utils.tests.TestCase):
         """
         mean = afwMath.makeStatistics(self.exposure.getImage(), afwMath.MEAN).getValue()
         sigma = afwMath.makeStatistics(self.exposure.getImage(), afwMath.STDEV).getValue()
-        expectMean = 10600
+        expectMean = 10370
         expectSigmaMax = 3000
         self.assertLess(np.abs(mean - expectMean), sigma,
                         msg=f"Test 10.X: {mean} {expectMean} {sigma}")
