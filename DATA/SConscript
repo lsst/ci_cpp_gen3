@@ -101,6 +101,8 @@ def getPipeTaskCmd(stage, expList, pipelineFile):
         args.append("-c cpDarkForDefectsIsr:doCrosstalk=False")
     elif stage in ['flat_for_defects']:
         args.append("-c cpFlatIsr:doCrosstalk=False")
+    elif stage in ['spectroFlat']:
+        args.append('-c cpSpectroFlat:inputFlatPhysicalFilter="RG610~empty"')
     # Crosstalk solution not that good; discards many
     # amps. Turn it off for ISR of the science exposures.
     # See DM-34173; DM-35041
@@ -263,6 +265,14 @@ flat = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_flat'),
                    ])
 env.Alias('flat', flat)
 
+# Create SPECTROFLAT
+spectroFlat = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_spectroFlat')],
+                          flat,
+                          [getPipeTaskCmd('spectroFlat', [exposureDict['allFlatExposures'][0]],
+                                          'cpSpectroFlat.yaml')
+                           ])
+env.Alias('spectroFlat', spectroFlat)
+
 # Create CROSSTALK
 crosstalk = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_crosstalk'),
                          os.path.join(REPO_ROOT, 'ci_cpv_crosstalk'),
@@ -390,6 +400,7 @@ env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_flat_for_def
 env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_defects'))
 env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_dark'))
 env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_flat'))
+env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_spectroFlat'))
 env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_crosstalk'))
 env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpv_defects'))
 env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_ptc'))
@@ -403,7 +414,7 @@ env.Depends(utils.targets['tests'], os.path.join(REPO_ROOT, 'ci_cpp_ctiProc'))
 
 # Set up things to clean.
 targets = [ctiProc, cti, sky, defects, bfk, linearizer, science, gain, ptc, crosstalk,
-           flat, defectsVerify, dark_for_defects, flat_for_defects, dark, bias, ingest, butler]
+           flat, spectroFlat, defectsVerify, dark_for_defects, flat_for_defects, dark, bias, ingest, butler]
 env.Clean(targets, [y for x in targets for y in x] +
           [os.path.join(REPO_ROOT, "calib"), os.path.join(REPO_ROOT, "LATISS")])
 
