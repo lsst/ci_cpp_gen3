@@ -265,14 +265,6 @@ flat = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_flat'),
                    ])
 env.Alias('flat', flat)
 
-# Create SPECTROFLAT
-spectroFlat = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_spectroFlat')],
-                          flat,
-                          [getPipeTaskCmd('spectroFlat', [exposureDict['allFlatExposures'][0]],
-                                          'cpSpectroFlat.yaml')
-                           ])
-env.Alias('spectroFlat', spectroFlat)
-
 # Create CROSSTALK
 crosstalk = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_crosstalk'),
                          os.path.join(REPO_ROOT, 'ci_cpv_crosstalk'),
@@ -303,6 +295,15 @@ ptc = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_ptc'),
                                 'verifyPtc.yaml'),
                   ])
 env.Alias('ptc', ptc)
+
+# Create SPECTROFLAT
+spectroFlat = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_spectroFlat')],
+                          ptc,
+                          [getPipeTaskCmd('spectroFlat', [exposureDict['allFlatExposures'][0]],
+                                          'cpSpectroFlat.yaml')
+                           ])
+env.Alias('spectroFlat', spectroFlat)
+
 
 # Gain from flat pairs
 gain = env.Command([os.path.join(REPO_ROOT, 'ci_cpp_gain'),
