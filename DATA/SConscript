@@ -190,7 +190,7 @@ butler = env.Command([File(os.path.join(REPO_ROOT, "gen3.sqlite3")),
                                        "register-instrument", REPO_ROOT, CAMERA),
                       getExecutableCmd("daf_butler", "butler",
                                        "write-curated-calibrations", REPO_ROOT,
-                                       CAMERA),
+                                       CAMERA, "--collection", "LATISS/calib"),
                   ])
 env.Alias("butler", butler)
 
