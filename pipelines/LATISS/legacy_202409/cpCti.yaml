@@ -1,7 +1,7 @@
 description: cp_pipe CTI calibration construction -- for ci_cpp only!
 instrument: lsst.obs.lsst.Latiss
 imports:
-  - location: $CP_PIPE_DIR/pipelines/LATISS/cpCti.yaml
+  - location: $CP_PIPE_DIR/pipelines/LATISS/legacy_202409/cpCti.yaml
 tasks:
   cpCtiSolve:
     class: lsst.cp.pipe.CpCtiSolveTask
