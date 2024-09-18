@@ -30,6 +30,8 @@ from lsst.ip.isr import (Defects, BrighterFatterKernel, CrosstalkCalib, Deferred
                          PhotonTransferCurveDataset)
 from lsst.utils import getPackageDir
 
+LEGACY_MODE = int(os.environ.get("CI_CPP_LEGACY", "0"))
+
 
 class OutputTestCases(lsst.utils.tests.TestCase):
     @classmethod

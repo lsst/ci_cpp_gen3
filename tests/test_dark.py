@@ -31,10 +31,14 @@ from lsst.utils import getPackageDir
 
 from lsst.pipe.tasks.repair import RepairTask
 
+LEGACY_MODE = int(os.environ.get("CI_CPP_LEGACY", "0"))
+
 
 # TODO: DM-26396
 #       Update these tests to validate calibration construction.
-class DarkTestCases(lsst.utils.tests.TestCase):
+
+@unittest.skipIf(LEGACY_MODE == 0, "Skipping legacy tests.")
+class DarkTestCasesLegacy(lsst.utils.tests.TestCase):
     @classmethod
     def setUpClass(cls):
         """Setup butler and generate an ISR processed exposure.
