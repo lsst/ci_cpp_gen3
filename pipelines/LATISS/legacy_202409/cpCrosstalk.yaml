@@ -1,7 +1,7 @@
 description: ci_cpp CROSSTALK calibration construction
 instrument: lsst.obs.lsst.Latiss
 imports:
-  - location: $CP_PIPE_DIR/pipelines/LATISS/cpCrosstalk.yaml
+  - location: $CP_PIPE_DIR/pipelines/LATISS/legacy_202409/cpCrosstalk.yaml
 tasks:
   cpCrosstalkSolve:
     class: lsst.cp.pipe.CrosstalkSolveTask
