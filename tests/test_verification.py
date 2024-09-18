@@ -84,7 +84,16 @@ class VerificationTestCases(lsst.utils.tests.TestCase):
         result : `dict`
             The archived result dictionary.
         """
-        fileLocation = os.path.join(getPackageDir("ci_cpp_gen3"), "tests", "data", filename)
+        if LEGACY_MODE > 0:
+            fileLocation = os.path.join(
+                getPackageDir("ci_cpp_gen3"),
+                "tests",
+                "data",
+                "legacy_202409",
+                filename,
+            )
+        else:
+            fileLocation = os.path.join(getPackageDir("ci_cpp_gen3"), "tests", "data", filename)
 
         with open(fileLocation, 'r') as file:
             result = yaml.safe_load(file)
@@ -205,17 +214,18 @@ class VerificationTestCases(lsst.utils.tests.TestCase):
         # self.genericComparison('ci_cpv_bfk', dataId, mapping)
         pass
 
+    @unittest.skipIf(LEGACY_MODE > 0, "Skipping linearizer verify test.")
     def test_linearizerVerify(self):
         """Run comparison for linearizer.
 
         DM-40856 Linearity fits from ci_cpp are not stable.
         """
-        # dataId = {'instrument': 'LATISS', 'detector': 0}
-        # mapping = {'run': ('verifyLinearityStats', 'linearityRun.yaml'),
-        #            'det': ('verifyLinearityDetStats', 'linearityDet.yaml')}
-        # self.genericComparison('ci_cpv_linearizer', dataId, mapping)
-        pass
+        dataId = {"instrument": "LATISS", "detector": 0}
+        mapping = {"run": ("verifyLinearizerStats", "linearizerRun.yaml"),
+                   "det": ("verifyLinearizerDetStats", "linearizerDet.yaml")}
+        self.genericComparison("ci_cpv_linearizer", dataId, mapping)
 
+    @unittest.skipIf(LEGACY_MODE == 0, "Skipping crosstalk verify test.")
     def test_crosstalkVerify(self):
         """Run comparison for crosstalk."""
         dataId = {'instrument': 'LATISS', 'detector': 0}
