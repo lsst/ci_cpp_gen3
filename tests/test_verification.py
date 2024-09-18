@@ -28,6 +28,8 @@ import lsst.utils.tests
 
 from lsst.utils import getPackageDir
 
+LEGACY_MODE = int(os.environ.get("CI_CPP_LEGACY", "0"))
+
 
 class VerificationTestCases(lsst.utils.tests.TestCase):
     @classmethod
