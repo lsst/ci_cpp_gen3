@@ -99,9 +99,11 @@ class OutputTestCases(lsst.utils.tests.TestCase):
     def test_ptcOutput(self):
         self.assertIsInstance(self.getExpectedProduct('ptc'), PhotonTransferCurveDataset)
 
+    @unittest.skipIf(LEGACY_MODE == 0, "Skipping BFK test until we have IsrTaskLSST BFK pipelines.")
     def test_bfkOutput(self):
         self.assertIsInstance(self.getExpectedProduct('bfk'), BrighterFatterKernel)
 
+    @unittest.skipIf(LEGACY_MODE == 0, "Skipping individual gain output test.")
     def test_gainOutput(self):
         # These are certified on a per-exposure basis.
         dataId = {'detector': 0, 'exposure': 2021052500079, 'instrument': 'LATISS'}
@@ -125,9 +127,11 @@ class OutputTestCases(lsst.utils.tests.TestCase):
     def test_skyOutput(self):
         self.assertIsInstance(self.getExpectedProduct('sky'), Exposure)
 
+    @unittest.skipIf(LEGACY_MODE == 0, "Skipping CTI test until we have IsrTaskLSST CTI pipelines.")
     def test_ctiOutput(self):
         self.assertIsInstance(self.getExpectedProduct('cti'), DeferredChargeCalib)
 
+    @unittest.skipIf(LEGACY_MODE == 0, "Skipping CTI test until we have IsrTaskLSST CTI pipelines.")
     def test_ctiProcOutput(self):
         # This needs one of the actual exposures and the specific
         # collection.
