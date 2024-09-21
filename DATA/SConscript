@@ -88,7 +88,7 @@ def getPipeTaskCmd(stage, expList, pipelineFile):
     else:
         pipelineFile, extension = pipelineFile, ""
 
-    pipelineYaml = os.path.join(PKG_ROOT, "pipelines", pipelineFile)
+    pipelineYaml = os.path.join(PKG_ROOT, "pipelines", "LATISS", pipelineFile)
     if not os.path.exists(pipelineYaml):
         pipelineYaml = os.path.join(env.ProductDir("cp_pipe"), "pipelines", "LATISS", pipelineFile)
     if extension != "":
@@ -167,7 +167,7 @@ def getVerifyCmd(stage, expList, pipelineFile):
     """
     inputCollections = "calib/v00,LATISS/calib,LATISS/raw/all"
 
-    pipelineYaml = os.path.join(PKG_ROOT, "pipelines", pipelineFile)
+    pipelineYaml = os.path.join(PKG_ROOT, "pipelines", "LATISS", pipelineFile)
     if not os.path.exists(pipelineYaml):
         pipelineYaml = os.path.join(env.ProductDir('cp_verify'), 'pipelines', 'LATISS', pipelineFile)
 
