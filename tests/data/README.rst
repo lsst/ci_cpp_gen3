@@ -94,7 +94,7 @@ Run level:
 
 .. code-block:: sh
 
-   cp ../../DATA/ci_cpv_flat/*/verifyFlatStats/verifyFlatStats* ./flatRun.yaml
+   cp ../../DATA/ci_cpv_flat/*/verifyFlatStats/r/RG610~empty/* ./flatRun.yaml
 
 Exposure level:
 
@@ -116,13 +116,13 @@ Run level:
 
 .. code-block:: sh
 
-   cp ../../DATA/ci_cpv_linearizer/*/verifyLinearityStats/verifyLinearityStats* ./linearityRun.yaml
+   cp ../../DATA/ci_cpv_linearizer/*/verifyLinearizerStats/verifyLinearizerStats* ./linearizerRun.yaml
 
 Detector level:
 
 .. code-block:: sh
 
-   cp ../../DATA/ci_cpv_linearizer/*/verifyLinearityDetStats/verifyLinearityDetStats* ./linearityDet.yaml
+   cp ../../DATA/ci_cpv_linearizer/*/verifyLinearizerDetStats/verifyLinearizerDetStats* ./linearizerDet.yaml
 
 
 ptc
