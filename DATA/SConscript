@@ -109,8 +109,17 @@ def getPipeTaskCmd(stage, expList, pipelineFile):
         args.append("-c cpLinearizerPtcExtract:useEfdPhotodiodeData=False "
                     "-c cpLinearizerSolve:splineKnots=5 "
                     "-c cpLinearizerSolve:usePhotodiode=False")
-    if stage == "ptc":
+    elif stage == "ptc":
         args.append("-c cpPtcExtract:useEfdPhotodiodeData=False")
+    elif stage == "bfk":
+        # For the limited test PTC data, we do not have enough to
+        # test the BFK out to as large as 15x15.
+        # TODO DM-46445: Figure out configs to give a reasonable
+        # result for the test data.
+        args.append("-c cpBfkPtcExtract:useEfdPhotodiodeData=False "
+                    "-c cpBfkPtcExtract:maximumRangeCovariancesAstier=8 "
+                    "-c cpBfkPtcSolve:maximumRangeCovariancesAstier=8 "
+                    "-c cpBfkPtcSolve:maximumRangeCovariancesAstierFullCovFit=8")
 
     # Bootstrap calibrations need to output to RUN collections.
     if "Bootstrap" in stage:
@@ -473,6 +482,18 @@ if LEGACY_MODE == 0:
     )
     env.Alias("ptc", ptc)
 
+    bfk = env.Command(
+        [
+            os.path.join(REPO_ROOT, "ci_cpp_bfk"),
+            os.path.join(REPO_ROOT, "calib", "v00", "bfk")],
+        [ptc],
+        [
+            getPipeTaskCmd("bfk", exposureDict["ptcExposurePairs"], "cpBfk.yaml"),
+            getCertifyCmd("bfk"),
+        ],
+    )
+    env.Alias("bfk", bfk)
+
     # Create a bias and certify/verify.
     bias = env.Command(
         [
@@ -480,7 +501,7 @@ if LEGACY_MODE == 0:
             os.path.join(REPO_ROOT, "ci_cpv_bias"),
             os.path.join(REPO_ROOT, "calib", "v00", "bias"),
         ],
-        [ptc],
+        [bfk],
         [
             getPipeTaskCmd("bias", exposureDict["biasExposures"], "cpBias.yaml"),
             getCertifyCmd("bias"),
@@ -520,8 +541,6 @@ if LEGACY_MODE == 0:
         ],
     )
     env.Alias("flat", flat)
-
-    # BFK TBD
 
     # CTI TBD
 
@@ -571,6 +590,7 @@ if LEGACY_MODE == 0:
     env.Depends(utils.targets["tests"], os.path.join(REPO_ROOT, "ci_cpp_defects"))
     env.Depends(utils.targets["tests"], os.path.join(REPO_ROOT, "ci_cpp_linearizer"))
     env.Depends(utils.targets["tests"], os.path.join(REPO_ROOT, "ci_cpp_ptc"))
+    env.Depends(utils.targets["tests"], os.path.join(REPO_ROOT, "ci_cpp_bfk"))
     env.Depends(utils.targets["tests"], os.path.join(REPO_ROOT, "ci_cpp_bias"))
     env.Depends(utils.targets["tests"], os.path.join(REPO_ROOT, "ci_cpp_dark"))
     env.Depends(utils.targets["tests"], os.path.join(REPO_ROOT, "ci_cpp_flat"))
@@ -586,6 +606,7 @@ if LEGACY_MODE == 0:
         defects,
         linearizer,
         ptc,
+        bfk,
         bias,
         dark,
         flat,
