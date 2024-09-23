@@ -109,7 +109,7 @@ def getPipeTaskCmd(stage, expList, pipelineFile):
         args.append("-c cpLinearizerPtcExtract:useEfdPhotodiodeData=False "
                     "-c cpLinearizerSolve:splineKnots=5 "
                     "-c cpLinearizerSolve:usePhotodiode=False")
-    elif stage == "ptc":
+    elif stage in ("ptc", "gainFromFlatPairs"):
         args.append("-c cpPtcExtract:useEfdPhotodiodeData=False")
     elif stage == "bfk":
         # For the limited test PTC data, we do not have enough to
@@ -482,11 +482,25 @@ if LEGACY_MODE == 0:
     )
     env.Alias("ptc", ptc)
 
+    # Gain from flat pairs
+    # TODO DM-46448: Right now this just runs the task, but it should be verified
+    # or updated properly on this ticket.
+    gainFromFlatPairs = env.Command(
+        [
+            os.path.join(REPO_ROOT, "ci_cpp_gainFromFlatPairs"),
+        ],
+        [ptc],
+        [
+            getPipeTaskCmd("gainFromFlatPairs", exposureDict["ptcExposurePairs"], "cpPtc.yaml#cpPtcGainFromFlatPairs"),
+        ],
+    )
+    env.Alias("gainFromFlatPairs", gainFromFlatPairs)
+
     bfk = env.Command(
         [
             os.path.join(REPO_ROOT, "ci_cpp_bfk"),
             os.path.join(REPO_ROOT, "calib", "v00", "bfk")],
-        [ptc],
+        [gainFromFlatPairs],
         [
             getPipeTaskCmd("bfk", exposureDict["ptcExposurePairs"], "cpBfk.yaml"),
             getCertifyCmd("bfk"),
@@ -590,6 +604,7 @@ if LEGACY_MODE == 0:
     env.Depends(utils.targets["tests"], os.path.join(REPO_ROOT, "ci_cpp_defects"))
     env.Depends(utils.targets["tests"], os.path.join(REPO_ROOT, "ci_cpp_linearizer"))
     env.Depends(utils.targets["tests"], os.path.join(REPO_ROOT, "ci_cpp_ptc"))
+    env.Depends(utils.targets["tests"], os.path.join(REPO_ROOT, "ci_cpp_gainFromFlatPairs"))
     env.Depends(utils.targets["tests"], os.path.join(REPO_ROOT, "ci_cpp_bfk"))
     env.Depends(utils.targets["tests"], os.path.join(REPO_ROOT, "ci_cpp_bias"))
     env.Depends(utils.targets["tests"], os.path.join(REPO_ROOT, "ci_cpp_dark"))
@@ -606,6 +621,7 @@ if LEGACY_MODE == 0:
         defects,
         linearizer,
         ptc,
+        gainFromFlatPairs,
         bfk,
         bias,
         dark,
