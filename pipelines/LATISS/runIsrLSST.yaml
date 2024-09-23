@@ -1,8 +1,9 @@
-description: ip_isr for ci_cpp_gen3
+description: ISR run on LATISS for ci_cpp_gen3
 instrument: lsst.obs.lsst.Latiss
 tasks:
   isr:
     class: lsst.ip.isr.IsrTaskLSST
     config:
-      doBrighterFatter: false
+      overscanCamera.defaultDetectorConfig.defaultAmpConfig.saturation: 120000
+      # TODO DM-46426: Add cpCtiLSST pipeline so that this can be True.
       doDeferredCharge: false
