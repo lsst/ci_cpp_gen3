@@ -68,6 +68,7 @@ class VerificationTestCases(lsst.utils.tests.TestCase):
         except Exception:
             # Ignoring these errors means there may be downstream test
             # failures.
+            print("ARGH")
             pass
         return product
 
@@ -138,7 +139,7 @@ class VerificationTestCases(lsst.utils.tests.TestCase):
         """
         if 'run' in componentMap:
             runStatDataType, runStatFile = componentMap['run']
-            runStats = self.getExpectedProduct(runStatDataType, collections=collections)
+            runStats = self.getExpectedProduct(runStatDataType, dataId=dataId, collections=collections)
             expectation = self.readExpectation(runStatFile)
             self.assertYamlEqual(runStats, expectation, "run level")
 
@@ -174,7 +175,12 @@ class VerificationTestCases(lsst.utils.tests.TestCase):
 
     def test_flatVerify(self):
         """Run comparison for flat."""
-        dataId = {'instrument': 'LATISS', 'detector': 0, 'exposure': 2021052500080}
+        dataId = {
+            "instrument": 'LATISS',
+            "detector": 0,
+            "exposure": 2021052500080,
+            "physical_filter": "RG610~empty",
+        }
         mapping = {'run': ('verifyFlatStats', 'flatRun.yaml'),
                    'exp': ('verifyFlatExpStats', 'flatExp.yaml'),
                    'det': ('verifyFlatDetStats', 'flatDet.yaml')}
