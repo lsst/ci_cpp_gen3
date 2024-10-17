@@ -1,0 +1,7 @@
+Detector 0:
+  FAILURES:
+  - Detector 0 PTC_BFE_A00
+  - Detector 0 PTC_GAIN
+  - Detector 0 PTC_NOISE
+  - Detector 0 PTC_TURNOFF
+SUCCESS: false

@@ -28,6 +28,8 @@ import lsst.utils.tests
 
 from lsst.utils import getPackageDir
 
+LEGACY_MODE = int(os.environ.get("CI_CPP_LEGACY", "0"))
+
 
 class VerificationTestCases(lsst.utils.tests.TestCase):
     @classmethod
@@ -66,6 +68,7 @@ class VerificationTestCases(lsst.utils.tests.TestCase):
         except Exception:
             # Ignoring these errors means there may be downstream test
             # failures.
+            print("ARGH")
             pass
         return product
 
@@ -82,7 +85,16 @@ class VerificationTestCases(lsst.utils.tests.TestCase):
         result : `dict`
             The archived result dictionary.
         """
-        fileLocation = os.path.join(getPackageDir("ci_cpp_gen3"), "tests", "data", filename)
+        if LEGACY_MODE > 0:
+            fileLocation = os.path.join(
+                getPackageDir("ci_cpp_gen3"),
+                "tests",
+                "data",
+                "legacy_202409",
+                filename,
+            )
+        else:
+            fileLocation = os.path.join(getPackageDir("ci_cpp_gen3"), "tests", "data", filename)
 
         with open(fileLocation, 'r') as file:
             result = yaml.safe_load(file)
@@ -94,7 +106,6 @@ class VerificationTestCases(lsst.utils.tests.TestCase):
             self.assertAlmostEqual(inputA, inputB, delta=0.05, msg=msg)
 
     def assertYamlEqual(self, inputA, inputB, msg=None):
-        return True
         self.assertEqual(inputA.keys(), inputB.keys(), msg)
         for key in inputA.keys():
             self.assertEqual(type(inputA[key]), type(inputB[key]), msg)
@@ -128,7 +139,7 @@ class VerificationTestCases(lsst.utils.tests.TestCase):
         """
         if 'run' in componentMap:
             runStatDataType, runStatFile = componentMap['run']
-            runStats = self.getExpectedProduct(runStatDataType, collections=collections)
+            runStats = self.getExpectedProduct(runStatDataType, dataId=dataId, collections=collections)
             expectation = self.readExpectation(runStatFile)
             self.assertYamlEqual(runStats, expectation, "run level")
 
@@ -164,7 +175,12 @@ class VerificationTestCases(lsst.utils.tests.TestCase):
 
     def test_flatVerify(self):
         """Run comparison for flat."""
-        dataId = {'instrument': 'LATISS', 'detector': 0, 'exposure': 2021052500080}
+        dataId = {
+            "instrument": 'LATISS',
+            "detector": 0,
+            "exposure": 2021052500080,
+            "physical_filter": "RG610~empty",
+        }
         mapping = {'run': ('verifyFlatStats', 'flatRun.yaml'),
                    'exp': ('verifyFlatExpStats', 'flatExp.yaml'),
                    'det': ('verifyFlatDetStats', 'flatDet.yaml')}
@@ -193,17 +209,18 @@ class VerificationTestCases(lsst.utils.tests.TestCase):
         # self.genericComparison('ci_cpv_bfk', dataId, mapping)
         pass
 
+    @unittest.skipIf(LEGACY_MODE > 0, "Skipping linearizer verify test.")
     def test_linearizerVerify(self):
         """Run comparison for linearizer.
 
         DM-40856 Linearity fits from ci_cpp are not stable.
         """
-        # dataId = {'instrument': 'LATISS', 'detector': 0}
-        # mapping = {'run': ('verifyLinearityStats', 'linearityRun.yaml'),
-        #            'det': ('verifyLinearityDetStats', 'linearityDet.yaml')}
-        # self.genericComparison('ci_cpv_linearizer', dataId, mapping)
-        pass
+        dataId = {"instrument": "LATISS", "detector": 0}
+        mapping = {"run": ("verifyLinearizerStats", "linearizerRun.yaml"),
+                   "det": ("verifyLinearizerDetStats", "linearizerDet.yaml")}
+        self.genericComparison("ci_cpv_linearizer", dataId, mapping)
 
+    @unittest.skipIf(LEGACY_MODE == 0, "Skipping crosstalk verify test.")
     def test_crosstalkVerify(self):
         """Run comparison for crosstalk."""
         dataId = {'instrument': 'LATISS', 'detector': 0}
