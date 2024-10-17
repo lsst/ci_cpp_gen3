@@ -68,6 +68,7 @@ class VerificationTestCases(lsst.utils.tests.TestCase):
         except Exception:
             # Ignoring these errors means there may be downstream test
             # failures.
+            print("ARGH")
             pass
         return product
 
