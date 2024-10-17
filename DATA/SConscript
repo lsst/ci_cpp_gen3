@@ -109,7 +109,10 @@ def getPipeTaskCmd(stage, expList, pipelineFile):
         args.append("-c cpLinearizerPtcExtract:useEfdPhotodiodeData=False "
                     "-c cpLinearizerSolve:splineKnots=5 "
                     "-c cpLinearizerSolve:usePhotodiode=False")
-    elif stage in ("ptc", "gainFromFlatPairs"):
+    elif stage == "ptc":
+        args.append("-c cpPtcExtract:useEfdPhotodiodeData=False")
+        args.append("-c cpPtcSolve:ampOffsetGainRatioMaxAdu=40000.0")
+    elif stage == "gainFromFlatPairs":
         args.append("-c cpPtcExtract:useEfdPhotodiodeData=False")
     elif stage == "bfk":
         # For the limited test PTC data, we do not have enough to
@@ -120,6 +123,8 @@ def getPipeTaskCmd(stage, expList, pipelineFile):
                     "-c cpBfkPtcExtract:maximumRangeCovariancesAstier=8 "
                     "-c cpBfkPtcSolve:maximumRangeCovariancesAstier=8 "
                     "-c cpBfkPtcSolve:maximumRangeCovariancesAstierFullCovFit=8")
+    elif stage == "spectroFlat":
+        args.append('-c cpSpectroFlat:inputFlatPhysicalFilter="RG610~empty"')
 
     # Bootstrap calibrations need to output to RUN collections.
     if "Bootstrap" in stage:
@@ -556,6 +561,18 @@ if LEGACY_MODE == 0:
     )
     env.Alias("flat", flat)
 
+    # Create SpectroFlat
+    spectroFlat = env.Command(
+        [
+            os.path.join(REPO_ROOT, "ci_cpp_spectroFlat"),
+        ],
+        [flat],
+        [
+            getPipeTaskCmd("spectroFlat", [exposureDict["allFlatExposures"][0]], "cpSpectroFlat.yaml"),
+        ],
+    )
+    env.Alias("spectroFlat", spectroFlat)
+
     # CTI TBD
 
     # Verify the defects.
@@ -563,7 +580,7 @@ if LEGACY_MODE == 0:
         [
             os.path.join(REPO_ROOT, "ci_cpv_defects"),
         ],
-        [flat],
+        [flat, spectroFlat],
         [
             getVerifyCmd("defects", exposureDict["scienceExposures"], "verifyDefects.yaml"),
         ],
@@ -609,6 +626,7 @@ if LEGACY_MODE == 0:
     env.Depends(utils.targets["tests"], os.path.join(REPO_ROOT, "ci_cpp_bias"))
     env.Depends(utils.targets["tests"], os.path.join(REPO_ROOT, "ci_cpp_dark"))
     env.Depends(utils.targets["tests"], os.path.join(REPO_ROOT, "ci_cpp_flat"))
+    env.Depends(utils.targets["tests"], os.path.join(REPO_ROOT, "ci_cpp_spectroFlat"))
     env.Depends(utils.targets["tests"], os.path.join(REPO_ROOT, "ci_cpp_science"))
     env.Depends(utils.targets["tests"], os.path.join(REPO_ROOT, "ci_cpp_sky"))
     env.Depends(utils.targets["tests"], os.path.join(REPO_ROOT, "ci_cpv_defects"))
@@ -626,6 +644,7 @@ if LEGACY_MODE == 0:
         bias,
         dark,
         flat,
+        spectroFlat,
         science,
         sky,
         defectsVerify,
