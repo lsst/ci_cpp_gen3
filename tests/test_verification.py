@@ -94,7 +94,6 @@ class VerificationTestCases(lsst.utils.tests.TestCase):
             self.assertAlmostEqual(inputA, inputB, delta=0.05, msg=msg)
 
     def assertYamlEqual(self, inputA, inputB, msg=None):
-        return True
         self.assertEqual(inputA.keys(), inputB.keys(), msg)
         for key in inputA.keys():
             self.assertEqual(type(inputA[key]), type(inputB[key]), msg)
