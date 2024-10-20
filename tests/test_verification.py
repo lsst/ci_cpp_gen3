@@ -103,7 +103,9 @@ class VerificationTestCases(lsst.utils.tests.TestCase):
             elif isinstance(inputA[key], list):
                 self.assertEqual(len(inputA[key]), len(inputB[key]), msg)
                 for aa, bb in zip(inputA[key], inputB[key]):
-                    if isinstance(aa, (int, float)):
+                    if isinstance(aa, dict):
+                        self.assertYamlEqual(aa, bb, msg)
+                    elif isinstance(aa, (int, float)):
                         self.assertNumbersEqual(aa, bb, msg)
                     else:
                         self.assertEqual(aa, bb, msg)
