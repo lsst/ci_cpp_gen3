@@ -94,7 +94,6 @@ class VerificationTestCases(lsst.utils.tests.TestCase):
             self.assertAlmostEqual(inputA, inputB, delta=0.05, msg=msg)
 
     def assertYamlEqual(self, inputA, inputB, msg=None):
-        return True
         self.assertEqual(inputA.keys(), inputB.keys(), msg)
         for key in inputA.keys():
             self.assertEqual(type(inputA[key]), type(inputB[key]), msg)
@@ -104,7 +103,13 @@ class VerificationTestCases(lsst.utils.tests.TestCase):
             elif isinstance(inputA[key], list):
                 self.assertEqual(len(inputA[key]), len(inputB[key]), msg)
                 for aa, bb in zip(inputA[key], inputB[key]):
-                    if isinstance(aa, (int, float)):
+                    if isinstance(aa, dict):
+                        self.assertYamlEqual(aa, bb, msg)
+                    elif isinstance(aa, list):
+                        self.assertEqual(len(aa), len(bb))
+                        for i in range(len(aa)):
+                            self.assertNumbersEqual(aa[i], bb[i], msg)
+                    elif isinstance(aa, (int, float)):
                         self.assertNumbersEqual(aa, bb, msg)
                     else:
                         self.assertEqual(aa, bb, msg)
@@ -128,7 +133,7 @@ class VerificationTestCases(lsst.utils.tests.TestCase):
         """
         if 'run' in componentMap:
             runStatDataType, runStatFile = componentMap['run']
-            runStats = self.getExpectedProduct(runStatDataType, collections=collections)
+            runStats = self.getExpectedProduct(runStatDataType, dataId=dataId, collections=collections)
             expectation = self.readExpectation(runStatFile)
             self.assertYamlEqual(runStats, expectation, "run level")
 
@@ -164,7 +169,12 @@ class VerificationTestCases(lsst.utils.tests.TestCase):
 
     def test_flatVerify(self):
         """Run comparison for flat."""
-        dataId = {'instrument': 'LATISS', 'detector': 0, 'exposure': 2021052500080}
+        dataId = {
+            "instrument": "LATISS",
+            "detector": 0,
+            "exposure": 2021052500080,
+            "physical_filter": "RG610~empty",
+        }
         mapping = {'run': ('verifyFlatStats', 'flatRun.yaml'),
                    'exp': ('verifyFlatExpStats', 'flatExp.yaml'),
                    'det': ('verifyFlatDetStats', 'flatDet.yaml')}

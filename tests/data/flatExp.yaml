@@ -1,3 +1,8 @@
 RXX_S00:
   SUCCESS: true
+EXP:
+  SCATTER: 0.0
+VERIFY:
+  EXP:
+    SCATTER: true
 SUCCESS: true
