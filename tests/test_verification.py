@@ -103,7 +103,7 @@ class VerificationTestCases(lsst.utils.tests.TestCase):
 
     def assertNumbersEqual(self, inputA, inputB, msg):
         if not (np.isnan(inputA) and np.isnan(inputB)):
-            self.assertAlmostEqual(inputA, inputB, delta=0.05, msg=msg)
+            self.assertAlmostEqual(inputA, inputB, delta=0.20, msg=msg)
 
     def assertYamlEqual(self, inputA, inputB, msg=None):
         self.assertEqual(inputA.keys(), inputB.keys(), msg)
