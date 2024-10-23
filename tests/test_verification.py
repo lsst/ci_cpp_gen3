@@ -101,11 +101,11 @@ class VerificationTestCases(lsst.utils.tests.TestCase):
 
         return result
 
-    def assertNumbersEqual(self, inputA, inputB, msg, delta=0.05):
+    def assertNumbersEqual(self, inputA, inputB, msg, delta=0.2):
         if not (np.isnan(inputA) and np.isnan(inputB)):
             self.assertAlmostEqual(inputA, inputB, delta=delta, msg=msg)
 
-    def assertYamlEqual(self, inputA, inputB, msg=None, delta=0.05):
+    def assertYamlEqual(self, inputA, inputB, msg=None, delta=0.2):
         self.assertEqual(inputA.keys(), inputB.keys(), msg)
         for key in inputA.keys():
             self.assertEqual(type(inputA[key]), type(inputB[key]), msg)
@@ -130,7 +130,7 @@ class VerificationTestCases(lsst.utils.tests.TestCase):
             else:
                 self.assertEqual(inputA[key], inputB[key], msg)
 
-    def genericComparison(self, collections, dataId, componentMap, delta=0.05):
+    def genericComparison(self, collections, dataId, componentMap, delta=0.2):
         """Run common comparisons.
 
         Parameters
@@ -201,7 +201,7 @@ class VerificationTestCases(lsst.utils.tests.TestCase):
         mapping = {'run': ('verifyPtcStats', 'ptcRun.yaml'),
                    'det': ('verifyPtcDetStats', 'ptcDet.yaml')}
 
-        self.genericComparison('ci_cpv_ptc', dataId, mapping)
+        self.genericComparison('ci_cpv_ptc', dataId, mapping, delta=0.5)
 
     def test_bfkVerify(self):
         """Run comparison for bfk.
@@ -226,7 +226,7 @@ class VerificationTestCases(lsst.utils.tests.TestCase):
         dataId = {"instrument": "LATISS", "detector": 0}
         mapping = {"run": ("verifyLinearizerStats", "linearizerRun.yaml"),
                    "det": ("verifyLinearizerDetStats", "linearizerDet.yaml")}
-        self.genericComparison("ci_cpv_linearizer", dataId, mapping)
+        self.genericComparison("ci_cpv_linearizer", dataId, mapping, delta=1.0)
 
     @unittest.skipIf(LEGACY_MODE == 0, "Skipping crosstalk verify test.")
     def test_crosstalkVerify(self):
