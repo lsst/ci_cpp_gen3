@@ -101,11 +101,11 @@ class VerificationTestCases(lsst.utils.tests.TestCase):
 
         return result
 
-    def assertNumbersEqual(self, inputA, inputB, msg):
+    def assertNumbersEqual(self, inputA, inputB, msg, delta=0.05):
         if not (np.isnan(inputA) and np.isnan(inputB)):
-            self.assertAlmostEqual(inputA, inputB, delta=0.20, msg=msg)
+            self.assertAlmostEqual(inputA, inputB, delta=delta, msg=msg)
 
-    def assertYamlEqual(self, inputA, inputB, msg=None):
+    def assertYamlEqual(self, inputA, inputB, msg=None, delta=0.05):
         self.assertEqual(inputA.keys(), inputB.keys(), msg)
         for key in inputA.keys():
             self.assertEqual(type(inputA[key]), type(inputB[key]), msg)
@@ -120,17 +120,17 @@ class VerificationTestCases(lsst.utils.tests.TestCase):
                     elif isinstance(aa, list):
                         self.assertEqual(len(aa), len(bb))
                         for i in range(len(aa)):
-                            self.assertNumbersEqual(aa[i], bb[i], msg)
+                            self.assertNumbersEqual(aa[i], bb[i], msg, delta=delta)
                     elif isinstance(aa, (int, float)):
-                        self.assertNumbersEqual(aa, bb, msg)
+                        self.assertNumbersEqual(aa, bb, msg, delta=delta)
                     else:
                         self.assertEqual(aa, bb, msg)
             elif isinstance(inputA[key], (int, float)):
-                self.assertNumbersEqual(inputA[key], inputB[key], msg)
+                self.assertNumbersEqual(inputA[key], inputB[key], msg, delta=delta)
             else:
                 self.assertEqual(inputA[key], inputB[key], msg)
 
-    def genericComparison(self, collections, dataId, componentMap):
+    def genericComparison(self, collections, dataId, componentMap, delta=0.05):
         """Run common comparisons.
 
         Parameters
@@ -142,24 +142,26 @@ class VerificationTestCases(lsst.utils.tests.TestCase):
         componentMap : `dict` [`str`, `tuple` [`str`, `str`]]
             Dictionary mapping butler data product to comparison yaml
             file.
+        delta : `float`, optional
+            Delta to use for floating point comparisons.
         """
         if 'run' in componentMap:
             runStatDataType, runStatFile = componentMap['run']
             runStats = self.getExpectedProduct(runStatDataType, dataId=dataId, collections=collections)
             expectation = self.readExpectation(runStatFile)
-            self.assertYamlEqual(runStats, expectation, "run level")
+            self.assertYamlEqual(runStats, expectation, "run level", delta=delta)
 
         if 'exp' in componentMap:
             expStatDataType, expStatFile = componentMap['exp']
             expStats = self.getExpectedProduct(expStatDataType, dataId=dataId, collections=collections)
             expectation = self.readExpectation(expStatFile)
-            self.assertYamlEqual(expStats, expectation, "exposure level")
+            self.assertYamlEqual(expStats, expectation, "exposure level", delta=delta)
 
         if 'det' in componentMap:
             detStatDataType, detStatFile = componentMap['det']
             detStats = self.getExpectedProduct(detStatDataType, dataId=dataId, collections=collections)
             expectation = self.readExpectation(detStatFile)
-            self.assertYamlEqual(detStats, expectation, "detector level")
+            self.assertYamlEqual(detStats, expectation, "detector level", delta=delta)
 
     def test_biasVerify(self):
         """Run comparison for bias."""
