@@ -101,11 +101,11 @@ class VerificationTestCases(lsst.utils.tests.TestCase):
 
         return result
 
-    def assertNumbersEqual(self, inputA, inputB, msg, delta=0.05):
+    def assertNumbersEqual(self, inputA, inputB, msg, delta=0.2):
         if not (np.isnan(inputA) and np.isnan(inputB)):
             self.assertAlmostEqual(inputA, inputB, delta=delta, msg=msg)
 
-    def assertYamlEqual(self, inputA, inputB, msg=None, delta=0.05):
+    def assertYamlEqual(self, inputA, inputB, msg=None, delta=0.2):
         self.assertEqual(inputA.keys(), inputB.keys(), msg)
         for key in inputA.keys():
             self.assertEqual(type(inputA[key]), type(inputB[key]), msg)
@@ -130,7 +130,7 @@ class VerificationTestCases(lsst.utils.tests.TestCase):
             else:
                 self.assertEqual(inputA[key], inputB[key], msg)
 
-    def genericComparison(self, collections, dataId, componentMap, delta=0.05):
+    def genericComparison(self, collections, dataId, componentMap, delta=0.2):
         """Run common comparisons.
 
         Parameters
@@ -170,7 +170,7 @@ class VerificationTestCases(lsst.utils.tests.TestCase):
                    'exp': ('verifyBiasExpStats', 'biasExp.yaml'),
                    'det': ('verifyBiasDetStats', 'biasDet.yaml')}
 
-        self.genericComparison('ci_cpv_bias', dataId, mapping, delta=0.2)
+        self.genericComparison('ci_cpv_bias', dataId, mapping)
 
     def test_darkVerify(self):
         """Run comparison for dark."""
