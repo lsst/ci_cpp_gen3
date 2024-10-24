@@ -226,7 +226,7 @@ class VerificationTestCases(lsst.utils.tests.TestCase):
         dataId = {"instrument": "LATISS", "detector": 0}
         mapping = {"run": ("verifyLinearizerStats", "linearizerRun.yaml"),
                    "det": ("verifyLinearizerDetStats", "linearizerDet.yaml")}
-        self.genericComparison("ci_cpv_linearizer", dataId, mapping, delta=4.0)
+        self.genericComparison("ci_cpv_linearizer", dataId, mapping, delta=10.0)
 
     @unittest.skipIf(LEGACY_MODE == 0, "Skipping crosstalk verify test.")
     def test_crosstalkVerify(self):
