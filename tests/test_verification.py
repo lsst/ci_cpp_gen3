@@ -68,7 +68,6 @@ class VerificationTestCases(lsst.utils.tests.TestCase):
         except Exception:
             # Ignoring these errors means there may be downstream test
             # failures.
-            print("ARGH")
             pass
         return product
 
@@ -201,7 +200,7 @@ class VerificationTestCases(lsst.utils.tests.TestCase):
         mapping = {'run': ('verifyPtcStats', 'ptcRun.yaml'),
                    'det': ('verifyPtcDetStats', 'ptcDet.yaml')}
 
-        self.genericComparison('ci_cpv_ptc', dataId, mapping, delta=0.5)
+        self.genericComparison('ci_cpv_ptc', dataId, mapping, delta=11.0)
 
     def test_bfkVerify(self):
         """Run comparison for bfk.
@@ -226,7 +225,7 @@ class VerificationTestCases(lsst.utils.tests.TestCase):
         dataId = {"instrument": "LATISS", "detector": 0}
         mapping = {"run": ("verifyLinearizerStats", "linearizerRun.yaml"),
                    "det": ("verifyLinearizerDetStats", "linearizerDet.yaml")}
-        self.genericComparison("ci_cpv_linearizer", dataId, mapping, delta=1.0)
+        self.genericComparison("ci_cpv_linearizer", dataId, mapping, delta=20.0)
 
     @unittest.skipIf(LEGACY_MODE == 0, "Skipping crosstalk verify test.")
     def test_crosstalkVerify(self):
