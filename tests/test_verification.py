@@ -111,12 +111,12 @@ class VerificationTestCases(lsst.utils.tests.TestCase):
             self.assertEqual(type(inputA[key]), type(inputB[key]), msg)
 
             if isinstance(inputA[key], dict):
-                self.assertYamlEqual(inputA[key], inputB[key], msg)
+                self.assertYamlEqual(inputA[key], inputB[key], msg, delta=delta)
             elif isinstance(inputA[key], list):
                 self.assertEqual(len(inputA[key]), len(inputB[key]), msg)
                 for aa, bb in zip(inputA[key], inputB[key]):
                     if isinstance(aa, dict):
-                        self.assertYamlEqual(aa, bb, msg)
+                        self.assertYamlEqual(aa, bb, msg, delta=delta)
                     elif isinstance(aa, list):
                         self.assertEqual(len(aa), len(bb))
                         for i in range(len(aa)):
