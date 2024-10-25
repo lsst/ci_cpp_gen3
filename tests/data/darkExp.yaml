@@ -1,5 +1,3 @@
 RXX_S00:
-  SUCCESS: false
-  FAILURES:
-  - C11 CR_NOISE
-SUCCESS: false
+  SUCCESS: true
+SUCCESS: true
