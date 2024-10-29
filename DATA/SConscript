@@ -487,6 +487,20 @@ if LEGACY_MODE == 0:
     )
     env.Alias("ptc", ptc)
 
+    # Create a cti and certify.
+    cti = env.Command(
+        [
+            os.path.join(REPO_ROOT, "ci_cpp_cti"),
+            os.path.join(REPO_ROOT, "calib", "v00", "cti"),
+        ],
+        [ptc],
+        [
+            getPipeTaskCmd("cti", exposureDict["ptcExposurePairs"], "cpCti.yaml"),
+            getCertifyCmd("cti"),
+        ],
+    )
+    env.Alias("cti", cti)
+
     # Gain from flat pairs
     # TODO DM-46448: Right now this just runs the task, but it should be verified
     # or updated properly on this ticket.
@@ -494,7 +508,7 @@ if LEGACY_MODE == 0:
         [
             os.path.join(REPO_ROOT, "ci_cpp_gainFromFlatPairs"),
         ],
-        [ptc],
+        [cti],
         [
             getPipeTaskCmd("gainFromFlatPairs", exposureDict["ptcExposurePairs"], "cpPtc.yaml#cpPtcGainFromFlatPairs"),
         ],
@@ -572,8 +586,6 @@ if LEGACY_MODE == 0:
         ],
     )
     env.Alias("spectroFlat", spectroFlat)
-
-    # CTI TBD
 
     # Verify the defects.
     defectsVerify = env.Command(
