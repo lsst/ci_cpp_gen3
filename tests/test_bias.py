@@ -30,9 +30,13 @@ import lsst.utils.tests
 from lsst.utils import getPackageDir
 from lsst.pipe.tasks.repair import RepairTask
 
+LEGACY_MODE = int(os.environ.get("CI_CPP_LEGACY", "0"))
+
 
 # TODO: DM-26396
 #       Update these tests to validate calibration construction.
+
+@unittest.skipIf(LEGACY_MODE > 0, "Skipping new tests in legacy mode.")
 class BiasTestCases(lsst.utils.tests.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -47,47 +51,50 @@ class BiasTestCases(lsst.utils.tests.TestCase):
 
         """
         repoDir = os.path.join(getPackageDir("ci_cpp_gen3"), "DATA/")
-        butler = dafButler.Butler(repoDir, collections=['LATISS/raw/all', 'calib/v00', 'LATISS/calib'])
+        butler = dafButler.Butler(repoDir, collections=["LATISS/raw/all", "calib/v00", "LATISS/calib"])
 
-        config = ipIsr.IsrTaskConfig()
+        config = ipIsr.IsrTaskLSSTConfig()
+        config.doBias = True
+        config.expectWcs = False
+        config.doDefect = True
+        config.doDark = False
+        config.doFlat = False
+        config.doDiffNonLinearCorrection = False
+        config.doBootstrap = False
+        config.doDeferredCharge = False
+        config.doLinearize = True
+        config.doCorrectGains = False
+        config.doApplyGains = True
+        config.doVariance = True
         config.doSaturation = True
         config.doSuspect = True
-        config.doSetBadRegions = True
-        config.doOverscan = True
-        config.overscan.doParallelOverscan = True
-        config.overscan.fitType = 'MEDIAN_PER_ROW'
-        config.doBias = True
-        config.doVariance = True
-
-        config.doLinearize = False
-        config.doCrosstalk = False
+        config.doCrosstalk = True
         config.doWidenSaturationTrails = False
+        config.doInterpolate = True
+        config.doSetBadRegions = True
         config.doBrighterFatter = False
-        config.doDefect = False
-        config.doSaturationInterpolation = False
-        config.doDark = False
-        config.doStrayLight = False
-        config.doFlat = False
-        config.doApplyGains = False
-        config.doFringe = False
-        config.doMeasureBackground = False
-        config.doVignette = False
-        config.doAttachTransmissionCurve = False
-        config.doUseOpticsTransmission = False
-        config.doUseFilterTransmission = False
-        config.doUseSensorTransmission = False
-        config.doUseAtmosphereTransmission = False
 
-        isrTask = ipIsr.IsrTask(config=config)
-        rawDataId = {'detector': 0, 'exposure': 2021052500015, 'instrument': 'LATISS'}
+        isrTaskLSST = ipIsr.IsrTaskLSST(config=config)
+        rawDataId = {"detector": 0, "exposure": 2021052500015, "instrument": "LATISS"}
         # TODO: DM-26396
         # This is not an independent frame.
-        cls.raw = butler.get('raw', dataId=rawDataId)
-        cls.bias = butler.get('bias', rawDataId)
-        cls.camera = butler.get('camera', rawDataId)
+        cls.raw = butler.get("raw", dataId=rawDataId)
+        cls.bias = butler.get("bias", rawDataId)
+        cls.camera = butler.get("camera", rawDataId)
+        cls.ptc = butler.get("ptc", rawDataId)
+        cls.linearizer = butler.get("linearizer", rawDataId)
+        cls.crosstalk = butler.get("crosstalk", rawDataId)
+        cls.defects = butler.get("defects", rawDataId)
 
-        results = isrTask.run(cls.raw, camera=cls.camera,
-                              bias=cls.bias)
+        results = isrTaskLSST.run(
+            cls.raw,
+            camera=cls.camera,
+            bias=cls.bias,
+            ptc=cls.ptc,
+            linearizer=cls.linearizer,
+            crosstalk=cls.crosstalk,
+            defects=cls.defects,
+        )
 
         cls.exposure = results.outputExposure
 
@@ -160,6 +167,66 @@ class BiasTestCases(lsst.utils.tests.TestCase):
             # needs to be < 0.05
             fractionalError = np.abs(sigma - sigmaClip)/sigmaClip
             self.assertLess(fractionalError, 3.0, msg=f"Test 4.4: {amp.getName()} {fractionalError}")
+
+
+@unittest.skipIf(LEGACY_MODE == 0, "Skipping legacy tests.")
+class BiasTestCasesLegacy(BiasTestCases):
+    @classmethod
+    def setUpClass(cls):
+        """Setup butler, and generate an ISR processed exposure.
+
+        Notes
+        -----
+        DMTN-101 4.1:
+
+        Process an independent bias frame through the ISR including
+        overscan correction and bias subtraction
+
+        """
+        repoDir = os.path.join(getPackageDir("ci_cpp_gen3"), "DATA/")
+        butler = dafButler.Butler(repoDir, collections=['LATISS/raw/all', 'calib/v00', 'LATISS/calib'])
+
+        config = ipIsr.IsrTaskConfig()
+        config.doSaturation = True
+        config.doSuspect = True
+        config.doSetBadRegions = True
+        config.doOverscan = True
+        config.overscan.doParallelOverscan = True
+        config.overscan.fitType = 'MEDIAN_PER_ROW'
+        config.doBias = True
+        config.doVariance = True
+
+        config.doLinearize = False
+        config.doCrosstalk = False
+        config.doWidenSaturationTrails = False
+        config.doBrighterFatter = False
+        config.doDefect = False
+        config.doSaturationInterpolation = False
+        config.doDark = False
+        config.doStrayLight = False
+        config.doFlat = False
+        config.doApplyGains = False
+        config.doFringe = False
+        config.doMeasureBackground = False
+        config.doVignette = False
+        config.doAttachTransmissionCurve = False
+        config.doUseOpticsTransmission = False
+        config.doUseFilterTransmission = False
+        config.doUseSensorTransmission = False
+        config.doUseAtmosphereTransmission = False
+
+        isrTask = ipIsr.IsrTask(config=config)
+        rawDataId = {'detector': 0, 'exposure': 2021052500015, 'instrument': 'LATISS'}
+        # TODO: DM-26396
+        # This is not an independent frame.
+        cls.raw = butler.get('raw', dataId=rawDataId)
+        cls.bias = butler.get('bias', rawDataId)
+        cls.camera = butler.get('camera', rawDataId)
+
+        results = isrTask.run(cls.raw, camera=cls.camera,
+                              bias=cls.bias)
+
+        cls.exposure = results.outputExposure
 
 
 class MemoryTester(lsst.utils.tests.MemoryTestCase):

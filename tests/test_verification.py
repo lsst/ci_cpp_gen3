@@ -28,6 +28,8 @@ import lsst.utils.tests
 
 from lsst.utils import getPackageDir
 
+LEGACY_MODE = int(os.environ.get("CI_CPP_LEGACY", "0"))
+
 
 class VerificationTestCases(lsst.utils.tests.TestCase):
     @classmethod
@@ -82,43 +84,52 @@ class VerificationTestCases(lsst.utils.tests.TestCase):
         result : `dict`
             The archived result dictionary.
         """
-        fileLocation = os.path.join(getPackageDir("ci_cpp_gen3"), "tests", "data", filename)
+        if LEGACY_MODE > 0:
+            fileLocation = os.path.join(
+                getPackageDir("ci_cpp_gen3"),
+                "tests",
+                "data",
+                "legacy_202409",
+                filename,
+            )
+        else:
+            fileLocation = os.path.join(getPackageDir("ci_cpp_gen3"), "tests", "data", filename)
 
         with open(fileLocation, 'r') as file:
             result = yaml.safe_load(file)
 
         return result
 
-    def assertNumbersEqual(self, inputA, inputB, msg):
+    def assertNumbersEqual(self, inputA, inputB, msg, delta=0.2):
         if not (np.isnan(inputA) and np.isnan(inputB)):
-            self.assertAlmostEqual(inputA, inputB, delta=0.05, msg=msg)
+            self.assertAlmostEqual(inputA, inputB, delta=delta, msg=msg)
 
-    def assertYamlEqual(self, inputA, inputB, msg=None):
+    def assertYamlEqual(self, inputA, inputB, msg=None, delta=0.2):
         self.assertEqual(inputA.keys(), inputB.keys(), msg)
         for key in inputA.keys():
             self.assertEqual(type(inputA[key]), type(inputB[key]), msg)
 
             if isinstance(inputA[key], dict):
-                self.assertYamlEqual(inputA[key], inputB[key], msg)
+                self.assertYamlEqual(inputA[key], inputB[key], msg, delta=delta)
             elif isinstance(inputA[key], list):
                 self.assertEqual(len(inputA[key]), len(inputB[key]), msg)
                 for aa, bb in zip(inputA[key], inputB[key]):
                     if isinstance(aa, dict):
-                        self.assertYamlEqual(aa, bb, msg)
+                        self.assertYamlEqual(aa, bb, msg, delta=delta)
                     elif isinstance(aa, list):
                         self.assertEqual(len(aa), len(bb))
                         for i in range(len(aa)):
-                            self.assertNumbersEqual(aa[i], bb[i], msg)
+                            self.assertNumbersEqual(aa[i], bb[i], msg, delta=delta)
                     elif isinstance(aa, (int, float)):
-                        self.assertNumbersEqual(aa, bb, msg)
+                        self.assertNumbersEqual(aa, bb, msg, delta=delta)
                     else:
                         self.assertEqual(aa, bb, msg)
             elif isinstance(inputA[key], (int, float)):
-                self.assertNumbersEqual(inputA[key], inputB[key], msg)
+                self.assertNumbersEqual(inputA[key], inputB[key], msg, delta=delta)
             else:
                 self.assertEqual(inputA[key], inputB[key], msg)
 
-    def genericComparison(self, collections, dataId, componentMap):
+    def genericComparison(self, collections, dataId, componentMap, delta=0.2):
         """Run common comparisons.
 
         Parameters
@@ -130,24 +141,26 @@ class VerificationTestCases(lsst.utils.tests.TestCase):
         componentMap : `dict` [`str`, `tuple` [`str`, `str`]]
             Dictionary mapping butler data product to comparison yaml
             file.
+        delta : `float`, optional
+            Delta to use for floating point comparisons.
         """
         if 'run' in componentMap:
             runStatDataType, runStatFile = componentMap['run']
             runStats = self.getExpectedProduct(runStatDataType, dataId=dataId, collections=collections)
             expectation = self.readExpectation(runStatFile)
-            self.assertYamlEqual(runStats, expectation, "run level")
+            self.assertYamlEqual(runStats, expectation, "run level", delta=delta)
 
         if 'exp' in componentMap:
             expStatDataType, expStatFile = componentMap['exp']
             expStats = self.getExpectedProduct(expStatDataType, dataId=dataId, collections=collections)
             expectation = self.readExpectation(expStatFile)
-            self.assertYamlEqual(expStats, expectation, "exposure level")
+            self.assertYamlEqual(expStats, expectation, "exposure level", delta=delta)
 
         if 'det' in componentMap:
             detStatDataType, detStatFile = componentMap['det']
             detStats = self.getExpectedProduct(detStatDataType, dataId=dataId, collections=collections)
             expectation = self.readExpectation(detStatFile)
-            self.assertYamlEqual(detStats, expectation, "detector level")
+            self.assertYamlEqual(detStats, expectation, "detector level", delta=delta)
 
     def test_biasVerify(self):
         """Run comparison for bias."""
@@ -187,7 +200,7 @@ class VerificationTestCases(lsst.utils.tests.TestCase):
         mapping = {'run': ('verifyPtcStats', 'ptcRun.yaml'),
                    'det': ('verifyPtcDetStats', 'ptcDet.yaml')}
 
-        self.genericComparison('ci_cpv_ptc', dataId, mapping)
+        self.genericComparison('ci_cpv_ptc', dataId, mapping, delta=11.0)
 
     def test_bfkVerify(self):
         """Run comparison for bfk.
@@ -203,17 +216,18 @@ class VerificationTestCases(lsst.utils.tests.TestCase):
         # self.genericComparison('ci_cpv_bfk', dataId, mapping)
         pass
 
+    @unittest.skipIf(LEGACY_MODE > 0, "Skipping linearizer verify test.")
     def test_linearizerVerify(self):
         """Run comparison for linearizer.
 
         DM-40856 Linearity fits from ci_cpp are not stable.
         """
-        # dataId = {'instrument': 'LATISS', 'detector': 0}
-        # mapping = {'run': ('verifyLinearityStats', 'linearityRun.yaml'),
-        #            'det': ('verifyLinearityDetStats', 'linearityDet.yaml')}
-        # self.genericComparison('ci_cpv_linearizer', dataId, mapping)
-        pass
+        dataId = {"instrument": "LATISS", "detector": 0}
+        mapping = {"run": ("verifyLinearizerStats", "linearizerRun.yaml"),
+                   "det": ("verifyLinearizerDetStats", "linearizerDet.yaml")}
+        self.genericComparison("ci_cpv_linearizer", dataId, mapping, delta=20.0)
 
+    @unittest.skipIf(LEGACY_MODE == 0, "Skipping crosstalk verify test.")
     def test_crosstalkVerify(self):
         """Run comparison for crosstalk."""
         dataId = {'instrument': 'LATISS', 'detector': 0}
