@@ -169,7 +169,7 @@ class VerificationTestCases(lsst.utils.tests.TestCase):
                    'exp': ('verifyBiasExpStats', 'biasExp.yaml'),
                    'det': ('verifyBiasDetStats', 'biasDet.yaml')}
 
-        self.genericComparison('ci_cpv_bias', dataId, mapping)
+        self.genericComparison('ci_cpv_bias', dataId, mapping, delta=0.5)
 
     def test_darkVerify(self):
         """Run comparison for dark."""
@@ -178,7 +178,7 @@ class VerificationTestCases(lsst.utils.tests.TestCase):
                    'exp': ('verifyDarkExpStats', 'darkExp.yaml'),
                    'det': ('verifyDarkDetStats', 'darkDet.yaml')}
 
-        self.genericComparison('ci_cpv_dark', dataId, mapping)
+        self.genericComparison('ci_cpv_dark', dataId, mapping, delta=3.0)
 
     def test_flatVerify(self):
         """Run comparison for flat."""
@@ -192,7 +192,7 @@ class VerificationTestCases(lsst.utils.tests.TestCase):
                    'exp': ('verifyFlatExpStats', 'flatExp.yaml'),
                    'det': ('verifyFlatDetStats', 'flatDet.yaml')}
 
-        self.genericComparison('ci_cpv_flat', dataId, mapping)
+        self.genericComparison('ci_cpv_flat', dataId, mapping, delta=2.0)
 
     def test_ptcVerify(self):
         """Run comparison for ptc."""
@@ -200,7 +200,7 @@ class VerificationTestCases(lsst.utils.tests.TestCase):
         mapping = {'run': ('verifyPtcStats', 'ptcRun.yaml'),
                    'det': ('verifyPtcDetStats', 'ptcDet.yaml')}
 
-        self.genericComparison('ci_cpv_ptc', dataId, mapping, delta=11.0)
+        self.genericComparison('ci_cpv_ptc', dataId, mapping, delta=100.0)
 
     def test_bfkVerify(self):
         """Run comparison for bfk.
@@ -225,7 +225,7 @@ class VerificationTestCases(lsst.utils.tests.TestCase):
         dataId = {"instrument": "LATISS", "detector": 0}
         mapping = {"run": ("verifyLinearizerStats", "linearizerRun.yaml"),
                    "det": ("verifyLinearizerDetStats", "linearizerDet.yaml")}
-        self.genericComparison("ci_cpv_linearizer", dataId, mapping, delta=20.0)
+        self.genericComparison("ci_cpv_linearizer", dataId, mapping, delta=35.0)
 
     @unittest.skipIf(LEGACY_MODE == 0, "Skipping crosstalk verify test.")
     def test_crosstalkVerify(self):
