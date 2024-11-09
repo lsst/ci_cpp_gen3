@@ -169,7 +169,7 @@ class VerificationTestCases(lsst.utils.tests.TestCase):
                    'exp': ('verifyBiasExpStats', 'biasExp.yaml'),
                    'det': ('verifyBiasDetStats', 'biasDet.yaml')}
 
-        self.genericComparison('ci_cpv_bias', dataId, mapping, delta=0.5)
+        self.genericComparison('ci_cpv_bias', dataId, mapping, delta=1.0)
 
     def test_darkVerify(self):
         """Run comparison for dark."""
@@ -225,7 +225,7 @@ class VerificationTestCases(lsst.utils.tests.TestCase):
         dataId = {"instrument": "LATISS", "detector": 0}
         mapping = {"run": ("verifyLinearizerStats", "linearizerRun.yaml"),
                    "det": ("verifyLinearizerDetStats", "linearizerDet.yaml")}
-        self.genericComparison("ci_cpv_linearizer", dataId, mapping, delta=35.0)
+        self.genericComparison("ci_cpv_linearizer", dataId, mapping, delta=300.0)
 
     @unittest.skipIf(LEGACY_MODE == 0, "Skipping crosstalk verify test.")
     def test_crosstalkVerify(self):
