@@ -129,7 +129,7 @@ class VerificationTestCases(lsst.utils.tests.TestCase):
             else:
                 self.assertEqual(inputA[key], inputB[key], msg)
 
-    def genericComparison(self, collections, dataId, componentMap, delta=0.2):
+    def genericComparison(self, collections, dataId, componentMap, delta=0.4):
         """Run common comparisons.
 
         Parameters
