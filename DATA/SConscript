@@ -199,7 +199,8 @@ def getVerifyCmd(stage, expList, pipelineFile):
     if stage == "linearizer":
         args.append("-c verifyLinearizerPtcExtract:useEfdPhotodiodeData=False "
                     "-c verifyLinearizerSecondLinearizer:splineKnots=5 "
-                    "-c verifyLinearizerSecondLinearizer:usePhotodiode=False")
+                    "-c verifyLinearizerSecondLinearizer:usePhotodiode=False "
+                    "-c verifyLinearizerSecondLinearizer:maxFracLinearityDeviation=0.001")
 
     return getExecutableCmd("ctrl_mpexec", "pipetask", *args)
 
