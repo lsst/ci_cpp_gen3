@@ -121,8 +121,21 @@ class OutputTestCases(lsst.utils.tests.TestCase):
         # collection.
         dataId = {'detector': 0, 'exposure': 2021052500198, 'instrument': 'LATISS'}
         collections = ['ci_cpp_science']
-        self.assertIsInstance(self.getExpectedProduct('postISRCCD', dataId=dataId, collections=collections),
-                              Exposure)
+        exp = self.getExpectedProduct('postISRCCD', dataId=dataId, collections=collections)
+        self.assertIsInstance(exp, Exposure)
+
+        metadata = exp.metadata
+
+        for calib in ["bias", "camera", "crosstalk", "dark", "defects", "flat", "linearizer", "ptc"]:
+            refs = self.butler.query_datasets(calib, data_id=dataId, collections=collections)
+            key = f"LSST CALIB RUN {calib.upper()}"
+            self.assertIn(key, metadata)
+            self.assertEqual(metadata[key], refs[0].run)
+            key = f"LSST CALIB UUID {calib.upper()}"
+            self.assertIn(key, metadata)
+            self.assertEqual(metadata[key], str(refs[0].id))
+            key = f"LSST CALIB DATE {calib.upper()}"
+            self.assertIn(key, metadata)
 
     def test_skyOutput(self):
         self.assertIsInstance(self.getExpectedProduct('sky'), Exposure)
