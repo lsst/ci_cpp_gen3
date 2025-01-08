@@ -361,6 +361,10 @@ def getVerifyCmdLegacy(stage, expList, pipelineFile, legacyDate="202409"):
 
     return getExecutableCmd("ctrl_mpexec", "pipetask", *args)
 
+# An array to store which collections should be used to make the
+# report.
+reportCollections = []
+
 # Begin ci_cpp build commands.
 # Create the butler, register the instrument, and add calibs.
 butler = env.Command([File(os.path.join(REPO_ROOT, "gen3.sqlite3")),
@@ -471,6 +475,7 @@ if LEGACY_MODE == 0:
             getVerifyCmd("linearizer", exposureDict["ptcExposurePairs"], "verifyLinearizer.yaml"),
         ],
     )
+    reportCollections.append("ci_cpv_linearizer")
     env.Alias("linearizer", linearizer)
 
     # Create a ptc and certify/verify.
@@ -487,6 +492,7 @@ if LEGACY_MODE == 0:
             getVerifyCmd("ptc", [exposureDict["ptcExposurePairs"][0]], "verifyPtc.yaml"),
         ],
     )
+    reportCollections.append("ci_cpv_ptc")
     env.Alias("ptc", ptc)
 
     # Create a cti and certify.
@@ -543,6 +549,7 @@ if LEGACY_MODE == 0:
             getVerifyCmd("bias", exposureDict["biasExposures"], "verifyBias.yaml"),
         ],
     )
+    reportCollections.append("ci_cpv_bias")
     env.Alias("bias", bias)
 
     # Create a dark and certify/verify.
@@ -559,6 +566,7 @@ if LEGACY_MODE == 0:
             getVerifyCmd("dark", exposureDict["darkExposures"], "verifyDark.yaml"),
         ],
     )
+    reportCollections.append("ci_cpv_dark")
     env.Alias("dark", dark)
 
     # Create a flat and certify/verify.
@@ -575,6 +583,7 @@ if LEGACY_MODE == 0:
             getVerifyCmd("flat", exposureDict["flatExposures"], "verifyFlat.yaml"),
         ],
     )
+    reportCollections.append("ci_cpv_flat")
     env.Alias("flat", flat)
 
     # Create SpectroFlat
@@ -599,6 +608,7 @@ if LEGACY_MODE == 0:
             getVerifyCmd("defects", exposureDict["scienceExposures"], "verifyDefects.yaml"),
         ],
     )
+    reportCollections.append("ci_cpv_defects")
     env.Alias("defectsVerify", defectsVerify)
 
     # Run a science exposure.
@@ -626,6 +636,22 @@ if LEGACY_MODE == 0:
     )
     env.Alias("sky", sky)
 
+    # Create the report.
+    report = env.Command(
+        [
+            os.path.join(REPO_ROOT, "report"),
+            ],
+        [defectsVerify],
+        [
+            getExecutableCmd("cp_verify", "cpv_report.py",
+                             "-r", REPO_ROOT,
+                             "-O", os.path.join(REPO_ROOT, "report"),
+                             *[f"-c {collection}" for collection in reportCollections],
+            )
+        ],
+    )
+    env.Alias("report", report)
+
     # Set up test dependencies.
     env.Depends(utils.targets["tests"], os.path.join(REPO_ROOT, "LATISS", "calib"))
     env.Depends(utils.targets["tests"], os.path.join(REPO_ROOT, "LATISS", "raw"))
@@ -644,6 +670,7 @@ if LEGACY_MODE == 0:
     env.Depends(utils.targets["tests"], os.path.join(REPO_ROOT, "ci_cpp_science"))
     env.Depends(utils.targets["tests"], os.path.join(REPO_ROOT, "ci_cpp_sky"))
     env.Depends(utils.targets["tests"], os.path.join(REPO_ROOT, "ci_cpv_defects"))
+    env.Depends(utils.targets["tests"], os.path.join(REPO_ROOT, "report"))
 
     # Set up things to clean.
     targets = [
@@ -662,6 +689,7 @@ if LEGACY_MODE == 0:
         science,
         sky,
         defectsVerify,
+        report,
     ]
     env.Clean(targets, [y for x in targets for y in x] +
               [os.path.join(REPO_ROOT, "calib"), os.path.join(REPO_ROOT, "LATISS")])
