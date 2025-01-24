@@ -5,7 +5,7 @@ tasks:
     class: lsst.ip.isr.IsrTask
     config:
       connections.newBFKernel: bfk
-      connections.deferredChargeCalib: cti
+      connections.deferredChargeCalib: cpCtiCalib
       doLinearize: false
       doCrosstalk: false
       doBrighterFatter: false
