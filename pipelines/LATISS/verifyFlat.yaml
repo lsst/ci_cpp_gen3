@@ -1,0 +1,10 @@
+# Pipeline to enable brighter-fatter for ci_cpp.  DM-48620
+description: cp_verify LATISS flat calibration verification
+instrument: lsst.obs.lsst.Latiss
+imports:
+  - location: $CP_VERIFY_DIR/pipelines/LATISS/verifyFlat.yaml
+tasks:
+  verifyFlatIsr:
+    class: lsst.ip.isr.IsrTaskLSST
+    config:
+      doBrighterFatter: true
