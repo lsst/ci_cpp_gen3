@@ -25,4 +25,5 @@ DATA/gen3.sqlite3
 DATA/LATISS
 DATA/calib/
 DATA/ci_*
+DATA/report
 python/*.dist-info/
