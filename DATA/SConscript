@@ -106,21 +106,21 @@ def getPipeTaskCmd(stage, expList, pipelineFile):
 
     # We need to override the default linearity configs for the ci dataset.
     if stage == "linearizer":
-        args.append("-c cpLinearizerPtcExtract:useEfdPhotodiodeData=False "
+        args.append("-c cpLinearizerPtcExtractPair:useEfdPhotodiodeData=False "
                     "-c cpLinearizerSolve:splineKnots=5 "
                     "-c cpLinearizerSolve:usePhotodiode=False")
     elif stage == "ptc":
-        args.append("-c cpPtcExtract:useEfdPhotodiodeData=False")
+        args.append("-c cpPtcExtractPair:useEfdPhotodiodeData=False")
         args.append("-c cpPtcSolve:ampOffsetGainRatioMaxAdu=40000.0")
     elif stage == "gainFromFlatPairs":
-        args.append("-c cpPtcExtract:useEfdPhotodiodeData=False")
+        args.append("-c cpPtcExtractPair:useEfdPhotodiodeData=False")
     elif stage == "bfk":
         # For the limited test PTC data, we do not have enough to
         # test the BFK out to as large as 15x15.
         # TODO DM-46445: Figure out configs to give a reasonable
         # result for the test data.
-        args.append("-c cpBfkPtcExtract:useEfdPhotodiodeData=False "
-                    "-c cpBfkPtcExtract:maximumRangeCovariancesAstier=8 "
+        args.append("-c cpBfkPtcExtractPair:useEfdPhotodiodeData=False "
+                    "-c cpBfkPtcExtractPair:maximumRangeCovariancesAstier=8 "
                     "-c cpBfkPtcSolve:maximumRangeCovariancesAstier=8 "
                     "-c cpBfkPtcSolve:maximumRangeCovariancesAstierFullCovFit=8")
     elif stage == "spectroFlat":
@@ -197,7 +197,7 @@ def getVerifyCmd(stage, expList, pipelineFile):
 
     # We need to override the default linearity configs for the ci dataset.
     if stage == "linearizer":
-        args.append("-c verifyLinearizerPtcExtract:useEfdPhotodiodeData=False "
+        args.append("-c verifyLinearizerPtcExtractPair:useEfdPhotodiodeData=False "
                     "-c verifyLinearizerSecondLinearizer:splineKnots=5 "
                     "-c verifyLinearizerSecondLinearizer:usePhotodiode=False "
                     "-c verifyLinearizerSecondLinearizer:maxFracLinearityDeviation=0.001")
