@@ -197,7 +197,7 @@ def getVerifyCmd(stage, expList, pipelineFile):
 
     # We need to override the default linearity configs for the ci dataset.
     if stage == "linearizer":
-        args.append("-c verifyLinearizerPtcExtract:useEfdPhotodiodeData=False "
+        args.append("-c verifyLinearizerPtcExtractPair:useEfdPhotodiodeData=False "
                     "-c verifyLinearizerSecondLinearizer:splineKnots=5 "
                     "-c verifyLinearizerSecondLinearizer:usePhotodiode=False "
                     "-c verifyLinearizerSecondLinearizer:maxFracLinearityDeviation=0.001")
