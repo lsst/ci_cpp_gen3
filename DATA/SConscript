@@ -122,7 +122,8 @@ def getPipeTaskCmd(stage, expList, pipelineFile):
         args.append("-c cpBfkPtcExtractPair:useEfdPhotodiodeData=False "
                     "-c cpBfkPtcExtractPair:maximumRangeCovariancesAstier=8 "
                     "-c cpBfkPtcSolve:maximumRangeCovariancesAstier=8 "
-                    "-c cpBfkPtcSolve:maximumRangeCovariancesAstierFullCovFit=8")
+                    "-c cpBfkPtcSolve:maximumRangeCovariancesAstierFullCovFit=8 "
+                    "-c cpBfkSolveX:doCheckValidity=False")
     elif stage == "spectroFlat":
         args.append('-c cpSpectroFlat:inputFlatPhysicalFilter="RG610~empty"')
 
