@@ -137,6 +137,13 @@ class OutputTestCases(lsst.utils.tests.TestCase):
             key = f"LSST CALIB DATE {calib.upper()}"
             self.assertIn(key, metadata)
 
+        # Check the logs for unexpected warnings.
+        log = self.getExpectedProduct('isr_log', dataId=dataId, collections=collections)
+        for rec in log:
+            if rec.levelname == "WARNING":
+                # We expect DATASEC warnings and nothing else.
+                self.assertIn("DATASEC", rec.message)
+
     def test_skyOutput(self):
         self.assertIsInstance(self.getExpectedProduct('sky'), Exposure)
 
