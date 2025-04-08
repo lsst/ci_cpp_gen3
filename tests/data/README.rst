@@ -6,6 +6,15 @@ target with the one generated in the current run.
 Please take care to understand what and why the results have changed
 before simply copying the new results in place.
 
+Checks run as part of DM-49219 make it clear that the measured PTC
+read noise values are not trustworthy, so tests that rely on these
+values are likely to fail in a way that looks random (amplifiers with
+plausible PTC read noise values may pass, while those with values like
+0.5(e-) will always fail).  When the testdata package is updated with
+a better selection of inputs, these tests should be checked to ensure
+that we're matching in this CI package what we want to do with real
+data.
+
 bfk
 ===
 
