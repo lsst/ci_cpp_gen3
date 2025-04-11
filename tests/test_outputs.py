@@ -147,7 +147,6 @@ class OutputTestCases(lsst.utils.tests.TestCase):
     def test_skyOutput(self):
         self.assertIsInstance(self.getExpectedProduct('sky'), Exposure)
 
-    @unittest.skipIf(LEGACY_MODE == 0, "Skipping CTI test until we have IsrTaskLSST CTI pipelines.")
     def test_ctiOutput(self):
         self.assertIsInstance(self.getExpectedProduct('cti'), DeferredChargeCalib)
 
