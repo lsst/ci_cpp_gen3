@@ -27,7 +27,7 @@ import lsst.utils.tests
 from lsst.afw.cameraGeom import Camera
 from lsst.afw.image import Exposure
 from lsst.ip.isr import (Defects, BrighterFatterKernel, CrosstalkCalib, DeferredChargeCalib, Linearizer,
-                         PhotonTransferCurveDataset)
+                         PhotonTransferCurveDataset, IsrCalib)
 from lsst.utils import getPackageDir
 
 LEGACY_MODE = int(os.environ.get("CI_CPP_LEGACY", "0"))
@@ -51,7 +51,7 @@ class OutputTestCases(lsst.utils.tests.TestCase):
         cls.butler = dafButler.Butler(repoDir, collections=cls.collections)
         cls.rawDataId = {'detector': 0, 'exposure': 2021052500015, 'instrument': 'LATISS'}
 
-    def getExpectedProduct(self, datasetType, dataId=None, collections=None):
+    def getExpectedProduct(self, datasetType, dataId=None, collections=None, checkMetadata=True):
         """Get a product from the butler.
 
         Parameters
@@ -63,6 +63,8 @@ class OutputTestCases(lsst.utils.tests.TestCase):
             product.
         collections : `list` or `str`, optional
             Alternate collections to supply.
+        checkMetadata : `bool`, optional
+            Check calibration metadata?
 
         Returns
         -------
@@ -74,15 +76,29 @@ class OutputTestCases(lsst.utils.tests.TestCase):
         dataId = dataId if dataId else self.rawDataId
         collections = collections if collections else self.collections
 
-        try:
-            product = self.butler.get(datasetType, dataId=dataId, collections=collections)
-        except Exception:
-            pass
+        product = self.butler.get(datasetType, dataId=dataId, collections=collections)
+
+        if checkMetadata:
+            expectedMetadata = {
+                "INSTRUME": "LATISS",
+                "SEQNAME": "FP_ITL_2s_ir2_v25.seq",
+                "SEQCKSUM": "2552520002",
+            }
+            # IsrCalib types additionally have normalized metadata.
+            if isinstance(product, IsrCalib):
+                expectedMetadata["SEQFILE"] = None
+                expectedMetadata["DETECTOR"] = 0
+                expectedMetadata["DET_NAME"] = "RXX_S00"
+                expectedMetadata["DET_SER"] = "ITL-3800C-068"
+
+            for key, value in expectedMetadata.items():
+                self.assertEqual(product.metadata[key], value)
+
         return product
 
     def test_cameraOutput(self):
         # This confirms curated calibrations were written correctly.
-        self.assertIsInstance(self.getExpectedProduct('camera'), Camera)
+        self.assertIsInstance(self.getExpectedProduct('camera', checkMetadata=False), Camera)
 
     def test_biasOutput(self):
         self.assertIsInstance(self.getExpectedProduct('bias'), Exposure)
@@ -94,7 +110,11 @@ class OutputTestCases(lsst.utils.tests.TestCase):
         self.assertIsInstance(self.getExpectedProduct('flat'), Exposure)
 
     def test_crosstalkOutput(self):
-        self.assertIsInstance(self.getExpectedProduct('crosstalk'), CrosstalkCalib)
+        # TODO DM-50078: Add metadata checking.
+        self.assertIsInstance(
+            self.getExpectedProduct('crosstalk', checkMetadata=False),
+            CrosstalkCalib,
+        )
 
     def test_ptcOutput(self):
         self.assertIsInstance(self.getExpectedProduct('ptc'), PhotonTransferCurveDataset)
@@ -121,7 +141,12 @@ class OutputTestCases(lsst.utils.tests.TestCase):
         # collection.
         dataId = {'detector': 0, 'exposure': 2021052500198, 'instrument': 'LATISS'}
         collections = ['ci_cpp_science']
-        exp = self.getExpectedProduct('postISRCCD', dataId=dataId, collections=collections)
+        exp = self.getExpectedProduct(
+            'postISRCCD',
+            dataId=dataId,
+            collections=collections,
+            checkMetadata=False,
+        )
         self.assertIsInstance(exp, Exposure)
 
         metadata = exp.metadata
@@ -138,7 +163,7 @@ class OutputTestCases(lsst.utils.tests.TestCase):
             self.assertIn(key, metadata)
 
         # Check the logs for unexpected warnings.
-        log = self.getExpectedProduct('isr_log', dataId=dataId, collections=collections)
+        log = self.getExpectedProduct('isr_log', dataId=dataId, collections=collections, checkMetadata=False)
         for rec in log:
             if rec.levelname == "WARNING":
                 # We expect DATASEC warnings and nothing else.
