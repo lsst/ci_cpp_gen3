@@ -107,7 +107,10 @@ class OutputTestCases(lsst.utils.tests.TestCase):
         self.assertIsInstance(self.getExpectedProduct('dark'), Exposure)
 
     def test_flatOutput(self):
-        self.assertIsInstance(self.getExpectedProduct('flat'), Exposure)
+        flat = self.getExpectedProduct('flat')
+        self.assertIsInstance(flat, Exposure)
+        self.assertIn("FLATSRC", flat.metadata)
+        self.assertEqual(flat.metadata["FLATSRC"], "DOME")
 
     def test_crosstalkOutput(self):
         # TODO DM-50078: Add metadata checking.
