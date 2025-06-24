@@ -1,4 +1,5 @@
-# Pipeline to enable brighter-fatter for ci_cpp.  DM-48620
+# Pipeline to enable brighter-fatter + cti for ci_cpp.
+# See DM-48620 and DM-51477.
 description: cp_verify LATISS flat calibration verification
 instrument: lsst.obs.lsst.Latiss
 imports:
@@ -8,3 +9,4 @@ tasks:
     class: lsst.ip.isr.IsrTaskLSST
     config:
       doBrighterFatter: true
+      doDeferredCharge: true
