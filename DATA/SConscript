@@ -107,6 +107,8 @@ def getPipeTaskCmd(stage, expList, pipelineFile):
     # We need to override the default linearity configs for the ci dataset.
     if stage == "linearizer":
         args.append("-c cpLinearizerPtcExtractPair:useEfdPhotodiodeData=False "
+                    "-c cpLinearizerUnnormalizedSolve1:splineKnots=5 "
+                    "-c cpLinearizerUnnormalizedSolve1:usePhotodiode=False "
                     "-c cpLinearizerSolve:splineKnots=5 "
                     "-c cpLinearizerSolve:usePhotodiode=False")
     elif stage == "ptc":
