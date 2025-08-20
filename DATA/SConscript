@@ -111,7 +111,7 @@ def getPipeTaskCmd(stage, expList, pipelineFile):
                     "-c cpLinearizerSolve:usePhotodiode=False")
     elif stage == "ptc":
         args.append("-c cpPtcExtractPair:useEfdPhotodiodeData=False")
-        args.append("-c cpPtcSolve:ampOffsetGainRatioMaxAdu=40000.0")
+        args.append("-c cpPtcAdjustGainRatios:max_adu=40000.0")
     elif stage == "gainFromFlatPairs":
         args.append("-c cpPtcExtractPair:useEfdPhotodiodeData=False")
     elif stage == "bfk":
