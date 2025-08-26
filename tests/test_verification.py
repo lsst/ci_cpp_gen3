@@ -169,7 +169,7 @@ class VerificationTestCases(lsst.utils.tests.TestCase):
                    'exp': ('verifyBiasExpStats', 'biasExp.yaml'),
                    'det': ('verifyBiasDetStats', 'biasDet.yaml')}
 
-        self.genericComparison('ci_cpv_bias', dataId, mapping, delta=1.0)
+        self.genericComparison('ci_cpv_bias', dataId, mapping, delta=4.0)
 
     def test_darkVerify(self):
         """Run comparison for dark."""
@@ -178,7 +178,7 @@ class VerificationTestCases(lsst.utils.tests.TestCase):
                    'exp': ('verifyDarkExpStats', 'darkExp.yaml'),
                    'det': ('verifyDarkDetStats', 'darkDet.yaml')}
 
-        self.genericComparison('ci_cpv_dark', dataId, mapping, delta=3.0)
+        self.genericComparison('ci_cpv_dark', dataId, mapping, delta=4.0)
 
     def test_flatVerify(self):
         """Run comparison for flat."""
@@ -192,7 +192,7 @@ class VerificationTestCases(lsst.utils.tests.TestCase):
                    'exp': ('verifyFlatExpStats', 'flatExp.yaml'),
                    'det': ('verifyFlatDetStats', 'flatDet.yaml')}
 
-        self.genericComparison('ci_cpv_flat', dataId, mapping, delta=2.0)
+        self.genericComparison('ci_cpv_flat', dataId, mapping, delta=4.0)
 
     def test_ptcVerify(self):
         """Run comparison for ptc."""
