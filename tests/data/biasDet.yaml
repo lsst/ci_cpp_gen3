@@ -40412,52 +40412,52 @@ ISR:
       LSST CALIB BIAS C00 DISTRIBUTION 100.0-PCT: 631.810913085938
   BIASSHIFT:
     C10:
-      LOCAL_NOISE: 0.7198656893383792
+      LOCAL_NOISE: 0.719865689284137
       BIAS_SHIFTS: []
     C11:
-      LOCAL_NOISE: 0.8118479444894621
+      LOCAL_NOISE: 0.8118479445453693
       BIAS_SHIFTS: []
     C12:
-      LOCAL_NOISE: 1.0091719288345946
+      LOCAL_NOISE: 1.0091719288201182
       BIAS_SHIFTS: []
     C13:
-      LOCAL_NOISE: 1.1219285296830643
+      LOCAL_NOISE: 1.1219285296613672
       BIAS_SHIFTS: []
     C14:
-      LOCAL_NOISE: 0.9681973456561591
+      LOCAL_NOISE: 0.9681973456334341
       BIAS_SHIFTS: []
     C15:
-      LOCAL_NOISE: 0.7593387054740327
+      LOCAL_NOISE: 0.7593387054827685
       BIAS_SHIFTS: []
     C16:
-      LOCAL_NOISE: 0.8764760787419594
+      LOCAL_NOISE: 0.8764760787798183
       BIAS_SHIFTS: []
     C17:
-      LOCAL_NOISE: 1.649164647681733
+      LOCAL_NOISE: 1.649164647778246
       BIAS_SHIFTS: []
     C07:
-      LOCAL_NOISE: 1.4649552650019642
+      LOCAL_NOISE: 1.4649552649836395
       BIAS_SHIFTS: []
     C06:
-      LOCAL_NOISE: 0.7366037439334219
+      LOCAL_NOISE: 0.7366037439504994
       BIAS_SHIFTS: []
     C05:
-      LOCAL_NOISE: 0.9340099626902929
+      LOCAL_NOISE: 0.934009962719282
       BIAS_SHIFTS: []
     C04:
-      LOCAL_NOISE: 1.028094411096917
+      LOCAL_NOISE: 1.0280944110912271
       BIAS_SHIFTS: []
     C03:
-      LOCAL_NOISE: 1.1216398189992327
+      LOCAL_NOISE: 1.1216398189792047
       BIAS_SHIFTS: []
     C02:
-      LOCAL_NOISE: 1.115573610950612
+      LOCAL_NOISE: 1.1155736109397927
       BIAS_SHIFTS: []
     C01:
-      LOCAL_NOISE: 0.8228936561352527
+      LOCAL_NOISE: 0.82289365612931
       BIAS_SHIFTS: []
     C00:
-      LOCAL_NOISE: 0.7157036654567912
+      LOCAL_NOISE: 0.7157036654858935
       BIAS_SHIFTS: []
   AMPCORR:
   - detector: 0
@@ -40470,98 +40470,98 @@ ISR:
     detectorComp: 0
     ampName: C10
     ampComp: C11
-    imageCorr: 0.5129528152216254
-    overscanCorr: 0.5690970480324825
+    imageCorr: 0.5129528152216231
+    overscanCorr: 0.569097048032481
   - detector: 0
     detectorComp: 0
     ampName: C10
     ampComp: C12
-    imageCorr: 0.5203802577662393
-    overscanCorr: 0.5682162244257812
+    imageCorr: 0.5203802577662376
+    overscanCorr: 0.5682162244257815
   - detector: 0
     detectorComp: 0
     ampName: C10
     ampComp: C13
-    imageCorr: 0.526284119063182
-    overscanCorr: 0.5724325117138035
+    imageCorr: 0.5262841190631825
+    overscanCorr: 0.572432511713801
   - detector: 0
     detectorComp: 0
     ampName: C10
     ampComp: C14
-    imageCorr: 0.5130068455987775
-    overscanCorr: 0.5594758231058846
+    imageCorr: 0.5130068455987763
+    overscanCorr: 0.5594758231058847
   - detector: 0
     detectorComp: 0
     ampName: C10
     ampComp: C15
-    imageCorr: 0.5254989598528108
-    overscanCorr: 0.5733775633466713
+    imageCorr: 0.5254989598528094
+    overscanCorr: 0.5733775633466717
   - detector: 0
     detectorComp: 0
     ampName: C10
     ampComp: C16
-    imageCorr: 0.5456889526814759
-    overscanCorr: 0.5910499165473294
+    imageCorr: 0.5456889526814753
+    overscanCorr: 0.5910499165473304
   - detector: 0
     detectorComp: 0
     ampName: C10
     ampComp: C17
-    imageCorr: 0.4942025021541493
-    overscanCorr: 0.5429518464435549
+    imageCorr: 0.494202502154147
+    overscanCorr: 0.5429518464435485
   - detector: 0
     detectorComp: 0
     ampName: C10
     ampComp: C07
-    imageCorr: 0.010128635071142124
-    overscanCorr: -0.002595680654820493
+    imageCorr: 0.010128635071142119
+    overscanCorr: -0.0025956806548205398
   - detector: 0
     detectorComp: 0
     ampName: C10
     ampComp: C06
-    imageCorr: 0.011036306323930382
-    overscanCorr: 0.0012338552663598917
+    imageCorr: 0.011036306323930403
+    overscanCorr: 0.0012338552663598793
   - detector: 0
     detectorComp: 0
     ampName: C10
     ampComp: C05
     imageCorr: 0.013412319059878091
-    overscanCorr: -0.003671605217054758
+    overscanCorr: -0.003671605217054827
   - detector: 0
     detectorComp: 0
     ampName: C10
     ampComp: C04
-    imageCorr: 0.011321911139012786
-    overscanCorr: -0.001304079988030105
+    imageCorr: 0.011321911139012814
+    overscanCorr: -0.0013040799880302335
   - detector: 0
     detectorComp: 0
     ampName: C10
     ampComp: C03
-    imageCorr: 0.010768833381460029
-    overscanCorr: -0.0011120961176034787
+    imageCorr: 0.01076883338146004
+    overscanCorr: -0.0011120961176035494
   - detector: 0
     detectorComp: 0
     ampName: C10
     ampComp: C02
-    imageCorr: 0.013312053992024642
-    overscanCorr: 0.0032452563882737597
+    imageCorr: 0.013312053992024576
+    overscanCorr: 0.0032452563882738547
   - detector: 0
     detectorComp: 0
     ampName: C10
     ampComp: C01
-    imageCorr: 0.01312080922056801
-    overscanCorr: 0.0015714142220793017
+    imageCorr: 0.013120809220568018
+    overscanCorr: 0.0015714142220794097
   - detector: 0
     detectorComp: 0
     ampName: C10
     ampComp: C00
-    imageCorr: 0.011149544562903234
-    overscanCorr: -0.002223754803195425
+    imageCorr: 0.011149544562903181
+    overscanCorr: -0.0022237548031953714
   - detector: 0
     detectorComp: 0
     ampName: C11
     ampComp: C10
-    imageCorr: 0.5129528152216253
-    overscanCorr: 0.5690970480324825
+    imageCorr: 0.5129528152216231
+    overscanCorr: 0.569097048032481
   - detector: 0
     detectorComp: 0
     ampName: C11
@@ -40572,98 +40572,98 @@ ISR:
     detectorComp: 0
     ampName: C11
     ampComp: C12
-    imageCorr: 0.5221178676688568
-    overscanCorr: 0.5706257891994102
+    imageCorr: 0.5221178676688562
+    overscanCorr: 0.5706257891994124
   - detector: 0
     detectorComp: 0
     ampName: C11
     ampComp: C13
-    imageCorr: 0.5257400334176405
-    overscanCorr: 0.5727953543563445
+    imageCorr: 0.525740033417638
+    overscanCorr: 0.5727953543563431
   - detector: 0
     detectorComp: 0
     ampName: C11
     ampComp: C14
-    imageCorr: 0.5194046521018024
-    overscanCorr: 0.565527514915511
+    imageCorr: 0.5194046521018033
+    overscanCorr: 0.5655275149155158
   - detector: 0
     detectorComp: 0
     ampName: C11
     ampComp: C15
-    imageCorr: 0.5198861555775344
-    overscanCorr: 0.5686291390135751
+    imageCorr: 0.5198861555775348
+    overscanCorr: 0.568629139013577
   - detector: 0
     detectorComp: 0
     ampName: C11
     ampComp: C16
-    imageCorr: 0.5160046901981611
-    overscanCorr: 0.5638248284030938
+    imageCorr: 0.5160046901981609
+    overscanCorr: 0.563824828403098
   - detector: 0
     detectorComp: 0
     ampName: C11
     ampComp: C17
-    imageCorr: 0.4507713177240534
-    overscanCorr: 0.5047700057448129
+    imageCorr: 0.4507713177240525
+    overscanCorr: 0.5047700057448133
   - detector: 0
     detectorComp: 0
     ampName: C11
     ampComp: C07
-    imageCorr: 0.012510698907632631
-    overscanCorr: 0.00024190853082502585
+    imageCorr: 0.012510698907632616
+    overscanCorr: 0.00024190853082506206
   - detector: 0
     detectorComp: 0
     ampName: C11
     ampComp: C06
-    imageCorr: 0.010766045024449424
-    overscanCorr: -0.0002341965129723968
+    imageCorr: 0.010766045024449403
+    overscanCorr: -0.00023419651297245555
   - detector: 0
     detectorComp: 0
     ampName: C11
     ampComp: C05
-    imageCorr: 0.011485507157255163
-    overscanCorr: -0.002383841282738306
+    imageCorr: 0.011485507157255178
+    overscanCorr: -0.002383841282738368
   - detector: 0
     detectorComp: 0
     ampName: C11
     ampComp: C04
-    imageCorr: 0.013983139501716226
-    overscanCorr: -0.0020172653716345086
+    imageCorr: 0.0139831395017162
+    overscanCorr: -0.0020172653716344527
   - detector: 0
     detectorComp: 0
     ampName: C11
     ampComp: C03
-    imageCorr: 0.013695604353737607
-    overscanCorr: -0.0014894891838774622
+    imageCorr: 0.013695604353737605
+    overscanCorr: -0.0014894891838772874
   - detector: 0
     detectorComp: 0
     ampName: C11
     ampComp: C02
-    imageCorr: 0.012632659736898949
-    overscanCorr: -0.0011629625167551747
+    imageCorr: 0.01263265973689893
+    overscanCorr: -0.0011629625167551374
   - detector: 0
     detectorComp: 0
     ampName: C11
     ampComp: C01
-    imageCorr: 0.014190385447850458
-    overscanCorr: -0.0014750618100106679
+    imageCorr: 0.014190385447850448
+    overscanCorr: -0.001475061810010724
   - detector: 0
     detectorComp: 0
     ampName: C11
     ampComp: C00
-    imageCorr: 0.01612811771511509
-    overscanCorr: -0.0028764239550235987
+    imageCorr: 0.016128117715115107
+    overscanCorr: -0.002876423955023497
   - detector: 0
     detectorComp: 0
     ampName: C12
     ampComp: C10
-    imageCorr: 0.5203802577662393
-    overscanCorr: 0.5682162244257813
+    imageCorr: 0.5203802577662376
+    overscanCorr: 0.5682162244257815
   - detector: 0
     detectorComp: 0
     ampName: C12
     ampComp: C11
-    imageCorr: 0.5221178676688568
-    overscanCorr: 0.5706257891994102
+    imageCorr: 0.5221178676688562
+    overscanCorr: 0.5706257891994124
   - detector: 0
     detectorComp: 0
     ampName: C12
@@ -40674,98 +40674,98 @@ ISR:
     detectorComp: 0
     ampName: C12
     ampComp: C13
-    imageCorr: 0.542972813228641
-    overscanCorr: 0.5842586500129551
+    imageCorr: 0.5429728132286407
+    overscanCorr: 0.584258650012957
   - detector: 0
     detectorComp: 0
     ampName: C12
     ampComp: C14
-    imageCorr: 0.5345442164983459
-    overscanCorr: 0.5717280457557748
+    imageCorr: 0.5345442164983468
+    overscanCorr: 0.571728045755777
   - detector: 0
     detectorComp: 0
     ampName: C12
     ampComp: C15
-    imageCorr: 0.5296651344374262
-    overscanCorr: 0.5707773189986073
+    imageCorr: 0.5296651344374264
+    overscanCorr: 0.5707773189986065
   - detector: 0
     detectorComp: 0
     ampName: C12
     ampComp: C16
-    imageCorr: 0.5148313638953745
-    overscanCorr: 0.556274038411326
+    imageCorr: 0.5148313638953742
+    overscanCorr: 0.5562740384113283
   - detector: 0
     detectorComp: 0
     ampName: C12
     ampComp: C17
-    imageCorr: 0.4339116744336319
-    overscanCorr: 0.4830567502465856
+    imageCorr: 0.4339116744336295
+    overscanCorr: 0.4830567502465852
   - detector: 0
     detectorComp: 0
     ampName: C12
     ampComp: C07
-    imageCorr: 0.011339366924437246
-    overscanCorr: -0.001065960399645908
+    imageCorr: 0.011339366924437218
+    overscanCorr: -0.0010659603996459506
   - detector: 0
     detectorComp: 0
     ampName: C12
     ampComp: C06
-    imageCorr: 0.009679373013678326
-    overscanCorr: 0.0009362544216432728
+    imageCorr: 0.009679373013678305
+    overscanCorr: 0.0009362544216431909
   - detector: 0
     detectorComp: 0
     ampName: C12
     ampComp: C05
-    imageCorr: 0.012153996612707031
-    overscanCorr: -0.0036961834874671556
+    imageCorr: 0.012153996612707026
+    overscanCorr: -0.0036961834874671626
   - detector: 0
     detectorComp: 0
     ampName: C12
     ampComp: C04
-    imageCorr: 0.011455504748614894
-    overscanCorr: -0.00218182150047311
+    imageCorr: 0.011455504748614934
+    overscanCorr: -0.0021818215004731126
   - detector: 0
     detectorComp: 0
     ampName: C12
     ampComp: C03
-    imageCorr: 0.013068631118712166
-    overscanCorr: 0.0008576121726963106
+    imageCorr: 0.013068631118712135
+    overscanCorr: 0.0008576121726963226
   - detector: 0
     detectorComp: 0
     ampName: C12
     ampComp: C02
-    imageCorr: 0.013542060278745483
-    overscanCorr: -0.00023058933112659585
+    imageCorr: 0.013542060278745488
+    overscanCorr: -0.00023058933112668918
   - detector: 0
     detectorComp: 0
     ampName: C12
     ampComp: C01
-    imageCorr: 0.01263541018947553
-    overscanCorr: -0.00020617023886978307
+    imageCorr: 0.01263541018947554
+    overscanCorr: -0.00020617023886978098
   - detector: 0
     detectorComp: 0
     ampName: C12
     ampComp: C00
-    imageCorr: 0.015934210483852098
-    overscanCorr: -0.0030599388273832968
+    imageCorr: 0.01593421048385214
+    overscanCorr: -0.0030599388273833427
   - detector: 0
     detectorComp: 0
     ampName: C13
     ampComp: C10
-    imageCorr: 0.526284119063182
-    overscanCorr: 0.5724325117138035
+    imageCorr: 0.5262841190631825
+    overscanCorr: 0.572432511713801
   - detector: 0
     detectorComp: 0
     ampName: C13
     ampComp: C11
-    imageCorr: 0.5257400334176405
-    overscanCorr: 0.5727953543563447
+    imageCorr: 0.5257400334176379
+    overscanCorr: 0.5727953543563431
   - detector: 0
     detectorComp: 0
     ampName: C13
     ampComp: C12
-    imageCorr: 0.5429728132286411
-    overscanCorr: 0.584258650012955
+    imageCorr: 0.5429728132286407
+    overscanCorr: 0.584258650012957
   - detector: 0
     detectorComp: 0
     ampName: C13
@@ -40776,98 +40776,98 @@ ISR:
     detectorComp: 0
     ampName: C13
     ampComp: C14
-    imageCorr: 0.5349742006048703
-    overscanCorr: 0.5754667271374758
+    imageCorr: 0.5349742006048696
+    overscanCorr: 0.5754667271374785
   - detector: 0
     detectorComp: 0
     ampName: C13
     ampComp: C15
-    imageCorr: 0.5374626187872167
-    overscanCorr: 0.5731995917868071
+    imageCorr: 0.5374626187872168
+    overscanCorr: 0.5731995917868093
   - detector: 0
     detectorComp: 0
     ampName: C13
     ampComp: C16
-    imageCorr: 0.5220960399966184
-    overscanCorr: 0.565755848196737
+    imageCorr: 0.5220960399966201
+    overscanCorr: 0.5657558481967404
   - detector: 0
     detectorComp: 0
     ampName: C13
     ampComp: C17
-    imageCorr: 0.4243448534741423
-    overscanCorr: 0.47311346247387515
+    imageCorr: 0.4243448534741401
+    overscanCorr: 0.47311346247387537
   - detector: 0
     detectorComp: 0
     ampName: C13
     ampComp: C07
-    imageCorr: 0.00995266744037394
-    overscanCorr: -0.0012238279905994831
+    imageCorr: 0.00995266744037397
+    overscanCorr: -0.0012238279905994168
   - detector: 0
     detectorComp: 0
     ampName: C13
     ampComp: C06
-    imageCorr: 0.011729611843761851
-    overscanCorr: -0.0010886370124452763
+    imageCorr: 0.01172961184376183
+    overscanCorr: -0.001088637012445363
   - detector: 0
     detectorComp: 0
     ampName: C13
     ampComp: C05
-    imageCorr: 0.01149083930927354
-    overscanCorr: -0.005277167745893908
+    imageCorr: 0.011490839309273571
+    overscanCorr: -0.00527716774589385
   - detector: 0
     detectorComp: 0
     ampName: C13
     ampComp: C04
-    imageCorr: 0.01292796526682092
-    overscanCorr: -0.004542701892460469
+    imageCorr: 0.0129279652668209
+    overscanCorr: -0.004542701892460559
   - detector: 0
     detectorComp: 0
     ampName: C13
     ampComp: C03
-    imageCorr: 0.012888356200826147
-    overscanCorr: 0.00028503312097825565
+    imageCorr: 0.012888356200826104
+    overscanCorr: 0.00028503312097819406
   - detector: 0
     detectorComp: 0
     ampName: C13
     ampComp: C02
-    imageCorr: 0.014865214456837113
-    overscanCorr: 0.0022465005097853947
+    imageCorr: 0.014865214456837058
+    overscanCorr: 0.0022465005097852928
   - detector: 0
     detectorComp: 0
     ampName: C13
     ampComp: C01
-    imageCorr: 0.013280226200985353
-    overscanCorr: 0.0012582071889000125
+    imageCorr: 0.013280226200985356
+    overscanCorr: 0.0012582071888999646
   - detector: 0
     detectorComp: 0
     ampName: C13
     ampComp: C00
-    imageCorr: 0.013334457204565442
-    overscanCorr: -0.0022871992158061847
+    imageCorr: 0.013334457204565452
+    overscanCorr: -0.002287199215806237
   - detector: 0
     detectorComp: 0
     ampName: C14
     ampComp: C10
-    imageCorr: 0.5130068455987775
-    overscanCorr: 0.5594758231058846
+    imageCorr: 0.5130068455987763
+    overscanCorr: 0.5594758231058847
   - detector: 0
     detectorComp: 0
     ampName: C14
     ampComp: C11
-    imageCorr: 0.5194046521018024
-    overscanCorr: 0.565527514915511
+    imageCorr: 0.5194046521018033
+    overscanCorr: 0.5655275149155158
   - detector: 0
     detectorComp: 0
     ampName: C14
     ampComp: C12
-    imageCorr: 0.534544216498346
-    overscanCorr: 0.571728045755775
+    imageCorr: 0.5345442164983468
+    overscanCorr: 0.571728045755777
   - detector: 0
     detectorComp: 0
     ampName: C14
     ampComp: C13
-    imageCorr: 0.5349742006048704
-    overscanCorr: 0.5754667271374757
+    imageCorr: 0.5349742006048697
+    overscanCorr: 0.5754667271374785
   - detector: 0
     detectorComp: 0
     ampName: C14
@@ -40878,98 +40878,98 @@ ISR:
     detectorComp: 0
     ampName: C14
     ampComp: C15
-    imageCorr: 0.5286032619662517
-    overscanCorr: 0.5674216402553786
+    imageCorr: 0.5286032619662531
+    overscanCorr: 0.5674216402553836
   - detector: 0
     detectorComp: 0
     ampName: C14
     ampComp: C16
-    imageCorr: 0.5140105844865767
-    overscanCorr: 0.5555596206689457
+    imageCorr: 0.5140105844865774
+    overscanCorr: 0.5555596206689521
   - detector: 0
     detectorComp: 0
     ampName: C14
     ampComp: C17
-    imageCorr: 0.44016431637850995
-    overscanCorr: 0.4808296985727485
+    imageCorr: 0.44016431637850795
+    overscanCorr: 0.4808296985727489
   - detector: 0
     detectorComp: 0
     ampName: C14
     ampComp: C07
-    imageCorr: 0.010324922753497601
-    overscanCorr: 9.575177212473523e-05
+    imageCorr: 0.010324922753497634
+    overscanCorr: 9.575177212468075e-05
   - detector: 0
     detectorComp: 0
     ampName: C14
     ampComp: C06
-    imageCorr: 0.011213451466595997
-    overscanCorr: -0.00011751764152709777
+    imageCorr: 0.011213451466595982
+    overscanCorr: -0.00011751764152696086
   - detector: 0
     detectorComp: 0
     ampName: C14
     ampComp: C05
-    imageCorr: 0.014687798987112062
-    overscanCorr: -0.00025429851810722745
+    imageCorr: 0.014687798987112078
+    overscanCorr: -0.00025429851810730714
   - detector: 0
     detectorComp: 0
     ampName: C14
     ampComp: C04
-    imageCorr: 0.01279726485028758
-    overscanCorr: 0.0010378295914712085
+    imageCorr: 0.01279726485028759
+    overscanCorr: 0.0010378295914711942
   - detector: 0
     detectorComp: 0
     ampName: C14
     ampComp: C03
-    imageCorr: 0.015898856649751013
-    overscanCorr: 0.0037447744081645536
+    imageCorr: 0.015898856649750995
+    overscanCorr: 0.003744774408164726
   - detector: 0
     detectorComp: 0
     ampName: C14
     ampComp: C02
-    imageCorr: 0.014797864045495246
-    overscanCorr: 0.009658463709883235
+    imageCorr: 0.014797864045495305
+    overscanCorr: 0.009658463709883405
   - detector: 0
     detectorComp: 0
     ampName: C14
     ampComp: C01
-    imageCorr: 0.014013032822913076
-    overscanCorr: 0.010350091674152273
+    imageCorr: 0.014013032822912998
+    overscanCorr: 0.010350091674152247
   - detector: 0
     detectorComp: 0
     ampName: C14
     ampComp: C00
-    imageCorr: 0.01721168490972395
-    overscanCorr: 0.001759668674319526
+    imageCorr: 0.017211684909723995
+    overscanCorr: 0.0017596686743195234
   - detector: 0
     detectorComp: 0
     ampName: C15
     ampComp: C10
-    imageCorr: 0.5254989598528108
-    overscanCorr: 0.5733775633466712
+    imageCorr: 0.5254989598528094
+    overscanCorr: 0.5733775633466718
   - detector: 0
     detectorComp: 0
     ampName: C15
     ampComp: C11
-    imageCorr: 0.5198861555775345
-    overscanCorr: 0.5686291390135753
+    imageCorr: 0.5198861555775348
+    overscanCorr: 0.5686291390135771
   - detector: 0
     detectorComp: 0
     ampName: C15
     ampComp: C12
-    imageCorr: 0.5296651344374262
-    overscanCorr: 0.5707773189986073
+    imageCorr: 0.5296651344374264
+    overscanCorr: 0.5707773189986064
   - detector: 0
     detectorComp: 0
     ampName: C15
     ampComp: C13
-    imageCorr: 0.5374626187872167
-    overscanCorr: 0.573199591786807
+    imageCorr: 0.5374626187872168
+    overscanCorr: 0.5731995917868093
   - detector: 0
     detectorComp: 0
     ampName: C15
     ampComp: C14
-    imageCorr: 0.5286032619662517
-    overscanCorr: 0.5674216402553786
+    imageCorr: 0.5286032619662531
+    overscanCorr: 0.5674216402553836
   - detector: 0
     detectorComp: 0
     ampName: C15
@@ -40980,98 +40980,98 @@ ISR:
     detectorComp: 0
     ampName: C15
     ampComp: C16
-    imageCorr: 0.533440921661235
-    overscanCorr: 0.5749106080082801
+    imageCorr: 0.5334409216612346
+    overscanCorr: 0.5749106080082824
   - detector: 0
     detectorComp: 0
     ampName: C15
     ampComp: C17
-    imageCorr: 0.46947514828778064
-    overscanCorr: 0.518344494488728
+    imageCorr: 0.4694751482877789
+    overscanCorr: 0.5183444944887248
   - detector: 0
     detectorComp: 0
     ampName: C15
     ampComp: C07
-    imageCorr: 0.009036136489605964
-    overscanCorr: -0.0014777911520216618
+    imageCorr: 0.009036136489606
+    overscanCorr: -0.0014777911520217682
   - detector: 0
     detectorComp: 0
     ampName: C15
     ampComp: C06
-    imageCorr: 0.011417399161532898
-    overscanCorr: 0.00016999769224476668
+    imageCorr: 0.01141739916153284
+    overscanCorr: 0.00016999769224476717
   - detector: 0
     detectorComp: 0
     ampName: C15
     ampComp: C05
-    imageCorr: 0.014666524413937215
-    overscanCorr: -0.001563113676646472
+    imageCorr: 0.014666524413937228
+    overscanCorr: -0.0015631136766466036
   - detector: 0
     detectorComp: 0
     ampName: C15
     ampComp: C04
-    imageCorr: 0.011233105129893126
-    overscanCorr: -0.0021594174026876157
+    imageCorr: 0.011233105129893147
+    overscanCorr: -0.0021594174026877432
   - detector: 0
     detectorComp: 0
     ampName: C15
     ampComp: C03
-    imageCorr: 0.012131944348303557
-    overscanCorr: -0.0016664986186867108
+    imageCorr: 0.012131944348303548
+    overscanCorr: -0.0016664986186866826
   - detector: 0
     detectorComp: 0
     ampName: C15
     ampComp: C02
-    imageCorr: 0.014750035243774948
-    overscanCorr: 0.0016945123757653728
+    imageCorr: 0.014750035243774972
+    overscanCorr: 0.0016945123757654606
   - detector: 0
     detectorComp: 0
     ampName: C15
     ampComp: C01
-    imageCorr: 0.013188031441784312
-    overscanCorr: -0.0026467363716529365
+    imageCorr: 0.013188031441784319
+    overscanCorr: -0.0026467363716528186
   - detector: 0
     detectorComp: 0
     ampName: C15
     ampComp: C00
-    imageCorr: 0.014708271329309129
-    overscanCorr: -0.0046774593483750685
+    imageCorr: 0.014708271329309115
+    overscanCorr: -0.004677459348375012
   - detector: 0
     detectorComp: 0
     ampName: C16
     ampComp: C10
-    imageCorr: 0.5456889526814759
-    overscanCorr: 0.5910499165473294
+    imageCorr: 0.5456889526814754
+    overscanCorr: 0.5910499165473304
   - detector: 0
     detectorComp: 0
     ampName: C16
     ampComp: C11
-    imageCorr: 0.5160046901981611
-    overscanCorr: 0.5638248284030937
+    imageCorr: 0.5160046901981609
+    overscanCorr: 0.563824828403098
   - detector: 0
     detectorComp: 0
     ampName: C16
     ampComp: C12
-    imageCorr: 0.5148313638953745
-    overscanCorr: 0.5562740384113259
+    imageCorr: 0.5148313638953742
+    overscanCorr: 0.5562740384113283
   - detector: 0
     detectorComp: 0
     ampName: C16
     ampComp: C13
-    imageCorr: 0.5220960399966184
-    overscanCorr: 0.5657558481967369
+    imageCorr: 0.52209603999662
+    overscanCorr: 0.5657558481967404
   - detector: 0
     detectorComp: 0
     ampName: C16
     ampComp: C14
-    imageCorr: 0.5140105844865768
-    overscanCorr: 0.5555596206689457
+    imageCorr: 0.5140105844865774
+    overscanCorr: 0.5555596206689523
   - detector: 0
     detectorComp: 0
     ampName: C16
     ampComp: C15
-    imageCorr: 0.533440921661235
-    overscanCorr: 0.5749106080082801
+    imageCorr: 0.5334409216612345
+    overscanCorr: 0.5749106080082824
   - detector: 0
     detectorComp: 0
     ampName: C16
@@ -41082,98 +41082,98 @@ ISR:
     detectorComp: 0
     ampName: C16
     ampComp: C17
-    imageCorr: 0.5324262478332781
-    overscanCorr: 0.5705657421343698
+    imageCorr: 0.5324262478332784
+    overscanCorr: 0.5705657421343668
   - detector: 0
     detectorComp: 0
     ampName: C16
     ampComp: C07
     imageCorr: 0.010544398990018697
-    overscanCorr: -0.001324992954548136
+    overscanCorr: -0.001324992954548154
   - detector: 0
     detectorComp: 0
     ampName: C16
     ampComp: C06
-    imageCorr: 0.011960285152446098
-    overscanCorr: -0.0033559398362136726
+    imageCorr: 0.011960285152446104
+    overscanCorr: -0.003355939836213601
   - detector: 0
     detectorComp: 0
     ampName: C16
     ampComp: C05
-    imageCorr: 0.011916757087185152
-    overscanCorr: -0.005972631827556193
+    imageCorr: 0.011916757087185188
+    overscanCorr: -0.005972631827556173
   - detector: 0
     detectorComp: 0
     ampName: C16
     ampComp: C04
-    imageCorr: 0.012961996406351144
-    overscanCorr: -0.003512651568260826
+    imageCorr: 0.012961996406351161
+    overscanCorr: -0.0035126515682606854
   - detector: 0
     detectorComp: 0
     ampName: C16
     ampComp: C03
-    imageCorr: 0.011452307799589865
-    overscanCorr: -0.0014328243631635288
+    imageCorr: 0.011452307799589894
+    overscanCorr: -0.0014328243631636017
   - detector: 0
     detectorComp: 0
     ampName: C16
     ampComp: C02
     imageCorr: 0.01141509231144881
-    overscanCorr: 0.0007908701288233615
+    overscanCorr: 0.0007908701288232136
   - detector: 0
     detectorComp: 0
     ampName: C16
     ampComp: C01
-    imageCorr: 0.012837618531463854
-    overscanCorr: -0.00222927351356826
+    imageCorr: 0.012837618531463868
+    overscanCorr: -0.0022292735135682586
   - detector: 0
     detectorComp: 0
     ampName: C16
     ampComp: C00
-    imageCorr: 0.015787621266906467
-    overscanCorr: -0.004082461740420996
+    imageCorr: 0.01578762126690647
+    overscanCorr: -0.004082461740421139
   - detector: 0
     detectorComp: 0
     ampName: C17
     ampComp: C10
-    imageCorr: 0.49420250215414924
-    overscanCorr: 0.5429518464435549
+    imageCorr: 0.494202502154147
+    overscanCorr: 0.5429518464435485
   - detector: 0
     detectorComp: 0
     ampName: C17
     ampComp: C11
-    imageCorr: 0.45077131772405343
-    overscanCorr: 0.5047700057448129
+    imageCorr: 0.4507713177240525
+    overscanCorr: 0.5047700057448135
   - detector: 0
     detectorComp: 0
     ampName: C17
     ampComp: C12
-    imageCorr: 0.4339116744336319
-    overscanCorr: 0.4830567502465856
+    imageCorr: 0.4339116744336295
+    overscanCorr: 0.48305675024658523
   - detector: 0
     detectorComp: 0
     ampName: C17
     ampComp: C13
-    imageCorr: 0.42434485347414225
-    overscanCorr: 0.4731134624738751
+    imageCorr: 0.42434485347414014
+    overscanCorr: 0.4731134624738754
   - detector: 0
     detectorComp: 0
     ampName: C17
     ampComp: C14
-    imageCorr: 0.44016431637850995
-    overscanCorr: 0.48082969857274843
+    imageCorr: 0.440164316378508
+    overscanCorr: 0.48082969857274893
   - detector: 0
     detectorComp: 0
     ampName: C17
     ampComp: C15
-    imageCorr: 0.4694751482877807
-    overscanCorr: 0.5183444944887281
+    imageCorr: 0.46947514828777887
+    overscanCorr: 0.5183444944887248
   - detector: 0
     detectorComp: 0
     ampName: C17
     ampComp: C16
-    imageCorr: 0.5324262478332781
-    overscanCorr: 0.5705657421343697
+    imageCorr: 0.5324262478332784
+    overscanCorr: 0.5705657421343668
   - detector: 0
     detectorComp: 0
     ampName: C17
@@ -41184,98 +41184,98 @@ ISR:
     detectorComp: 0
     ampName: C17
     ampComp: C07
-    imageCorr: 0.012097157018987892
-    overscanCorr: 0.0026739762867920933
+    imageCorr: 0.012097157018987843
+    overscanCorr: 0.0026739762867920795
   - detector: 0
     detectorComp: 0
     ampName: C17
     ampComp: C06
-    imageCorr: 0.009979587943940525
-    overscanCorr: 0.003372446206425574
+    imageCorr: 0.009979587943940533
+    overscanCorr: 0.003372446206425475
   - detector: 0
     detectorComp: 0
     ampName: C17
     ampComp: C05
-    imageCorr: 0.007796362715602251
-    overscanCorr: -0.0001261197263921385
+    imageCorr: 0.007796362715602257
+    overscanCorr: -0.00012611972639221908
   - detector: 0
     detectorComp: 0
     ampName: C17
     ampComp: C04
-    imageCorr: 0.011287924409949369
-    overscanCorr: -0.0017820517326321726
+    imageCorr: 0.011287924409949348
+    overscanCorr: -0.00178205173263221
   - detector: 0
     detectorComp: 0
     ampName: C17
     ampComp: C03
-    imageCorr: 0.009377815289257331
-    overscanCorr: 0.0013268559528235647
+    imageCorr: 0.0093778152892573
+    overscanCorr: 0.0013268559528236668
   - detector: 0
     detectorComp: 0
     ampName: C17
     ampComp: C02
-    imageCorr: 0.009025977102345128
-    overscanCorr: 0.0022660833803420373
+    imageCorr: 0.009025977102345097
+    overscanCorr: 0.002266083380341994
   - detector: 0
     detectorComp: 0
     ampName: C17
     ampComp: C01
-    imageCorr: 0.009935155129416274
-    overscanCorr: 0.002978194674347255
+    imageCorr: 0.009935155129416296
+    overscanCorr: 0.002978194674347091
   - detector: 0
     detectorComp: 0
     ampName: C17
     ampComp: C00
-    imageCorr: 0.013606317862037894
-    overscanCorr: -0.0006992710177417043
+    imageCorr: 0.013606317862037877
+    overscanCorr: -0.000699271017741738
   - detector: 0
     detectorComp: 0
     ampName: C07
     ampComp: C10
-    imageCorr: 0.010128635071142124
-    overscanCorr: -0.0025956806548204925
+    imageCorr: 0.010128635071142119
+    overscanCorr: -0.0025956806548205398
   - detector: 0
     detectorComp: 0
     ampName: C07
     ampComp: C11
-    imageCorr: 0.012510698907632631
-    overscanCorr: 0.0002419085308250258
+    imageCorr: 0.012510698907632616
+    overscanCorr: 0.00024190853082506206
   - detector: 0
     detectorComp: 0
     ampName: C07
     ampComp: C12
-    imageCorr: 0.011339366924437246
-    overscanCorr: -0.001065960399645908
+    imageCorr: 0.01133936692443722
+    overscanCorr: -0.0010659603996459506
   - detector: 0
     detectorComp: 0
     ampName: C07
     ampComp: C13
-    imageCorr: 0.00995266744037394
-    overscanCorr: -0.0012238279905994833
+    imageCorr: 0.00995266744037397
+    overscanCorr: -0.0012238279905994168
   - detector: 0
     detectorComp: 0
     ampName: C07
     ampComp: C14
-    imageCorr: 0.010324922753497601
-    overscanCorr: 9.575177212473523e-05
+    imageCorr: 0.010324922753497633
+    overscanCorr: 9.575177212468076e-05
   - detector: 0
     detectorComp: 0
     ampName: C07
     ampComp: C15
-    imageCorr: 0.009036136489605962
-    overscanCorr: -0.0014777911520216618
+    imageCorr: 0.009036136489606
+    overscanCorr: -0.0014777911520217682
   - detector: 0
     detectorComp: 0
     ampName: C07
     ampComp: C16
     imageCorr: 0.010544398990018697
-    overscanCorr: -0.001324992954548136
+    overscanCorr: -0.001324992954548154
   - detector: 0
     detectorComp: 0
     ampName: C07
     ampComp: C17
-    imageCorr: 0.012097157018987892
-    overscanCorr: 0.0026739762867920933
+    imageCorr: 0.012097157018987842
+    overscanCorr: 0.0026739762867920795
   - detector: 0
     detectorComp: 0
     ampName: C07
@@ -41287,97 +41287,97 @@ ISR:
     ampName: C07
     ampComp: C06
     imageCorr: 0.5334698535847474
-    overscanCorr: 0.5785771844321893
+    overscanCorr: 0.5785771844321883
   - detector: 0
     detectorComp: 0
     ampName: C07
     ampComp: C05
-    imageCorr: 0.49275474627855015
-    overscanCorr: 0.5421709619454232
+    imageCorr: 0.4927547462785512
+    overscanCorr: 0.542170961945421
   - detector: 0
     detectorComp: 0
     ampName: C07
     ampComp: C04
-    imageCorr: 0.4849262702346012
+    imageCorr: 0.4849262702345995
     overscanCorr: 0.5389575958913257
   - detector: 0
     detectorComp: 0
     ampName: C07
     ampComp: C03
-    imageCorr: 0.4594734164018119
-    overscanCorr: 0.5135200886578293
+    imageCorr: 0.4594734164018139
+    overscanCorr: 0.5135200886578317
   - detector: 0
     detectorComp: 0
     ampName: C07
     ampComp: C02
-    imageCorr: 0.45459201959535034
-    overscanCorr: 0.5052204535905533
+    imageCorr: 0.4545920195953504
+    overscanCorr: 0.5052204535905496
   - detector: 0
     detectorComp: 0
     ampName: C07
     ampComp: C01
-    imageCorr: 0.5027613060618382
-    overscanCorr: 0.5479797741723931
+    imageCorr: 0.5027613060618367
+    overscanCorr: 0.5479797741723923
   - detector: 0
     detectorComp: 0
     ampName: C07
     ampComp: C00
-    imageCorr: 0.5109091364776557
-    overscanCorr: 0.5652791676667467
+    imageCorr: 0.5109091364776562
+    overscanCorr: 0.5652791676667485
   - detector: 0
     detectorComp: 0
     ampName: C06
     ampComp: C10
-    imageCorr: 0.01103630632393038
-    overscanCorr: 0.0012338552663598915
+    imageCorr: 0.011036306323930403
+    overscanCorr: 0.0012338552663598793
   - detector: 0
     detectorComp: 0
     ampName: C06
     ampComp: C11
-    imageCorr: 0.010766045024449424
-    overscanCorr: -0.0002341965129723968
+    imageCorr: 0.010766045024449403
+    overscanCorr: -0.00023419651297245557
   - detector: 0
     detectorComp: 0
     ampName: C06
     ampComp: C12
-    imageCorr: 0.009679373013678326
-    overscanCorr: 0.0009362544216432729
+    imageCorr: 0.009679373013678305
+    overscanCorr: 0.0009362544216431909
   - detector: 0
     detectorComp: 0
     ampName: C06
     ampComp: C13
-    imageCorr: 0.011729611843761853
-    overscanCorr: -0.0010886370124452763
+    imageCorr: 0.01172961184376183
+    overscanCorr: -0.001088637012445363
   - detector: 0
     detectorComp: 0
     ampName: C06
     ampComp: C14
-    imageCorr: 0.011213451466595997
-    overscanCorr: -0.00011751764152709777
+    imageCorr: 0.011213451466595982
+    overscanCorr: -0.00011751764152696086
   - detector: 0
     detectorComp: 0
     ampName: C06
     ampComp: C15
-    imageCorr: 0.011417399161532898
-    overscanCorr: 0.00016999769224476666
+    imageCorr: 0.01141739916153284
+    overscanCorr: 0.00016999769224476717
   - detector: 0
     detectorComp: 0
     ampName: C06
     ampComp: C16
-    imageCorr: 0.011960285152446098
-    overscanCorr: -0.0033559398362136726
+    imageCorr: 0.011960285152446104
+    overscanCorr: -0.0033559398362136006
   - detector: 0
     detectorComp: 0
     ampName: C06
     ampComp: C17
-    imageCorr: 0.009979587943940523
-    overscanCorr: 0.003372446206425574
+    imageCorr: 0.009979587943940533
+    overscanCorr: 0.0033724462064254747
   - detector: 0
     detectorComp: 0
     ampName: C06
     ampComp: C07
-    imageCorr: 0.5334698535847473
-    overscanCorr: 0.5785771844321893
+    imageCorr: 0.5334698535847475
+    overscanCorr: 0.5785771844321883
   - detector: 0
     detectorComp: 0
     ampName: C06
@@ -41388,98 +41388,98 @@ ISR:
     detectorComp: 0
     ampName: C06
     ampComp: C05
-    imageCorr: 0.6224881715665472
-    overscanCorr: 0.6649177230799992
+    imageCorr: 0.6224881715665449
+    overscanCorr: 0.6649177230799963
   - detector: 0
     detectorComp: 0
     ampName: C06
     ampComp: C04
-    imageCorr: 0.5962778669152313
-    overscanCorr: 0.6393079142265016
+    imageCorr: 0.5962778669152338
+    overscanCorr: 0.6393079142264966
   - detector: 0
     detectorComp: 0
     ampName: C06
     ampComp: C03
-    imageCorr: 0.5600692618709288
-    overscanCorr: 0.601816115795865
+    imageCorr: 0.5600692618709278
+    overscanCorr: 0.6018161157958593
   - detector: 0
     detectorComp: 0
     ampName: C06
     ampComp: C02
-    imageCorr: 0.5523492705973295
-    overscanCorr: 0.5955806097415441
+    imageCorr: 0.5523492705973299
+    overscanCorr: 0.5955806097415429
   - detector: 0
     detectorComp: 0
     ampName: C06
     ampComp: C01
-    imageCorr: 0.613757073879502
-    overscanCorr: 0.6558713596002572
+    imageCorr: 0.6137570738795002
+    overscanCorr: 0.6558713596002584
   - detector: 0
     detectorComp: 0
     ampName: C06
     ampComp: C00
-    imageCorr: 0.580772025093712
-    overscanCorr: 0.6289520194631346
+    imageCorr: 0.580772025093713
+    overscanCorr: 0.628952019463132
   - detector: 0
     detectorComp: 0
     ampName: C05
     ampComp: C10
     imageCorr: 0.013412319059878091
-    overscanCorr: -0.003671605217054758
+    overscanCorr: -0.0036716052170548265
   - detector: 0
     detectorComp: 0
     ampName: C05
     ampComp: C11
-    imageCorr: 0.011485507157255163
-    overscanCorr: -0.002383841282738306
+    imageCorr: 0.011485507157255178
+    overscanCorr: -0.0023838412827383686
   - detector: 0
     detectorComp: 0
     ampName: C05
     ampComp: C12
-    imageCorr: 0.01215399661270703
-    overscanCorr: -0.003696183487467156
+    imageCorr: 0.012153996612707024
+    overscanCorr: -0.0036961834874671626
   - detector: 0
     detectorComp: 0
     ampName: C05
     ampComp: C13
-    imageCorr: 0.01149083930927354
-    overscanCorr: -0.005277167745893908
+    imageCorr: 0.011490839309273571
+    overscanCorr: -0.00527716774589385
   - detector: 0
     detectorComp: 0
     ampName: C05
     ampComp: C14
-    imageCorr: 0.01468779898711206
-    overscanCorr: -0.00025429851810722745
+    imageCorr: 0.014687798987112078
+    overscanCorr: -0.00025429851810730714
   - detector: 0
     detectorComp: 0
     ampName: C05
     ampComp: C15
-    imageCorr: 0.014666524413937215
-    overscanCorr: -0.0015631136766464718
+    imageCorr: 0.014666524413937228
+    overscanCorr: -0.0015631136766466039
   - detector: 0
     detectorComp: 0
     ampName: C05
     ampComp: C16
-    imageCorr: 0.011916757087185153
-    overscanCorr: -0.005972631827556193
+    imageCorr: 0.011916757087185188
+    overscanCorr: -0.005972631827556173
   - detector: 0
     detectorComp: 0
     ampName: C05
     ampComp: C17
-    imageCorr: 0.007796362715602251
-    overscanCorr: -0.00012611972639213847
+    imageCorr: 0.007796362715602257
+    overscanCorr: -0.00012611972639221906
   - detector: 0
     detectorComp: 0
     ampName: C05
     ampComp: C07
-    imageCorr: 0.49275474627855015
-    overscanCorr: 0.5421709619454232
+    imageCorr: 0.4927547462785511
+    overscanCorr: 0.542170961945421
   - detector: 0
     detectorComp: 0
     ampName: C05
     ampComp: C06
-    imageCorr: 0.6224881715665473
-    overscanCorr: 0.6649177230799993
+    imageCorr: 0.6224881715665449
+    overscanCorr: 0.6649177230799962
   - detector: 0
     detectorComp: 0
     ampName: C05
@@ -41490,98 +41490,98 @@ ISR:
     detectorComp: 0
     ampName: C05
     ampComp: C04
-    imageCorr: 0.618386260508858
-    overscanCorr: 0.6563519001435033
+    imageCorr: 0.6183862605088596
+    overscanCorr: 0.6563519001435099
   - detector: 0
     detectorComp: 0
     ampName: C05
     ampComp: C03
-    imageCorr: 0.5795855814587253
-    overscanCorr: 0.6187585104803018
+    imageCorr: 0.5795855814587235
+    overscanCorr: 0.6187585104803016
   - detector: 0
     detectorComp: 0
     ampName: C05
     ampComp: C02
-    imageCorr: 0.5753880298053006
-    overscanCorr: 0.613539567910075
+    imageCorr: 0.5753880298052999
+    overscanCorr: 0.6135395679100701
   - detector: 0
     detectorComp: 0
     ampName: C05
     ampComp: C01
-    imageCorr: 0.614949036095347
-    overscanCorr: 0.6594969337300777
+    imageCorr: 0.6149490360953488
+    overscanCorr: 0.6594969337300757
   - detector: 0
     detectorComp: 0
     ampName: C05
     ampComp: C00
-    imageCorr: 0.5781366804722823
-    overscanCorr: 0.6275173410340422
+    imageCorr: 0.5781366804722854
+    overscanCorr: 0.6275173410340406
   - detector: 0
     detectorComp: 0
     ampName: C04
     ampComp: C10
-    imageCorr: 0.011321911139012784
-    overscanCorr: -0.001304079988030105
+    imageCorr: 0.011321911139012816
+    overscanCorr: -0.0013040799880302335
   - detector: 0
     detectorComp: 0
     ampName: C04
     ampComp: C11
-    imageCorr: 0.013983139501716228
-    overscanCorr: -0.0020172653716345086
+    imageCorr: 0.013983139501716198
+    overscanCorr: -0.0020172653716344527
   - detector: 0
     detectorComp: 0
     ampName: C04
     ampComp: C12
-    imageCorr: 0.011455504748614894
-    overscanCorr: -0.00218182150047311
+    imageCorr: 0.011455504748614932
+    overscanCorr: -0.002181821500473113
   - detector: 0
     detectorComp: 0
     ampName: C04
     ampComp: C13
-    imageCorr: 0.012927965266820919
-    overscanCorr: -0.004542701892460469
+    imageCorr: 0.012927965266820898
+    overscanCorr: -0.004542701892460559
   - detector: 0
     detectorComp: 0
     ampName: C04
     ampComp: C14
-    imageCorr: 0.01279726485028758
-    overscanCorr: 0.0010378295914712085
+    imageCorr: 0.012797264850287588
+    overscanCorr: 0.0010378295914711942
   - detector: 0
     detectorComp: 0
     ampName: C04
     ampComp: C15
-    imageCorr: 0.011233105129893126
-    overscanCorr: -0.0021594174026876157
+    imageCorr: 0.011233105129893147
+    overscanCorr: -0.0021594174026877432
   - detector: 0
     detectorComp: 0
     ampName: C04
     ampComp: C16
-    imageCorr: 0.012961996406351144
-    overscanCorr: -0.0035126515682608254
+    imageCorr: 0.012961996406351161
+    overscanCorr: -0.003512651568260686
   - detector: 0
     detectorComp: 0
     ampName: C04
     ampComp: C17
-    imageCorr: 0.011287924409949369
-    overscanCorr: -0.0017820517326321724
+    imageCorr: 0.01128792440994935
+    overscanCorr: -0.00178205173263221
   - detector: 0
     detectorComp: 0
     ampName: C04
     ampComp: C07
-    imageCorr: 0.4849262702346012
+    imageCorr: 0.4849262702345995
     overscanCorr: 0.5389575958913257
   - detector: 0
     detectorComp: 0
     ampName: C04
     ampComp: C06
-    imageCorr: 0.5962778669152313
-    overscanCorr: 0.6393079142265016
+    imageCorr: 0.5962778669152338
+    overscanCorr: 0.6393079142264966
   - detector: 0
     detectorComp: 0
     ampName: C04
     ampComp: C05
-    imageCorr: 0.6183862605088581
-    overscanCorr: 0.6563519001435034
+    imageCorr: 0.6183862605088596
+    overscanCorr: 0.6563519001435099
   - detector: 0
     detectorComp: 0
     ampName: C04
@@ -41592,98 +41592,98 @@ ISR:
     detectorComp: 0
     ampName: C04
     ampComp: C03
-    imageCorr: 0.5851035568106534
-    overscanCorr: 0.6236373870689884
+    imageCorr: 0.5851035568106524
+    overscanCorr: 0.6236373870689911
   - detector: 0
     detectorComp: 0
     ampName: C04
     ampComp: C02
-    imageCorr: 0.5770631752846729
-    overscanCorr: 0.6203188370530989
+    imageCorr: 0.5770631752846713
+    overscanCorr: 0.6203188370530979
   - detector: 0
     detectorComp: 0
     ampName: C04
     ampComp: C01
-    imageCorr: 0.6016582208404502
-    overscanCorr: 0.6434981942034351
+    imageCorr: 0.6016582208404492
+    overscanCorr: 0.64349819420344
   - detector: 0
     detectorComp: 0
     ampName: C04
     ampComp: C00
-    imageCorr: 0.5729921228497786
-    overscanCorr: 0.6223725832671948
+    imageCorr: 0.5729921228497792
+    overscanCorr: 0.6223725832671982
   - detector: 0
     detectorComp: 0
     ampName: C03
     ampComp: C10
-    imageCorr: 0.010768833381460027
-    overscanCorr: -0.0011120961176034785
+    imageCorr: 0.01076883338146004
+    overscanCorr: -0.0011120961176035496
   - detector: 0
     detectorComp: 0
     ampName: C03
     ampComp: C11
-    imageCorr: 0.013695604353737607
-    overscanCorr: -0.0014894891838774622
+    imageCorr: 0.013695604353737605
+    overscanCorr: -0.0014894891838772874
   - detector: 0
     detectorComp: 0
     ampName: C03
     ampComp: C12
-    imageCorr: 0.013068631118712166
-    overscanCorr: 0.0008576121726963106
+    imageCorr: 0.013068631118712136
+    overscanCorr: 0.0008576121726963227
   - detector: 0
     detectorComp: 0
     ampName: C03
     ampComp: C13
-    imageCorr: 0.012888356200826147
-    overscanCorr: 0.00028503312097825565
+    imageCorr: 0.012888356200826104
+    overscanCorr: 0.00028503312097819406
   - detector: 0
     detectorComp: 0
     ampName: C03
     ampComp: C14
-    imageCorr: 0.015898856649751016
-    overscanCorr: 0.003744774408164554
+    imageCorr: 0.015898856649750992
+    overscanCorr: 0.0037447744081647266
   - detector: 0
     detectorComp: 0
     ampName: C03
     ampComp: C15
-    imageCorr: 0.012131944348303557
-    overscanCorr: -0.0016664986186867108
+    imageCorr: 0.012131944348303546
+    overscanCorr: -0.0016664986186866826
   - detector: 0
     detectorComp: 0
     ampName: C03
     ampComp: C16
-    imageCorr: 0.011452307799589863
-    overscanCorr: -0.0014328243631635286
+    imageCorr: 0.011452307799589896
+    overscanCorr: -0.0014328243631636015
   - detector: 0
     detectorComp: 0
     ampName: C03
     ampComp: C17
-    imageCorr: 0.009377815289257333
-    overscanCorr: 0.0013268559528235647
+    imageCorr: 0.0093778152892573
+    overscanCorr: 0.0013268559528236668
   - detector: 0
     detectorComp: 0
     ampName: C03
     ampComp: C07
-    imageCorr: 0.4594734164018119
-    overscanCorr: 0.5135200886578293
+    imageCorr: 0.4594734164018139
+    overscanCorr: 0.5135200886578317
   - detector: 0
     detectorComp: 0
     ampName: C03
     ampComp: C06
-    imageCorr: 0.5600692618709288
-    overscanCorr: 0.601816115795865
+    imageCorr: 0.5600692618709279
+    overscanCorr: 0.6018161157958593
   - detector: 0
     detectorComp: 0
     ampName: C03
     ampComp: C05
-    imageCorr: 0.5795855814587253
-    overscanCorr: 0.6187585104803018
+    imageCorr: 0.5795855814587235
+    overscanCorr: 0.6187585104803015
   - detector: 0
     detectorComp: 0
     ampName: C03
     ampComp: C04
-    imageCorr: 0.5851035568106534
-    overscanCorr: 0.6236373870689885
+    imageCorr: 0.5851035568106525
+    overscanCorr: 0.6236373870689912
   - detector: 0
     detectorComp: 0
     ampName: C03
@@ -41694,98 +41694,98 @@ ISR:
     detectorComp: 0
     ampName: C03
     ampComp: C02
-    imageCorr: 0.5638662857501818
-    overscanCorr: 0.602810689759792
+    imageCorr: 0.5638662857501838
+    overscanCorr: 0.6028106897597892
   - detector: 0
     detectorComp: 0
     ampName: C03
     ampComp: C01
-    imageCorr: 0.5779317387234738
-    overscanCorr: 0.618342455873356
+    imageCorr: 0.5779317387234741
+    overscanCorr: 0.6183424558733553
   - detector: 0
     detectorComp: 0
     ampName: C03
     ampComp: C00
-    imageCorr: 0.5504857024525962
-    overscanCorr: 0.6019251139722364
+    imageCorr: 0.5504857024525995
+    overscanCorr: 0.6019251139722369
   - detector: 0
     detectorComp: 0
     ampName: C02
     ampComp: C10
-    imageCorr: 0.01331205399202464
-    overscanCorr: 0.0032452563882737597
+    imageCorr: 0.013312053992024576
+    overscanCorr: 0.0032452563882738547
   - detector: 0
     detectorComp: 0
     ampName: C02
     ampComp: C11
-    imageCorr: 0.012632659736898947
-    overscanCorr: -0.0011629625167551747
+    imageCorr: 0.01263265973689893
+    overscanCorr: -0.0011629625167551374
   - detector: 0
     detectorComp: 0
     ampName: C02
     ampComp: C12
-    imageCorr: 0.013542060278745481
-    overscanCorr: -0.00023058933112659588
+    imageCorr: 0.013542060278745488
+    overscanCorr: -0.00023058933112668918
   - detector: 0
     detectorComp: 0
     ampName: C02
     ampComp: C13
-    imageCorr: 0.014865214456837113
-    overscanCorr: 0.002246500509785395
+    imageCorr: 0.01486521445683706
+    overscanCorr: 0.0022465005097852923
   - detector: 0
     detectorComp: 0
     ampName: C02
     ampComp: C14
-    imageCorr: 0.014797864045495247
-    overscanCorr: 0.009658463709883235
+    imageCorr: 0.014797864045495305
+    overscanCorr: 0.009658463709883403
   - detector: 0
     detectorComp: 0
     ampName: C02
     ampComp: C15
-    imageCorr: 0.01475003524377495
-    overscanCorr: 0.0016945123757653728
+    imageCorr: 0.014750035243774974
+    overscanCorr: 0.0016945123757654606
   - detector: 0
     detectorComp: 0
     ampName: C02
     ampComp: C16
-    imageCorr: 0.01141509231144881
-    overscanCorr: 0.0007908701288233615
+    imageCorr: 0.011415092311448808
+    overscanCorr: 0.0007908701288232136
   - detector: 0
     detectorComp: 0
     ampName: C02
     ampComp: C17
-    imageCorr: 0.009025977102345128
-    overscanCorr: 0.0022660833803420373
+    imageCorr: 0.009025977102345097
+    overscanCorr: 0.0022660833803419935
   - detector: 0
     detectorComp: 0
     ampName: C02
     ampComp: C07
-    imageCorr: 0.45459201959535034
-    overscanCorr: 0.5052204535905532
+    imageCorr: 0.4545920195953504
+    overscanCorr: 0.5052204535905497
   - detector: 0
     detectorComp: 0
     ampName: C02
     ampComp: C06
-    imageCorr: 0.5523492705973295
-    overscanCorr: 0.5955806097415443
+    imageCorr: 0.5523492705973299
+    overscanCorr: 0.5955806097415429
   - detector: 0
     detectorComp: 0
     ampName: C02
     ampComp: C05
-    imageCorr: 0.5753880298053006
-    overscanCorr: 0.613539567910075
+    imageCorr: 0.5753880298053
+    overscanCorr: 0.6135395679100702
   - detector: 0
     detectorComp: 0
     ampName: C02
     ampComp: C04
-    imageCorr: 0.5770631752846729
-    overscanCorr: 0.620318837053099
+    imageCorr: 0.5770631752846712
+    overscanCorr: 0.6203188370530979
   - detector: 0
     detectorComp: 0
     ampName: C02
     ampComp: C03
-    imageCorr: 0.5638662857501818
-    overscanCorr: 0.602810689759792
+    imageCorr: 0.5638662857501838
+    overscanCorr: 0.6028106897597892
   - detector: 0
     detectorComp: 0
     ampName: C02
@@ -41796,97 +41796,97 @@ ISR:
     detectorComp: 0
     ampName: C02
     ampComp: C01
-    imageCorr: 0.5710269429251693
-    overscanCorr: 0.6156663098068738
+    imageCorr: 0.5710269429251691
+    overscanCorr: 0.6156663098068739
   - detector: 0
     detectorComp: 0
     ampName: C02
     ampComp: C00
-    imageCorr: 0.5469144632266294
-    overscanCorr: 0.5950613318990359
+    imageCorr: 0.5469144632266315
+    overscanCorr: 0.5950613318990381
   - detector: 0
     detectorComp: 0
     ampName: C01
     ampComp: C10
-    imageCorr: 0.013120809220568009
-    overscanCorr: 0.0015714142220793017
+    imageCorr: 0.013120809220568018
+    overscanCorr: 0.0015714142220794097
   - detector: 0
     detectorComp: 0
     ampName: C01
     ampComp: C11
-    imageCorr: 0.01419038544785046
-    overscanCorr: -0.0014750618100106679
+    imageCorr: 0.014190385447850448
+    overscanCorr: -0.0014750618100107242
   - detector: 0
     detectorComp: 0
     ampName: C01
     ampComp: C12
-    imageCorr: 0.012635410189475532
-    overscanCorr: -0.00020617023886978304
+    imageCorr: 0.01263541018947554
+    overscanCorr: -0.00020617023886978096
   - detector: 0
     detectorComp: 0
     ampName: C01
     ampComp: C13
-    imageCorr: 0.013280226200985353
-    overscanCorr: 0.0012582071889000125
+    imageCorr: 0.013280226200985356
+    overscanCorr: 0.0012582071888999646
   - detector: 0
     detectorComp: 0
     ampName: C01
     ampComp: C14
-    imageCorr: 0.014013032822913074
-    overscanCorr: 0.010350091674152273
+    imageCorr: 0.014013032822912996
+    overscanCorr: 0.010350091674152247
   - detector: 0
     detectorComp: 0
     ampName: C01
     ampComp: C15
-    imageCorr: 0.013188031441784313
-    overscanCorr: -0.002646736371652937
+    imageCorr: 0.013188031441784317
+    overscanCorr: -0.002646736371652819
   - detector: 0
     detectorComp: 0
     ampName: C01
     ampComp: C16
-    imageCorr: 0.012837618531463854
-    overscanCorr: -0.00222927351356826
+    imageCorr: 0.012837618531463868
+    overscanCorr: -0.002229273513568259
   - detector: 0
     detectorComp: 0
     ampName: C01
     ampComp: C17
-    imageCorr: 0.009935155129416274
-    overscanCorr: 0.002978194674347255
+    imageCorr: 0.009935155129416295
+    overscanCorr: 0.002978194674347091
   - detector: 0
     detectorComp: 0
     ampName: C01
     ampComp: C07
-    imageCorr: 0.5027613060618382
-    overscanCorr: 0.5479797741723932
+    imageCorr: 0.5027613060618367
+    overscanCorr: 0.5479797741723923
   - detector: 0
     detectorComp: 0
     ampName: C01
     ampComp: C06
-    imageCorr: 0.613757073879502
-    overscanCorr: 0.6558713596002572
+    imageCorr: 0.6137570738795002
+    overscanCorr: 0.6558713596002584
   - detector: 0
     detectorComp: 0
     ampName: C01
     ampComp: C05
-    imageCorr: 0.614949036095347
-    overscanCorr: 0.6594969337300777
+    imageCorr: 0.6149490360953488
+    overscanCorr: 0.6594969337300757
   - detector: 0
     detectorComp: 0
     ampName: C01
     ampComp: C04
-    imageCorr: 0.6016582208404502
-    overscanCorr: 0.6434981942034351
+    imageCorr: 0.6016582208404492
+    overscanCorr: 0.64349819420344
   - detector: 0
     detectorComp: 0
     ampName: C01
     ampComp: C03
-    imageCorr: 0.5779317387234737
-    overscanCorr: 0.6183424558733559
+    imageCorr: 0.5779317387234741
+    overscanCorr: 0.6183424558733555
   - detector: 0
     detectorComp: 0
     ampName: C01
     ampComp: C02
-    imageCorr: 0.5710269429251693
+    imageCorr: 0.5710269429251691
     overscanCorr: 0.6156663098068739
   - detector: 0
     detectorComp: 0
@@ -41898,98 +41898,98 @@ ISR:
     detectorComp: 0
     ampName: C01
     ampComp: C00
-    imageCorr: 0.5833302079464453
-    overscanCorr: 0.6301775109422142
+    imageCorr: 0.5833302079464443
+    overscanCorr: 0.6301775109422171
   - detector: 0
     detectorComp: 0
     ampName: C00
     ampComp: C10
-    imageCorr: 0.011149544562903234
-    overscanCorr: -0.002223754803195425
+    imageCorr: 0.011149544562903181
+    overscanCorr: -0.0022237548031953714
   - detector: 0
     detectorComp: 0
     ampName: C00
     ampComp: C11
-    imageCorr: 0.016128117715115086
-    overscanCorr: -0.0028764239550235987
+    imageCorr: 0.01612811771511511
+    overscanCorr: -0.002876423955023497
   - detector: 0
     detectorComp: 0
     ampName: C00
     ampComp: C12
-    imageCorr: 0.0159342104838521
-    overscanCorr: -0.0030599388273832968
+    imageCorr: 0.01593421048385214
+    overscanCorr: -0.0030599388273833423
   - detector: 0
     detectorComp: 0
     ampName: C00
     ampComp: C13
-    imageCorr: 0.013334457204565444
-    overscanCorr: -0.0022871992158061847
+    imageCorr: 0.013334457204565454
+    overscanCorr: -0.0022871992158062376
   - detector: 0
     detectorComp: 0
     ampName: C00
     ampComp: C14
-    imageCorr: 0.01721168490972395
-    overscanCorr: 0.001759668674319526
+    imageCorr: 0.017211684909724
+    overscanCorr: 0.0017596686743195234
   - detector: 0
     detectorComp: 0
     ampName: C00
     ampComp: C15
-    imageCorr: 0.014708271329309127
-    overscanCorr: -0.0046774593483750685
+    imageCorr: 0.014708271329309117
+    overscanCorr: -0.004677459348375012
   - detector: 0
     detectorComp: 0
     ampName: C00
     ampComp: C16
-    imageCorr: 0.015787621266906467
-    overscanCorr: -0.004082461740420996
+    imageCorr: 0.01578762126690647
+    overscanCorr: -0.004082461740421139
   - detector: 0
     detectorComp: 0
     ampName: C00
     ampComp: C17
-    imageCorr: 0.013606317862037894
-    overscanCorr: -0.0006992710177417043
+    imageCorr: 0.013606317862037877
+    overscanCorr: -0.0006992710177417381
   - detector: 0
     detectorComp: 0
     ampName: C00
     ampComp: C07
-    imageCorr: 0.5109091364776556
-    overscanCorr: 0.5652791676667467
+    imageCorr: 0.5109091364776562
+    overscanCorr: 0.5652791676667485
   - detector: 0
     detectorComp: 0
     ampName: C00
     ampComp: C06
-    imageCorr: 0.580772025093712
-    overscanCorr: 0.6289520194631346
+    imageCorr: 0.580772025093713
+    overscanCorr: 0.6289520194631321
   - detector: 0
     detectorComp: 0
     ampName: C00
     ampComp: C05
-    imageCorr: 0.5781366804722823
-    overscanCorr: 0.6275173410340421
+    imageCorr: 0.5781366804722854
+    overscanCorr: 0.6275173410340406
   - detector: 0
     detectorComp: 0
     ampName: C00
     ampComp: C04
-    imageCorr: 0.5729921228497785
-    overscanCorr: 0.6223725832671947
+    imageCorr: 0.5729921228497791
+    overscanCorr: 0.6223725832671982
   - detector: 0
     detectorComp: 0
     ampName: C00
     ampComp: C03
-    imageCorr: 0.5504857024525962
-    overscanCorr: 0.6019251139722364
+    imageCorr: 0.5504857024525995
+    overscanCorr: 0.6019251139722368
   - detector: 0
     detectorComp: 0
     ampName: C00
     ampComp: C02
-    imageCorr: 0.5469144632266294
-    overscanCorr: 0.5950613318990359
+    imageCorr: 0.5469144632266316
+    overscanCorr: 0.5950613318990381
   - detector: 0
     detectorComp: 0
     ampName: C00
     ampComp: C01
-    imageCorr: 0.5833302079464453
-    overscanCorr: 0.6301775109422141
+    imageCorr: 0.5833302079464443
+    overscanCorr: 0.6301775109422171
   - detector: 0
     detectorComp: 0
     ampName: C00
