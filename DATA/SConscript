@@ -108,6 +108,7 @@ def getPipeTaskCmd(stage, expList, pipelineFile):
     if stage == "ptc":
         args.append("-c cpPtcExtractPair:useEfdPhotodiodeData=False")
         args.append("-c cpPtcAdjustGainRatios:max_adu=40000.0")
+        args.append("-c cpPtcIsr:doDeferredCharge=False")  # Turn off CTI
     elif stage == "gainFromFlatPairs":
         args.append("-c cpPtcExtractPair:useEfdPhotodiodeData=False")
     elif stage == "bfk":
@@ -119,7 +120,8 @@ def getPipeTaskCmd(stage, expList, pipelineFile):
                     "-c cpBfkPtcExtractPair:maximumRangeCovariancesAstier=8 "
                     "-c cpBfkPtcSolve:maximumRangeCovariancesAstier=8 "
                     "-c cpBfkPtcSolve:maximumRangeCovariancesAstierFullCovFit=8 "
-                    "-c cpBfkSolveX:doCheckValidity=False")
+                    "-c cpBfkSolveX:doCheckValidity=False "
+                    "-c cpBfkIsr:doDeferredCharge=False")  # Turn off CTI
     elif stage == "spectroFlat":
         args.append('-c cpSpectroFlat:inputFlatPhysicalFilter="RG610~empty"')
 
@@ -474,6 +476,20 @@ if LEGACY_MODE == 0:
     reportCollections.append("ci_cpv_linearizer")
     env.Alias("linearizer", linearizer)
 
+    # Create a cti and certify.
+    cti = env.Command(
+        [
+            os.path.join(REPO_ROOT, "ci_cpp_cti"),
+            os.path.join(REPO_ROOT, "calib", "v00", "cti"),
+        ],
+        [linearizer],
+        [
+            getPipeTaskCmd("cti", exposureDict["ptcExposurePairs"], "cpCti.yaml"),
+            getCertifyCmd("cti"),
+        ],
+    )
+    env.Alias("cti", cti)
+
     # Create a ptc and certify/verify.
     ptc = env.Command(
         [
@@ -490,20 +506,6 @@ if LEGACY_MODE == 0:
     )
     reportCollections.append("ci_cpv_ptc")
     env.Alias("ptc", ptc)
-
-    # Create a cti and certify.
-    cti = env.Command(
-        [
-            os.path.join(REPO_ROOT, "ci_cpp_cti"),
-            os.path.join(REPO_ROOT, "calib", "v00", "cti"),
-        ],
-        [ptc],
-        [
-            getPipeTaskCmd("cti", exposureDict["ptcExposurePairs"], "cpCti.yaml"),
-            getCertifyCmd("cti"),
-        ],
-    )
-    env.Alias("cti", cti)
 
     # Gain from flat pairs
     # TODO DM-46448: Right now this just runs the task, but it should be verified
@@ -906,4 +908,3 @@ elif LEGACY_MODE == 1:
               [os.path.join(REPO_ROOT, "calib"), os.path.join(REPO_ROOT, "LATISS")])
 
     env.Alias("install", "SConscript")
-
