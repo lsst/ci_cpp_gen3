@@ -22,6 +22,7 @@ import os
 import numpy as np
 import unittest
 import yaml
+import platform
 
 import lsst.daf.butler as dafButler
 import lsst.utils.tests
@@ -29,6 +30,13 @@ import lsst.utils.tests
 from lsst.utils import getPackageDir
 
 LEGACY_MODE = int(os.environ.get("CI_CPP_LEGACY", "0"))
+
+IS_LINUX_X86 = platform.system() == "Linux" and platform.machine() == "x86_64"
+
+
+def setUpModule():
+    if not IS_LINUX_X86:
+        raise unittest.SkipTest("Requires Linux x86")
 
 
 class VerificationTestCases(lsst.utils.tests.TestCase):
